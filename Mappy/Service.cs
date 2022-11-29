@@ -1,4 +1,5 @@
 ﻿using Dalamud.Data;
+using Dalamud.Game;
 using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.Command;
@@ -17,6 +18,7 @@ internal class Service
     [PluginService] public static ClientState ClientState { get; private set; } = null!;
     [PluginService] public static DataManager DataManager { get; private set; } = null!;
     [PluginService] public static ObjectTable ObjectTable { get; private set; } = null!;
+    [PluginService] public static Framework Framework { get; private set; } = null!;
 
     public static System.WindowManager WindowManager = null!;
     public static System.CommandManager CommandManager = null!;
