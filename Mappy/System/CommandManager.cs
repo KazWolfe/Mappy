@@ -19,6 +19,7 @@ internal class CommandManager : IDisposable
         new ConfigurationWindowCommand(),
         new PrintHelpTextCommand(),
         new MapWindowCommand(),
+        new DebugWindowCommand(),
     };
 
     public CommandManager()

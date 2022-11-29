@@ -132,9 +132,9 @@ public class MapManager : IDisposable
 
                 if (CurrentMapTexture is not null)
                 {
-                    var textureSize = GetTextureSize(CurrentMapTexture) / 2.0f * viewport.Scale;
+                    var textureSize = GetTextureSize(CurrentMapTexture) / 2.0f;
                     
-                    var playerPosition = new Vector2(player.Position.X, player.Position.Z) * CurrentMapInfo.SizeFactor / 100.0f * viewport.Scale;
+                    var playerPosition = new Vector2(player.Position.X, player.Position.Z) * CurrentMapInfo.SizeFactor / 100.0f;
 
                     MapViewport.Center = playerPosition + textureSize;
                 }
