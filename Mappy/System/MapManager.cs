@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net.Mime;
 using System.Numerics;
+using System.Text;
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Hooking;
 using Dalamud.Logging;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
@@ -29,6 +33,8 @@ public unsafe class MapManager : IDisposable
     private List<MapMarker> mapMarkers = new();
 
     private bool followPlayer = false;
+    
+    private Vector2 LastWindowSize = Vector2.Zero;
 
     private readonly GatheringPointName mineralDeposit;
     private readonly GatheringPointName rockyOutcrop;
@@ -37,6 +43,11 @@ public unsafe class MapManager : IDisposable
 
     [Signature("8B 2D ?? ?? ?? ?? 41 BF", ScanType = ScanType.StaticAddress)]
     private readonly TerritoryInfoStruct* territoryStruct = null!;
+
+    [Signature("48 8D 15 ?? ?? ?? ?? 48 83 C1 08 44 8B C7", ScanType = ScanType.StaticAddress)]
+    private readonly byte* mapPath = null!;
+    
+    private string lastMapPath = string.Empty;
 
     public MapManager()
     {
@@ -56,10 +67,22 @@ public unsafe class MapManager : IDisposable
 
     private void OnFrameworkUpdate(Framework framework)
     {
-        if (territoryStruct != null)
+        if (mapPath is not null)
         {
-            DebugWindow.AddString($"Territory: {new IntPtr(territoryStruct):X8}");
-            
+            var pathString = Encoding.UTF8.GetString(mapPath + 0x1011CB, 27);
+
+            if (lastMapPath != pathString)
+            {
+                var mapIndex = pathString[7..14];
+                
+                PluginLog.Debug($"MapIndex: {mapIndex}");
+                
+                UpdateCurrentMap(pathString, mapIndex);
+
+                lastMapPath = pathString;
+                
+                PluginLog.Debug($"Map Path Updated: {pathString}");
+            }
         }
     }
 
@@ -102,10 +125,26 @@ public unsafe class MapManager : IDisposable
         return false;
     }
 
+    private static bool GetMapTexture(string mapPath, [NotNullWhen(true)] out TextureWrap? textureWrap)
+    {
+        textureWrap = Service.DataManager.GetImGuiTexture(mapPath);
+
+        return textureWrap != null;
+    }
+
     private static bool GetTerritoryMap(TerritoryType territory, [NotNullWhen(true)] out Map? map)
     {
         map = territory.Map.Value;
 
+        return map != null;
+    }
+    
+    private static bool GetTerritoryMap(string mapID, [NotNullWhen(true)] out Map? map)
+    {
+        map = Service.DataManager.GetExcelSheet<Map>()!
+            .Where(map => map.Id.RawString == mapID)
+            .FirstOrDefault();
+        
         return map != null;
     }
 
@@ -136,6 +175,27 @@ public unsafe class MapManager : IDisposable
         }
     }
 
+    private void UpdateCurrentMap(string mapPath, string mapId)
+    {
+        CurrentMapTexture = GetMapTexture(mapPath, out var texture) ? texture : null;
+        CurrentMapInfo = GetTerritoryMap(mapId, out var mapInfo) ? mapInfo : null;
+            
+        mapMarkers.Clear();
+
+        if (mapInfo is not null)
+        {
+            PluginLog.Debug($"MarkerRange: {mapInfo.MapMarkerRange}");
+                
+            foreach (var row in Service.DataManager.GetExcelSheet<MapMarker>()!)
+            {
+                if (row.RowId == mapInfo.MapMarkerRange)
+                {
+                    mapMarkers.Add(row);
+                }
+            }
+        }
+    }
+    
     public void DrawMap()
     {
         if (CurrentMapTexture is not null)
