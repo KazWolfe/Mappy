@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Dalamud.Game.ClientState;
+using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using ImGuiNET;
 using ImGuiScene;
@@ -24,10 +24,20 @@ public class MapManager : IDisposable
 
     private List<MapMarker> MapMarkers = new();
 
-    private bool FollowPlayer = true;
+    private bool FollowPlayer = false;
+
+    private readonly GatheringPointName MineralDeposit;
+    private readonly GatheringPointName RockyOutcrop;
+    private readonly GatheringPointName MatureTree;
+    private readonly GatheringPointName LushVegetation;
 
     public MapManager()
     {
+        MineralDeposit = Service.DataManager.GetExcelSheet<GatheringPointName>()!.GetRow(1)!;
+        RockyOutcrop = Service.DataManager.GetExcelSheet<GatheringPointName>()!.GetRow(2)!;
+        MatureTree = Service.DataManager.GetExcelSheet<GatheringPointName>()!.GetRow(3)!;
+        LushVegetation = Service.DataManager.GetExcelSheet<GatheringPointName>()!.GetRow(4)!;
+        
         Service.ClientState.TerritoryChanged += OnZoneChange;
         
         UpdateCurrentMap();
@@ -117,9 +127,51 @@ public class MapManager : IDisposable
             DrawMapImage(CurrentMapTexture, MapViewport);
 
             DrawMapMarkers();
+
+            DrawGatheringNodes();
             
             DrawPlayer();
         }
+    }
+
+    private void DrawGatheringNodes()
+    {
+        foreach (var obj in Service.ObjectTable)
+        {
+            if(obj.ObjectKind != ObjectKind.GatheringPoint) continue;
+            
+            var iconId = GetIconIdForGatheringNode(obj);
+            
+            if (Service.IconManager.GetIconTexture(iconId) is {} icon)
+            {
+                DrawGatheringMarker(icon, obj.Position);
+            }
+        }
+    }
+
+    private uint GetIconIdForGatheringNode(GameObject gatheringNode)
+    {
+        var iconId = 0u;
+        var nodeName = gatheringNode.Name.TextValue.ToLower();
+        
+        if (nodeName == MineralDeposit.Singular)
+        {
+            iconId = 60438;
+        }
+        else if (nodeName == RockyOutcrop.Singular)
+        {
+            iconId = 60437;
+        }
+        else if (nodeName == MatureTree.Singular)
+        {
+            iconId = 60433;
+        }
+        else if (nodeName == LushVegetation.Singular)
+        {
+            iconId = 60432;
+        }
+
+        return iconId;
     }
 
     private void CenterOnPlayer()
@@ -128,8 +180,6 @@ public class MapManager : IDisposable
         {
             if (CurrentMapInfo is not null)
             {
-                var viewport = MapViewport;
-
                 if (CurrentMapTexture is not null)
                 {
                     var textureSize = GetTextureSize(CurrentMapTexture) / 2.0f;
@@ -175,6 +225,24 @@ public class MapManager : IDisposable
         }
     }
 
+    private void DrawGatheringMarker(TextureWrap icon, Vector3 position)
+    {
+        if (CurrentMapInfo is not null && CurrentMapTexture is not null)
+        {
+            var iconSize = new Vector2(icon.Width, icon.Height);
+            var texturePosition = new Vector2(position.X, position.Z) * CurrentMapInfo.SizeFactor / 100.0f * MapViewport.Scale;
+            var textureCentered = texturePosition - iconSize / 2.0f;
+            
+            var mapSize = GetTextureSize(CurrentMapTexture) * MapViewport.Scale;
+            var viewportPosition = MapViewport.Center * MapViewport.Scale - MapViewport.Size / 2.0f;
+            
+            DebugWindow.AddString($"Position: {-viewportPosition + textureCentered + mapSize}");
+            
+            ImGui.SetCursorPos(-viewportPosition + textureCentered + mapSize / 2.0f);
+            ImGui.Image(icon.ImGuiHandle, iconSize);
+        }
+    }
+
     private void DrawPlayer()
     {
         if (Service.ClientState.LocalPlayer is { } player)
@@ -192,8 +260,16 @@ public class MapManager : IDisposable
                 
                     DebugWindow.AddString("\nPlayer:");
                     DebugWindow.AddString($"Position: {playerPosition}");
-                
-                    ImGui.GetWindowDrawList().AddCircleFilled(ImGui.GetWindowPos() - viewportPosition + playerPosition + textureSize, 10.0f, ImGui.GetColorU32(Colors.Red));
+
+                    if (Service.IconManager.GetIconTexture(60443) is { } playerIcon)
+                    {
+                        var iconSize = new Vector2(playerIcon.Width, playerIcon.Height);
+                        
+                        ImGui.SetCursorPos(-viewportPosition + playerPosition + textureSize - iconSize / 2.0f);
+                        ImGui.Image(playerIcon.ImGuiHandle, iconSize);
+                    }
+                    
+                    //ImGui.GetWindowDrawList().AddCircleFilled(ImGui.GetWindowPos() - viewportPosition + playerPosition + textureSize, 10.0f, ImGui.GetColorU32(Colors.Red));
 
                     unsafe
                     {

@@ -1,5 +1,6 @@
 ﻿using Dalamud.Data;
 using Dalamud.Game.ClientState;
+using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.Command;
 using Dalamud.Game.Gui;
 using Dalamud.IoC;
@@ -15,6 +16,7 @@ internal class Service
     [PluginService] public static ChatGui Chat { get; private set; } = null!;
     [PluginService] public static ClientState ClientState { get; private set; } = null!;
     [PluginService] public static DataManager DataManager { get; private set; } = null!;
+    [PluginService] public static ObjectTable ObjectTable { get; private set; } = null!;
 
     public static System.WindowManager WindowManager = null!;
     public static System.CommandManager CommandManager = null!;
