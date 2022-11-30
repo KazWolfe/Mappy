@@ -18,6 +18,8 @@ public class PlayerMapComponent
         if (!MapData.DataAvailable) return;
         if (Service.ClientState.LocalPlayer is not { } player) return;
 
+        if (!MapData.PlayerInCurrentMap()) return;
+        
         DrawLookLine(player);
         DrawBluePlayerIcon(player);
     }

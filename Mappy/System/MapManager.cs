@@ -5,10 +5,8 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Logging;
 using Dalamud.Utility.Signatures;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
 using Mappy.MapComponents;
-using Mappy.UserInterface.Windows;
 
 namespace Mappy.System;
 
@@ -78,9 +76,7 @@ public unsafe class MapManager : IDisposable
         DrawMapImage();
 
         mapMarkers.Draw();
-
         gatheringPoints.Draw();
-         
         player.Draw();
     }
 

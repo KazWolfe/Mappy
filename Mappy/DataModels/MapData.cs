@@ -15,6 +15,7 @@ public class MapData : IDisposable
     public TextureWrap? Texture { get; private set; }
     public Map? Map { get; private set; }
     public MapViewport Viewport { get; } = new();
+    private string playerMapKey = string.Empty;
     
     [MemberNotNullWhen(true, nameof(Texture))]
     [MemberNotNullWhen(true, nameof(Map))]
@@ -35,8 +36,18 @@ public class MapData : IDisposable
     {
         Texture = GetMapTexture(path);
         Map = GetMap(GetMapIdString(path));
+        playerMapKey = GetMapIdString(path);
         
         PluginLog.Debug($"Loading Map ID: {GetMapIdString(path)}");
+    }
+
+    public void LoadMapWithKey(string mapKey)
+    {
+        var rawKey = mapKey.Replace("/", "");
+        var newPath = $"ui/map/{mapKey}/{rawKey}_m.tex";
+
+        Texture = GetMapTexture(newPath);
+        Map = GetMap(mapKey);
     }
     
     private string GetMapIdString(string path) => path[7..14];
@@ -45,8 +56,13 @@ public class MapData : IDisposable
     private IEnumerable<Map> GetMapSheet() => Service.DataManager.GetExcelSheet<Map>()!;
     public Vector2 GetScaledMapTextureSize() => GetMapTextureSize() * Viewport.Scale;
     public Vector2 GetHalfMapTextureSize() => GetMapTextureSize() / 2.0f;
-    public Vector2 GetScaledHalfMapTextureSize() => GetHalfMapTextureSize() * Viewport.Scale;
-    
+    public bool PlayerInCurrentMap()
+    {
+        if (!MapAvailable) return false;
+
+        return Map.Id.RawString == playerMapKey;
+    }
+
     public Vector2 GetMapTextureSize()
     {
         if(!TextureAvailable) throw new NullReferenceException("Texture is null");
