@@ -15,8 +15,7 @@ namespace Mappy.System;
 public unsafe class MapManager : IDisposable
 {
     public MapData MapData { get; } = new();
-
-    public bool FollowPlayer { get; set; } = false;
+    public bool FollowPlayer { get; set; }
     
     private readonly PlayerMapComponent player = new();
     private readonly GatheringPointMapComponent gatheringPoints = new();
@@ -40,8 +39,10 @@ public unsafe class MapManager : IDisposable
 
         if (mapPath is not null)
         {
-            var pathString = Encoding.UTF8.GetString(mapPath + 0x1011CB, 27);
+            var pathString = Encoding.UTF8.GetString(mapPath + 0x1011CB, 27).Trim('\0');
 
+            if (pathString == string.Empty) return;
+            
             if (lastMapPath != pathString)
             {
                 PluginLog.Debug($"Map Path Updated: {pathString}");
