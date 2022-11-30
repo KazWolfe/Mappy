@@ -51,6 +51,8 @@ public class GatheringPointMapComponent
 
     private unsafe bool IsTargetable(GameObject gameObject)
     {
+        if (gameObject.Address == IntPtr.Zero) return false;
+        
         var csObject = (ClientStructGameObject*)gameObject.Address;
         return csObject->GetIsTargetable();
     }
