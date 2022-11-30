@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Logging;
 using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
 
@@ -33,6 +34,8 @@ public class MapData : IDisposable
     {
         Texture = GetMapTexture(path);
         Map = GetMap(GetMapIdString(path));
+        
+        PluginLog.Debug($"Loading Map ID: {GetMapIdString(path)}");
     }
     
     private string GetMapIdString(string path) => path[7..14];

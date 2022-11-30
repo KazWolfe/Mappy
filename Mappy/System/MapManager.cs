@@ -44,9 +44,9 @@ public unsafe class MapManager : IDisposable
 
             if (lastMapPath != pathString)
             {
+                PluginLog.Debug($"Map Path Updated: {pathString}");
                 UpdateCurrentMap(pathString);
                 lastMapPath = pathString;
-                PluginLog.Debug($"Map Path Updated: {pathString}");
             }
         }
     }
