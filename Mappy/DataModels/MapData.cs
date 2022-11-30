@@ -64,9 +64,12 @@ public class MapData : IDisposable
         return new Vector2(Map.OffsetX, Map.OffsetY) * GetMapScalar();
     }
 
-    public Vector2 GetScaledGameObjectPosition(Vector3 objectPosition) => 
-        (new Vector2(objectPosition.X, objectPosition.Z) * GetMapScalar()
+    public Vector2 GetScaledGameObjectPosition(Vector3 objectPosition) => GetGameObjectPosition(objectPosition) * Viewport.Scale;
+
+    public Vector2 GetGameObjectPosition(Vector3 objectPosition) =>
+        new Vector2(objectPosition.X, objectPosition.Z) * GetMapScalar()
         + GetScaledMapOffset()
-        + GetHalfMapTextureSize()) * Viewport.Scale;
+        + GetHalfMapTextureSize();
+    
     public Vector2 GetScaledPosition(Vector2 texturePosition) => new Vector2(texturePosition.X, texturePosition.Y) * Viewport.Scale;
 }

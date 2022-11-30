@@ -20,6 +20,7 @@ internal class CommandManager : IDisposable
         new PrintHelpTextCommand(),
         new MapWindowCommand(),
         new DebugWindowCommand(),
+        new MapManagerCommand(),
     };
 
     public CommandManager()

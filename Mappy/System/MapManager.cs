@@ -5,16 +5,18 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Logging;
 using Dalamud.Utility.Signatures;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
 using Mappy.MapComponents;
+using Mappy.UserInterface.Windows;
 
 namespace Mappy.System;
 
 public unsafe class MapManager : IDisposable
 {
     public MapData MapData { get; } = new();
-    
-    private readonly bool followPlayer = false;
+
+    public bool FollowPlayer { get; set; } = false;
     
     private readonly PlayerMapComponent player = new();
     private readonly GatheringPointMapComponent gatheringPoints = new();
@@ -67,7 +69,7 @@ public unsafe class MapManager : IDisposable
     {
         if (!MapData.DataAvailable) return;
         
-        if (followPlayer)
+        if (FollowPlayer)
         {
             CenterOnPlayer();
         }
@@ -87,11 +89,9 @@ public unsafe class MapManager : IDisposable
         
         if (Service.ClientState.LocalPlayer is { } localPlayer)
         {
-            var textureSize = MapData.GetHalfMapTextureSize();
-
-            var playerPosition = MapData.GetScaledGameObjectPosition(localPlayer.Position);
-                
-            MapData.Viewport.Center = playerPosition + textureSize;
+            var playerPosition = MapData.GetGameObjectPosition(localPlayer.Position);
+            
+            MapData.Viewport.Center = playerPosition;
         }
     }
     
