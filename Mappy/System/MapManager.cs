@@ -101,9 +101,8 @@ public unsafe class MapManager : IDisposable
         if (!MapData.DataAvailable) return;
         
         var textureSize = MapData.GetScaledMapTextureSize();
-        var viewportPosition = MapData.Viewport.ScaledTopLeft;
-
-        ImGui.SetCursorPos(-viewportPosition);
+        
+        MapData.SetDrawPosition();
         ImGui.Image(MapData.Texture.ImGuiHandle, textureSize);
     }
 }

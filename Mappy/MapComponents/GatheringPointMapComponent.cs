@@ -1,11 +1,11 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
 using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
-using Mappy.UserInterface.Windows;
 using ClientStructGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 namespace Mappy.MapComponents;
@@ -63,9 +63,8 @@ public class GatheringPointMapComponent
         
         var iconSize = new Vector2(icon.Width, icon.Height);
         var iconPosition = MapData.GetScaledGameObjectPosition(position) - iconSize / 2.0f;
-        var viewportPosition = MapData.Viewport.ScaledTopLeft;
 
-        ImGui.SetCursorPos(-viewportPosition + iconPosition);
+        MapData.SetDrawPosition(iconPosition);
         ImGui.Image(icon.ImGuiHandle, iconSize);
     }
     

@@ -4,9 +4,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using ImGuiNET;
 using ImGuiScene;
-using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
-using Mappy.UserInterface.Windows;
 using Mappy.Utilities;
 
 namespace Mappy.MapComponents;
@@ -28,27 +26,29 @@ public class PlayerMapComponent
     {
         if (Service.IconManager.GetIconTexture(60443) is { } playerIcon)
         {
-            var angle = -player.Rotation + 0.5f * MathF.PI;
-            var viewportOffset = MapData.Viewport.ScaledTopLeft;
+            var angle = GetPlayerRotation(player);
+
+            var playerPosition = MapData.GetScaledGameObjectPosition(player.Position);
+            var drawPosition = MapData.GetWindowDrawPosition(playerPosition);
             
-            var center = MapData.GetScaledGameObjectPosition(player.Position) + ImGui.GetWindowPos();
-            
-            DrawImageRotated(playerIcon, -viewportOffset + center, angle, 1.25f);
+            DrawImageRotated(playerIcon, drawPosition, angle, 1.25f);
         }
     }
 
     private void DrawLookLine(GameObject player)
     {
         var angle = GetCameraRotation();
-        var center = -MapData.Viewport.ScaledTopLeft + MapData.GetScaledGameObjectPosition(player.Position) + ImGui.GetWindowPos();
+
+        var playerPosition = MapData.GetScaledGameObjectPosition(player.Position);
+        var drawPosition = MapData.GetWindowDrawPosition(playerPosition);
 
         var lineLength = 90.0f * MapData.Viewport.Scale;
         
-        DrawAngledLineFromCenter(center, lineLength, angle - 0.25f * MathF.PI);
-        DrawAngledLineFromCenter(center, lineLength, angle + 0.25f * MathF.PI);
-        DrawLineArcFromCenter(center, lineLength, angle);
+        DrawAngledLineFromCenter(drawPosition, lineLength, angle - 0.25f * MathF.PI);
+        DrawAngledLineFromCenter(drawPosition, lineLength, angle + 0.25f * MathF.PI);
+        DrawLineArcFromCenter(drawPosition, lineLength, angle);
         
-        DrawFilledSemiCircle(center, lineLength, angle);
+        DrawFilledSemiCircle(drawPosition, lineLength, angle);
     }
 
     private static void DrawAngledLineFromCenter(Vector2 center, float lineLength, float angle)
@@ -86,31 +86,15 @@ public class PlayerMapComponent
     {
         var cameraManager = CameraManager.Instance()->CurrentCamera;
 
-        var yaw = -1 * Math.Atan2(-1 * cameraManager->Vector_4.X, -1 * cameraManager->Vector_2.X);
+        var yaw = MathF.Atan2(-1 * cameraManager->Vector_4.X, -1 * cameraManager->Vector_2.X);
 
-        return -((float) yaw - 0.5f * MathF.PI);
+        return yaw + 0.5f * MathF.PI;
     }
 
-    // private static Vector2 GetTextureSize(TextureWrap texture) => new(texture.Width, texture.Height);
-    //
-    // private static Vector2 GetScaledTextureCenter(TextureWrap texture, MapViewport viewport) => GetTextureSize(texture) / 2.0f * viewport.Scale;
-    //
-    // private static Vector2 GetPlayerCenteredViewport(TextureWrap texture, MapViewport viewport, Map map, Vector3 playerPosition)
-    // {
-    //     return -viewport.ScaledTopLeft + GetPlayerPosition(playerPosition, map, viewport) + GetScaledTextureCenter(texture, viewport);
-    // }
-    //
-    // private static Vector2 GetPlayerPosition(Vector3 position, Map map, MapViewport viewport)
-    // {
-    //     var mapScalar = GetMapScalar(map);
-    //
-    //     var playerPosition = new Vector2(position.X, position.Z) * mapScalar * viewport.Scale;
-    //     var mapOffset = new Vector2(map.OffsetX, map.OffsetY) * mapScalar * viewport.Scale;
-    //
-    //     return playerPosition + mapOffset;
-    // }
-    //
-    // private static float GetMapScalar(Map map) => map.SizeFactor / 100.0f;
+    private float GetPlayerRotation(GameObject player)
+    {
+        return -player.Rotation + 0.5f * MathF.PI;
+    }
 
     private static void DrawImageRotated(TextureWrap texture, Vector2 center, float angle, float iconScale)
     {

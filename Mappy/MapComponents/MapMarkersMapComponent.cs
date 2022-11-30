@@ -29,7 +29,6 @@ public class MapMarkersMapComponent
         if (icon is not null)
         {
             var iconSize = new Vector2(icon.Width, icon.Height);
-            var viewportPosition = MapData.Viewport.ScaledTopLeft;
 
             var markerPosition = MapData.GetScaledPosition(new Vector2(marker.X, marker.Y)) - iconSize / 2.0f;
 
@@ -42,7 +41,7 @@ public class MapMarkersMapComponent
             //     ImGui.TextColored(Colors.Black, placeName.Name.ToDalamudString().TextValue);
             // }
             
-            ImGui.SetCursorPos(-viewportPosition + markerPosition);
+            MapData.SetDrawPosition(markerPosition);
             ImGui.Image(icon.ImGuiHandle, iconSize);
         }
     }

@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Logging;
+using ImGuiNET;
 using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
 
@@ -75,4 +76,8 @@ public class MapData : IDisposable
         + GetHalfMapTextureSize();
     
     public Vector2 GetScaledPosition(Vector2 texturePosition) => new Vector2(texturePosition.X, texturePosition.Y) * Viewport.Scale;
+
+    public void SetDrawPosition(Vector2 texturePosition) => ImGui.SetCursorPos(-Viewport.ScaledTopLeft + texturePosition);
+    public void SetDrawPosition() => ImGui.SetCursorPos(-Viewport.ScaledTopLeft);
+    public Vector2 GetWindowDrawPosition(Vector2 texturePosition) => -Viewport.ScaledTopLeft + texturePosition + ImGui.GetWindowPos();
 }
