@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Interface.Windowing;
-using Dalamud.Logging;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using Mappy.DataModels;
 
 namespace Mappy.UserInterface.Windows;
 
 public class MapWindow : Window, IDisposable
 {
+    private static MapData MapData => Service.MapManager.MapData;
+    
+    private Vector2 mouseDragStart;
+    private bool dragStarted;
+    private Vector2 lastWindowSize = Vector2.Zero;
+    
     public MapWindow() : base("Mappy Map Window")
     {
-        // SizeConstraints = new WindowSizeConstraints
-        // {
-        //     MinimumSize = new Vector2(350,350),
-        //     MaximumSize = new Vector2(350,350)
-        // };
-
         Flags |= ImGuiWindowFlags.NoMove;
         Flags |= ImGuiWindowFlags.NoScrollbar;
         Flags |= ImGuiWindowFlags.NoScrollWithMouse;
@@ -36,22 +34,91 @@ public class MapWindow : Window, IDisposable
 
     public override void Draw()
     {
-        CheckMapDrag();
+        EvaluateWindowResize();
+        
+        EvaluateInputs();
         
         if (ImGui.BeginChild("###MapFrame", ImGui.GetContentRegionAvail(), false, Flags))
         {
-            Service.MapManager.MapViewport.Size = ImGui.GetContentRegionAvail();
+            MapData.Viewport.Size = ImGui.GetContentRegionAvail();
             Service.MapManager.DrawMap();
         }
         ImGui.EndChild();
     }
 
-    private Vector2 mouseDragStart;
-    public bool DragStarted;
-    
-    private void CheckMapDrag()
+    private void EvaluateWindowResize()
     {
-        if (IsInWindowHeader())
+        var windowSize = ImGui.GetWindowSize();
+
+        if (lastWindowSize != windowSize && lastWindowSize != Vector2.Zero)
+        {
+            var delta = windowSize - lastWindowSize;
+
+            MapData.Viewport.Center += delta / MapData.Viewport.Scale;
+        }
+
+        lastWindowSize = windowSize;
+    }
+
+    private void EvaluateInputs()
+    {
+        SetMoveFlags(IsInWindowHeader());
+
+        if (!ImGui.IsWindowFocused(ImGuiFocusedFlags.AnyWindow) || IsFocused)
+        {
+            EvaluateDrag();
+
+            EvaluateZoom();
+        }
+    }
+
+    private static void EvaluateZoom()
+    {
+        if (IsCursorInWindow() && !IsInWindowHeader())
+        {
+            // Mouse Wheel Up
+            if (ImGui.GetIO().MouseWheel > 0)
+            {
+                MapData.Viewport.Scale += 0.2f;
+            }
+            // Mouse Wheel Down
+            else if (ImGui.GetIO().MouseWheel < 0)
+            {
+                MapData.Viewport.Scale -= 0.2f;
+            }
+        }
+    }
+
+    private void EvaluateDrag()
+    {
+        if (IsCursorInWindow() && !IsInWindowHeader())
+        {
+            if (ImGui.IsMouseDown(ImGuiMouseButton.Left) && !ImGui.IsMouseDragging(ImGuiMouseButton.Left))
+            {
+                mouseDragStart = ImGui.GetMousePos();
+                dragStarted = true;
+            }
+            else if (ImGui.IsMouseDragging(ImGuiMouseButton.Left) && !dragStarted)
+            {
+                mouseDragStart = ImGui.GetMousePos();
+                dragStarted = true;
+            }
+            else if(!ImGui.IsMouseDragging(ImGuiMouseButton.Left))
+            {
+                dragStarted = false;
+            }
+        }
+        
+        if (ImGui.IsMouseDragging(ImGuiMouseButton.Left) && dragStarted)
+        {
+            MapData.Viewport.Center -= (ImGui.GetMousePos() - mouseDragStart) / MapData.Viewport.Scale;
+            mouseDragStart = ImGui.GetMousePos();
+        }
+    }
+
+    private void SetMoveFlags(bool enableMoving)
+    {
+        if (enableMoving)
         {
             Flags &= ~ImGuiWindowFlags.NoMove;
         }
@@ -59,39 +126,9 @@ public class MapWindow : Window, IDisposable
         {
             Flags |= ImGuiWindowFlags.NoMove;
         }
-        
-        if (IsCursorInWindow() && !IsInWindowHeader())
-        {
-            if (ImGui.IsMouseDown(ImGuiMouseButton.Left) && !ImGui.IsMouseDragging(ImGuiMouseButton.Left))
-            {
-                mouseDragStart = ImGui.GetMousePos();
-                DragStarted = true;
-            }
-            else if(!ImGui.IsMouseDragging(ImGuiMouseButton.Left))
-            {
-                DragStarted = false;
-            }
-
-            // Mouse Wheel Up
-            if (ImGui.GetIO().MouseWheel > 0)
-            {
-                Service.MapManager.ZoomIn(0.20f);
-            }
-            // Mouse Wheel Down
-            else if (ImGui.GetIO().MouseWheel < 0)
-            {
-                Service.MapManager.ZoomOut(0.20f);
-            }
-        }
-        
-        if (ImGui.IsMouseDragging(ImGuiMouseButton.Left) && DragStarted)
-        {
-            Service.MapManager.MapViewport.Center -= (ImGui.GetMousePos() - mouseDragStart) / Service.MapManager.MapViewport.Scale;
-            mouseDragStart = ImGui.GetMousePos();
-        }
     }
-
-    private bool IsCursorInWindow()
+    
+    private static bool IsCursorInWindow()
     {
         var windowStart = ImGui.GetWindowPos();
         var windowSize = ImGui.GetWindowSize();
@@ -99,7 +136,7 @@ public class MapWindow : Window, IDisposable
         return IsBoundedBy(ImGui.GetMousePos(), windowStart, windowStart + windowSize);
     }
 
-    private bool IsInWindowHeader()
+    private static bool IsInWindowHeader()
     {
         var windowStart = ImGui.GetWindowPos();
         var headerSize = ImGui.GetWindowSize() with { Y = ImGui.GetWindowContentRegionMin().Y };
@@ -107,7 +144,7 @@ public class MapWindow : Window, IDisposable
         return IsBoundedBy(ImGui.GetMousePos(), windowStart, windowStart + headerSize);
     }
     
-    private bool IsBoundedBy(Vector2 cursor, Vector2 minBounds, Vector2 maxBounds)
+    private static bool IsBoundedBy(Vector2 cursor, Vector2 minBounds, Vector2 maxBounds)
     {
         if (cursor.X >= minBounds.X && cursor.Y >= minBounds.Y)
         {

@@ -7,6 +7,7 @@ using Dalamud.Game.Gui;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Lumina.Excel.GeneratedSheets;
+using Condition = Dalamud.Game.ClientState.Conditions.Condition;
 
 namespace Mappy;
 
@@ -19,6 +20,7 @@ internal class Service
     [PluginService] public static DataManager DataManager { get; private set; } = null!;
     [PluginService] public static ObjectTable ObjectTable { get; private set; } = null!;
     [PluginService] public static Framework Framework { get; private set; } = null!;
+    [PluginService] public static Condition Condition { get; private set; } = null!;
 
     public static System.WindowManager WindowManager = null!;
     public static System.CommandManager CommandManager = null!;

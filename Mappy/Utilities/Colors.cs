@@ -15,6 +15,7 @@ internal static class Colors
     public static Vector4 DPSRed = new(210/255f, 42/255f, 43/255f, 1.0f);
     public static Vector4 SoftRed = new(0.8f, 0.2f, 0.2f, 1.0f);
     public static Vector4 Grey = new(0.6f, 0.6f, 0.6f, 1.0f);
+    public static Vector4 LightGrey = new(220/250.0f, 220/250.0f, 220/250f, 1.0f);
     public static Vector4 Orange = new(1.0f, 165.0f / 255.0f, 0.0f, 1.0f);
     public static Vector4 SoftGreen = new(0.2f, 0.8f, 0.2f, 1.0f);
 }

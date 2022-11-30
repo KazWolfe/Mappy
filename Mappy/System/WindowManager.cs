@@ -25,7 +25,7 @@ internal class WindowManager : IDisposable
         {
             windowSystem.AddWindow(window);
         }
-
+        
         Service.PluginInterface.UiBuilder.Draw += DrawUI;
         Service.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
     }
