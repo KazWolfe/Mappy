@@ -16,6 +16,8 @@ public class MapData : IDisposable
     public Map? Map { get; private set; }
     public MapViewport Viewport { get; } = new();
     private string playerMapKey = string.Empty;
+
+    public List<Map> MapLayers { get; private set; } = new();
     
     [MemberNotNullWhen(true, nameof(Texture))]
     [MemberNotNullWhen(true, nameof(Map))]
@@ -38,9 +40,11 @@ public class MapData : IDisposable
         Map = GetMap(GetMapIdString(path));
         playerMapKey = GetMapIdString(path);
         
+        LoadMapLayers();
+        
         PluginLog.Debug($"Loading Map ID: {GetMapIdString(path)}");
     }
-
+    
     public void LoadMapWithKey(string mapKey)
     {
         var rawKey = mapKey.Replace("/", "");
@@ -48,9 +52,27 @@ public class MapData : IDisposable
 
         Texture = GetMapTexture(newPath);
         Map = GetMap(mapKey);
+        
+        LoadMapLayers();
 
         if (!TextureAvailable) return;
         Viewport.Center = new Vector2(Texture.Width, Texture.Height) / 2.0f;
+    }
+
+    public void SelectMapLayer(Map layer)
+    {
+        LoadMapWithKey(layer.Id.RawString);
+    }
+
+    private void LoadMapLayers()
+    {
+        if (!MapAvailable) return;
+
+        MapLayers = Service.DataManager.GetExcelSheet<Map>()!
+            .Where(map => map.TerritoryType.Row == Map.TerritoryType.Row)
+            .ToList();
+        
+        PluginLog.Debug($"Loaded {MapLayers.Count} May Layers");
     }
     
     private string GetMapIdString(string path) => path[7..14];
@@ -59,6 +81,20 @@ public class MapData : IDisposable
     private IEnumerable<Map> GetMapSheet() => Service.DataManager.GetExcelSheet<Map>()!;
     public Vector2 GetScaledMapTextureSize() => GetMapTextureSize() * Viewport.Scale;
     public Vector2 GetHalfMapTextureSize() => GetMapTextureSize() / 2.0f;
+
+    public string GetCurrentMapName()
+    {
+        if(!MapAvailable) throw new NullReferenceException("Map is null");
+
+        if (GetPlaceName() is { } placeName) return placeName;
+        if (GetPlaceSubName() is { } subName) return subName;
+
+        return string.Empty;
+    }
+
+    private string? GetPlaceName() => !MapAvailable ? null : Map.PlaceName.Value?.Name.RawString;
+    private string? GetPlaceSubName() => !MapAvailable ? null : Map.PlaceNameSub.Value?.Name.RawString;
+
     public bool PlayerInCurrentMap()
     {
         if (!MapAvailable) return false;

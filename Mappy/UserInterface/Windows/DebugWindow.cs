@@ -12,7 +12,6 @@ public class DebugWindow : Window
     
     public DebugWindow() : base("Mappy Debug Window")
     {
-        IsOpen = true;
     }
 
     public override void Draw()

@@ -10,7 +10,7 @@ public class MapManagerCommand : IPluginCommand
         switch (additionalArguments)
         {
             case "follow":
-                Service.MapManager.FollowPlayer = !Service.MapManager.FollowPlayer;
+                Service.Configuration.FollowPlayer.Value = !Service.Configuration.FollowPlayer.Value;
                 break;
         }
     }

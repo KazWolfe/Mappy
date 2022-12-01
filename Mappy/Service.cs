@@ -4,12 +4,13 @@ using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Aetherytes;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Game.ClientState.Objects;
-using Dalamud.Game.Command;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Gui.Toast;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Lumina.Excel.GeneratedSheets;
+using Mappy.System;
+using CommandManager = Dalamud.Game.Command.CommandManager;
 using Condition = Dalamud.Game.ClientState.Conditions.Condition;
 
 namespace Mappy;
@@ -28,6 +29,7 @@ internal class Service
     [PluginService] public static ToastGui Toast { get; private set; } = null!;
     [PluginService] public static KeyState Keys { get; private set; } = null!;
 
+    public static Configuration Configuration = null!;
     public static System.WindowManager WindowManager = null!;
     public static System.CommandManager CommandManager = null!;
     public static System.MapManager MapManager = null!;

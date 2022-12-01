@@ -11,6 +11,9 @@ public sealed class MappyPlugin : IDalamudPlugin
     public MappyPlugin(DalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
+        
+        Service.Configuration = Service.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+        Service.Configuration.Initialize(Service.PluginInterface);
 
         Service.Localization = new LocalizationManager();
         Service.PlaceNameCache = new LuminaCache<PlaceName>();

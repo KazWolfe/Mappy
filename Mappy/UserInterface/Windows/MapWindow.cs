@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Numerics;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using Mappy.DataModels;
+using Condition = Mappy.Utilities.Condition;
 
 namespace Mappy.UserInterface.Windows;
 
@@ -13,9 +15,13 @@ public class MapWindow : Window, IDisposable
     private Vector2 mouseDragStart;
     private bool dragStarted;
     private Vector2 lastWindowSize = Vector2.Zero;
-    
+
     public MapWindow() : base("Mappy Map Window")
     {
+
+        Flags |= ImGuiWindowFlags.NoFocusOnAppearing;
+        Flags |= ImGuiWindowFlags.NoNavFocus;
+        Flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
         Flags |= ImGuiWindowFlags.NoMove;
         Flags |= ImGuiWindowFlags.NoScrollbar;
         Flags |= ImGuiWindowFlags.NoScrollWithMouse;
@@ -27,9 +33,31 @@ public class MapWindow : Window, IDisposable
     {
     }
 
+    public override void PreOpenCheck()
+    {
+        if (Service.Configuration.KeepOpen.Value) IsOpen = true;
+        
+        if (Service.ClientState.IsPvP) IsOpen = false;
+        if (!Service.ClientState.IsLoggedIn) IsOpen = false;
+        if (Service.Configuration.HideInDuties.Value && Condition.IsBoundByDuty()) IsOpen = false; 
+    }
+
     public override void PreDraw()
     {
-        if (Service.ClientState.IsPvP) IsOpen = false;
+
+        
+        if (Service.Configuration.HideWindowFrame.Value)
+        {
+            Flags |= ImGuiWindowFlags.NoDecoration;
+            
+            ImGui.PushStyleColor(ImGuiCol.WindowBg, Vector4.Zero);
+        }
+        else
+        {
+            Flags &= ~ImGuiWindowFlags.NoDecoration;
+            Flags |= ImGuiWindowFlags.NoScrollbar;
+            Flags |= ImGuiWindowFlags.NoScrollWithMouse;
+        }
     }
 
     public override void Draw()
@@ -44,6 +72,14 @@ public class MapWindow : Window, IDisposable
             Service.MapManager.DrawMap();
         }
         ImGui.EndChild();
+    }
+
+    public override void PostDraw()
+    {
+        if (Service.Configuration.HideWindowFrame.Value)
+        {
+            ImGui.PopStyleColor();
+        }
     }
 
     private void EvaluateWindowResize()
@@ -68,10 +104,10 @@ public class MapWindow : Window, IDisposable
         {
             EvaluateDrag();
 
-            if (dragStarted)
-            {
-                Service.MapManager.FollowPlayer = false;
-            }
+            // if (dragStarted)
+            // {
+            //     Service.MapManager.FollowPlayer = false;
+            // }
 
             EvaluateZoom();
         }
@@ -123,13 +159,15 @@ public class MapWindow : Window, IDisposable
 
     private void SetMoveFlags(bool enableMoving)
     {
-        if (enableMoving)
+        if (enableMoving && !Service.Configuration.LockWindow.Value)
         {
             Flags &= ~ImGuiWindowFlags.NoMove;
+            Flags &= ~ImGuiWindowFlags.NoResize;
         }
         else
         {
             Flags |= ImGuiWindowFlags.NoMove;
+            Flags |= ImGuiWindowFlags.NoResize;
         }
     }
     
