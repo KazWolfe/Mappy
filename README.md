@@ -1,7 +1,9 @@
-# Todo This.
+# Mappy
   
-This is a work in progress
+Mappy is a XivLauncher/Dalamud Plugin for a better ingame map.
 
+This is a WORK IN PROGRESS plugin, many features are planned, below is an outline of some of the features that are coming:
 
-https://user-images.githubusercontent.com/9083275/204767495-f4beb421-693e-4207-86db-a6eeb2f24736.mp4
-
+* Inter-Plugin Communication for placing icons lines or text
+* Customizable colors
+* Ability to show or hide specific map icons
