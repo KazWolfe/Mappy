@@ -48,6 +48,9 @@ public class MapData : IDisposable
 
         Texture = GetMapTexture(newPath);
         Map = GetMap(mapKey);
+
+        if (!TextureAvailable) return;
+        Viewport.Center = new Vector2(Texture.Width, Texture.Height) / 2.0f;
     }
     
     private string GetMapIdString(string path) => path[7..14];

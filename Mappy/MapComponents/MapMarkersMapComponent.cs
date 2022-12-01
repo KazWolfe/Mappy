@@ -37,15 +37,6 @@ public class MapMarkersMapComponent
             var iconSize = new Vector2(icon.Width, icon.Height);
 
             var markerPosition = MapData.GetScaledPosition(new Vector2(marker.X, marker.Y)) - iconSize / 2.0f;
-
-            // if (marker.PlaceNameSubtext.Value is { } placeName && viewport.Scale > 0.5f)
-            // {
-            //     var stringSize = new Vector2(ImGui.CalcTextSize(placeName.Name).X, 0.0f) * viewport.Scale;
-            //     var textOffset = new Vector2(0.0f, -20.0f);
-            //     
-            //     ImGui.SetCursorPos(-viewportPosition + markerCenter - stringSize);
-            //     ImGui.TextColored(Colors.Black, placeName.Name.ToDalamudString().TextValue);
-            // }
             
             MapData.SetDrawPosition(markerPosition);
             ImGui.Image(icon.ImGuiHandle, iconSize);
@@ -73,12 +64,17 @@ public class MapMarkersMapComponent
 
     private void DoTeleport(MapMarker marker)
     {
+        var targetAetherite = Service.DataManager.GetExcelSheet<Aetheryte>()!.GetRow(marker.DataKey);
+        if (targetAetherite is null) return;
         
+        Service.Teleporter.Teleport(targetAetherite);
     }
 
     private void ChangeMapView(MapMarker marker)
     {
-        var targetMap = Service.DataManager.GetExcelSheet<Map>()!.GetRow(marker.DataKey)!;
+        var targetMap = Service.DataManager.GetExcelSheet<Map>()!.GetRow(marker.DataKey);
+        if (targetMap is null) return;
+        
         var mapKey = targetMap.Id.RawString;
         
         MapData.LoadMapWithKey(mapKey);

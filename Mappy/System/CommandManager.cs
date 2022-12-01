@@ -21,6 +21,7 @@ internal class CommandManager : IDisposable
         new MapWindowCommand(),
         new DebugWindowCommand(),
         new MapManagerCommand(),
+        new LocalizationCommand(),
     };
 
     public CommandManager()

@@ -12,8 +12,10 @@ public sealed class MappyPlugin : IDalamudPlugin
     {
         pluginInterface.Create<Service>();
 
+        Service.Localization = new LocalizationManager();
         Service.PlaceNameCache = new LuminaCache<PlaceName>();
         Service.IconManager = new IconManager();
+        Service.Teleporter = new TeleportManager();
         
         Service.WindowManager = new WindowManager();
         Service.CommandManager = new CommandManager();
@@ -22,7 +24,9 @@ public sealed class MappyPlugin : IDalamudPlugin
 
     public void Dispose()
     {
+        Service.Localization.Dispose();
         Service.IconManager.Dispose();
+        Service.Teleporter.Dispose();
         
         Service.WindowManager.Dispose();
         Service.CommandManager.Dispose();
