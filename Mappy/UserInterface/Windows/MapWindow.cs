@@ -20,7 +20,7 @@ public class MapWindow : Window, IDisposable
     {
 
         Flags |= ImGuiWindowFlags.NoFocusOnAppearing;
-        Flags |= ImGuiWindowFlags.NoNavFocus;
+        Flags |= ImGuiWindowFlags.NoNav;
         Flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
         Flags |= ImGuiWindowFlags.NoMove;
         Flags |= ImGuiWindowFlags.NoScrollbar;
@@ -44,19 +44,17 @@ public class MapWindow : Window, IDisposable
 
     public override void PreDraw()
     {
-
-        
         if (Service.Configuration.HideWindowFrame.Value)
         {
             Flags |= ImGuiWindowFlags.NoDecoration;
-            
-            ImGui.PushStyleColor(ImGuiCol.WindowBg, Vector4.Zero);
+            Flags |= ImGuiWindowFlags.NoBackground;
         }
         else
         {
             Flags &= ~ImGuiWindowFlags.NoDecoration;
             Flags |= ImGuiWindowFlags.NoScrollbar;
             Flags |= ImGuiWindowFlags.NoScrollWithMouse;
+            Flags &= ~ImGuiWindowFlags.NoBackground;
         }
     }
 
@@ -72,14 +70,6 @@ public class MapWindow : Window, IDisposable
             Service.MapManager.DrawMap();
         }
         ImGui.EndChild();
-    }
-
-    public override void PostDraw()
-    {
-        if (Service.Configuration.HideWindowFrame.Value)
-        {
-            ImGui.PopStyleColor();
-        }
     }
 
     private void EvaluateWindowResize()
