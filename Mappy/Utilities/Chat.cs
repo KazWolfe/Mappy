@@ -1,6 +1,4 @@
-﻿using System;
-using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Game.Text.SeStringHandling.Payloads;
+﻿using Dalamud.Game.Text.SeStringHandling;
 
 namespace Mappy.Utilities;
 

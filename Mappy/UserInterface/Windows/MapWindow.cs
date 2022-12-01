@@ -68,10 +68,15 @@ public class MapWindow : Window, IDisposable
         {
             EvaluateDrag();
 
+            if (dragStarted)
+            {
+                Service.MapManager.FollowPlayer = false;
+            }
+
             EvaluateZoom();
         }
     }
-
+    
     private static void EvaluateZoom()
     {
         if (IsCursorInWindow() && !IsInWindowHeader())

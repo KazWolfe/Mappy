@@ -13,12 +13,12 @@ namespace Mappy.System;
 public unsafe class MapManager : IDisposable
 {
     public MapData MapData { get; } = new();
-    public bool FollowPlayer { get; set; }
-    
+    public bool FollowPlayer { get; set; } = true;
+
     private readonly PlayerMapComponent player = new();
     private readonly GatheringPointMapComponent gatheringPoints = new();
     private readonly MapMarkersMapComponent mapMarkers = new();
-
+    
     [Signature("48 8D 15 ?? ?? ?? ?? 48 83 C1 08 44 8B C7", ScanType = ScanType.StaticAddress)]
     private readonly byte* mapPath = null!;
     
@@ -60,7 +60,7 @@ public unsafe class MapManager : IDisposable
     private void UpdateCurrentMap(string mapTexturePath)
     {
         MapData.LoadMap(mapTexturePath);
-
+        
         mapMarkers.LoadMarkers();
     }
     
@@ -68,7 +68,7 @@ public unsafe class MapManager : IDisposable
     {
         if (!MapData.DataAvailable) return;
         
-        if (FollowPlayer)
+        if (FollowPlayer && MapData.PlayerInCurrentMap())
         {
             CenterOnPlayer();
         }
