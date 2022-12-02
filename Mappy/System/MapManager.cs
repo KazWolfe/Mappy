@@ -10,8 +10,10 @@ using Dalamud.Utility.Signatures;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
+using Mappy.Localization;
 using Mappy.MapComponents;
 using Mappy.UserInterface.Windows;
+using Mappy.Utilities;
 
 namespace Mappy.System;
 
@@ -87,21 +89,27 @@ public unsafe class MapManager : IDisposable
     
     private void DrawMapLayers()
     {
-        var regionSize = ImGuiHelpers.ScaledVector2(175.0f, 150.0f);
         var regionAvailable = ImGui.GetContentRegionAvail();
         ImGui.SetCursorPos(regionAvailable with {Y = 0, X = 0});
         
         ImGui.PushItemWidth(250.0f * ImGuiHelpers.GlobalScale);
         if (ImGui.BeginCombo("###LayerCombo", MapData.GetCurrentMapName()))
         {
-            foreach (var layer in MapData.MapLayers)
+            if (MapData.MapLayers.Count == 1)
             {
-                if (GetLayerSubName(layer, out var layerSubName))
+                ImGui.TextColored(Colors.Orange, Strings.Map.NoLayers);
+            }
+            else
+            {
+                foreach (var layer in MapData.MapLayers)
                 {
-                    if (ImGui.Selectable(layerSubName))
+                    if (GetLayerSubName(layer, out var layerSubName))
                     {
-                        MapData.SelectMapLayer(layer);
-                        mapMarkers.LoadMarkers();
+                        if (ImGui.Selectable(layerSubName))
+                        {
+                            MapData.SelectMapLayer(layer);
+                            mapMarkers.LoadMarkers();
+                        }
                     }
                 }
             }

@@ -15,5 +15,4 @@ public readonly struct TerritoryInfoStruct
     public bool IsInSanctuary => InSanctuary == 1;
     public PlaceName? Region => Service.PlaceNameCache.GetRow(RegionID);
     public PlaceName? SubArea => Service.PlaceNameCache.GetRow(SubAreaID);
-
 }

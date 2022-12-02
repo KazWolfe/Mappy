@@ -28,7 +28,7 @@ public class PlayerMapComponent
     {
         if (Service.IconManager.GetIconTexture(60443) is { } playerIcon)
         {
-            var angle = GetPlayerRotation(player);
+            var angle = GetObjectRotation(player);
 
             var playerPosition = MapData.GetScaledGameObjectPosition(player.Position);
             var drawPosition = MapData.GetWindowDrawPosition(playerPosition);
@@ -93,9 +93,9 @@ public class PlayerMapComponent
         return yaw + 0.5f * MathF.PI;
     }
 
-    private float GetPlayerRotation(GameObject player)
+    private float GetObjectRotation(GameObject gameObject)
     {
-        return -player.Rotation + 0.5f * MathF.PI;
+        return -gameObject.Rotation + 0.5f * MathF.PI;
     }
 
     private static void DrawImageRotated(TextureWrap texture, Vector2 center, float angle, float iconScale)
