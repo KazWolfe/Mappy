@@ -7,6 +7,7 @@ using Dalamud.Logging;
 using ImGuiNET;
 using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
+using Mappy.Utilities;
 
 namespace Mappy.DataModels;
 
@@ -37,7 +38,7 @@ public class MapData : IDisposable
 
     // Helpers
     private static string GetMapIdString(string path) => path[7..14];
-    private static TextureWrap? GetMapTexture(string path) => Service.DataManager.GetImGuiTexture(path);
+    private static TextureWrap? GetMapTexture(string path) => Service.DataManager.GetImGuiTexture(path + ".tex");
     private static IEnumerable<Map> GetMapSheet() => Service.DataManager.GetExcelSheet<Map>()!;
     private static Map? GetMap(string mapIdString) => GetMapSheet().Where(map => map.Id.RawString == mapIdString).FirstOrDefault();
     public Vector2 GetScaledMapTextureSize() => GetMapTextureSize() * Viewport.Scale;
@@ -48,6 +49,7 @@ public class MapData : IDisposable
     public void SetDrawPosition(Vector2 texturePosition) => ImGui.SetCursorPos(-Viewport.ScaledTopLeft + texturePosition);
     public void SetDrawPosition() => ImGui.SetCursorPos(-Viewport.ScaledTopLeft);
     public Vector2 GetWindowDrawPosition(Vector2 texturePosition) => -Viewport.ScaledTopLeft + texturePosition + ImGui.GetWindowPos();
+    public Vector2 GetScaledWindowDrawPosition(Vector2 texturePosition) => -Viewport.ScaledTopLeft + texturePosition * Viewport.Scale + ImGui.GetWindowPos();
     public Vector2 GetGameObjectPosition(Vector3 objectPosition) =>
         new Vector2(objectPosition.X, objectPosition.Z) * GetMapScalar()
         + GetScaledMapOffset()
@@ -69,7 +71,7 @@ public class MapData : IDisposable
     public void LoadMapWithKey(string mapKey)
     {
         var rawKey = mapKey.Replace("/", "");
-        var newPath = $"ui/map/{mapKey}/{rawKey}_m.tex";
+        var newPath = $"ui/map/{mapKey}/{rawKey}_m";
 
         Texture = GetMapTexture(newPath);
         Map = GetMap(mapKey);
@@ -120,7 +122,7 @@ public class MapData : IDisposable
         return new Vector2(Texture.Width, Texture.Height);
     }
 
-    private float GetMapScalar()
+    public float GetMapScalar()
     {
         if (!MapAvailable) throw new NullReferenceException("Map is null");
 
@@ -144,6 +146,18 @@ public class MapData : IDisposable
         
         SetDrawPosition(iconPosition);
         ImGui.Image(icon.ImGuiHandle, iconSize);
+    }
+
+    public void DrawText(PlaceName? name, short x, short y, bool region)
+    {
+        if (name != null)
+        {
+            var position = GetScaledWindowDrawPosition(new Vector2(x, y));
+
+            var scale = region ? 1.5f : 1.0f;
+            
+            Draw.TextOutlined(position, name.Name.RawString, scale);
+        }
     }
     
     public void DrawIcon(uint iconID, Vector3 location)

@@ -33,6 +33,8 @@ public class MapMarkersMapComponent : IMapComponent
 
     private void DrawMapMarker(MapMarker marker)
     {
+        if (marker.Icon == 0) return;
+        
         MapData.DrawIcon(marker.Icon, marker.X, marker.Y);
         DrawTooltip(marker);
         CheckClick(marker);

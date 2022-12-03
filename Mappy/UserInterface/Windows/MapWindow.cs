@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using Mappy.DataModels;
@@ -94,10 +93,10 @@ public class MapWindow : Window, IDisposable
         {
             EvaluateDrag();
 
-            // if (dragStarted)
-            // {
-            //     Service.MapManager.FollowPlayer = false;
-            // }
+            if (dragStarted)
+            {
+                Service.Configuration.FollowPlayer.Value = false;
+            }
 
             EvaluateZoom();
         }

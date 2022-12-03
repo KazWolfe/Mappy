@@ -33,6 +33,8 @@ public unsafe class FateMapComponent : IMapComponent
     
     private void DrawFate(FateContext fate)
     {
+        if (!MapData.PlayerInCurrentMap()) return;
+        
         DrawRing(fate);
         MapData.DrawIcon(fate.IconId, fate.Location);
         DrawTooltip(fate);
@@ -46,8 +48,13 @@ public unsafe class FateMapComponent : IMapComponent
         {
             case 2:
                 var position = MapData.GetScaledGameObjectPosition(fate.Location);
-                ImGui.GetWindowDrawList().AddCircleFilled(MapData.GetWindowDrawPosition(position), fate.Radius * MapData.Viewport.Scale, ImGui.GetColorU32(Colors.FatePink));
-                ImGui.GetWindowDrawList().AddCircle(MapData.GetWindowDrawPosition(position), fate.Radius * MapData.Viewport.Scale, ImGui.GetColorU32(Colors.FatePink), 35, 4);
+                var drawPosition = MapData.GetWindowDrawPosition(position);
+
+                var radius = fate.Radius * MapData.Viewport.Scale;
+                var fatePink = ImGui.GetColorU32(Colors.FatePink);
+                
+                ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, fatePink);
+                ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, fatePink, 35, 4);
                 break;
         }
     }
@@ -65,7 +72,7 @@ public unsafe class FateMapComponent : IMapComponent
 
                 ImGui.Text($"{Strings.Map.Fate.Level} {fate.Level} {fate.Name}\n" +
                            $"{Strings.Map.Fate.TimeRemaining}: {remainingTime}\n" +
-                           $"{Strings.Map.Fate.Progress}: {fate.Progress}%");
+                           $"{Strings.Map.Fate.Progress}: {fate.Progress}%%");
                 break;
             
             case 7:
