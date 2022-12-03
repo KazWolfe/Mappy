@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Numerics;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
+using Mappy.Interfaces;
+using Strings = Mappy.Localization.Strings;
 
 namespace Mappy.MapComponents;
 
-public class MapMarkersMapComponent
+public class MapMarkersMapComponent : IMapComponent
 {
-    private static MapData MapData => Service.MapManager.MapData;
+    public MapData MapData => Service.MapManager.MapData;
 
     private readonly List<MapMarker> mapMarkers = new();
     private bool reloadMarkers;
@@ -27,23 +28,14 @@ public class MapMarkersMapComponent
             LoadMarkers();
         }
     }
-    
+
+    public void Refresh() => LoadMarkers();
+
     private void DrawMapMarker(MapMarker marker)
     {
-        var icon = Service.IconManager.GetIconTexture(marker.Icon);
-
-        if (icon is not null)
-        {
-            var iconSize = new Vector2(icon.Width, icon.Height);
-
-            var markerPosition = MapData.GetScaledPosition(new Vector2(marker.X, marker.Y)) - iconSize / 2.0f;
-            
-            MapData.SetDrawPosition(markerPosition);
-            ImGui.Image(icon.ImGuiHandle, iconSize);
-
-            DrawTooltip(marker);
-            CheckClick(marker);
-        }
+        MapData.DrawIcon(marker.Icon, marker.X, marker.Y);
+        DrawTooltip(marker);
+        CheckClick(marker);
     }
 
     private void CheckClick(MapMarker marker)
@@ -105,7 +97,7 @@ public class MapMarkersMapComponent
         if (markerPlaceName is not null && markerPlaceName.RowId != 0)
         {
             ImGui.BeginTooltip();
-            ImGui.Text(markerPlaceName.Name);
+            ImGui.Text(markerPlaceName.Name + $" {Strings.Map.Aetheryte}");
             ImGui.EndTooltip();
         }
     }

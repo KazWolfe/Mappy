@@ -5,13 +5,14 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using ImGuiNET;
 using ImGuiScene;
 using Mappy.DataModels;
+using Mappy.Interfaces;
 using Mappy.Utilities;
 
 namespace Mappy.MapComponents;
 
-public class PlayerMapComponent
+public class PlayerMapComponent : IMapComponent
 {
-    private static MapData MapData => Service.MapManager.MapData;
+    public MapData MapData => Service.MapManager.MapData;
     
     public void Draw()
     {
@@ -22,6 +23,11 @@ public class PlayerMapComponent
         
         DrawLookLine(player);
         DrawBluePlayerIcon(player);
+    }
+
+    public void Refresh()
+    {
+        
     }
 
     private void DrawBluePlayerIcon(GameObject player)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Text;
@@ -10,6 +11,7 @@ using Dalamud.Utility.Signatures;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
+using Mappy.Interfaces;
 using Mappy.Localization;
 using Mappy.MapComponents;
 using Mappy.UserInterface.Windows;
@@ -22,13 +24,17 @@ public unsafe class MapManager : IDisposable
     public MapData MapData { get; } = new();
     public bool FollowPlayer => Service.Configuration.FollowPlayer.Value;
 
-    private readonly PlayerMapComponent player = new();
-    private readonly GatheringPointMapComponent gatheringPoints = new();
-    private readonly MapMarkersMapComponent mapMarkers = new();
-    
+    private readonly List<IMapComponent> mapComponents = new()
+    {
+        new GatheringPointMapComponent(),
+        new MapMarkersMapComponent(),
+        new FateMapComponent(),
+        new PlayerMapComponent(),
+    };
+
     [Signature("48 8D 15 ?? ?? ?? ?? 48 83 C1 08 44 8B C7", ScanType = ScanType.StaticAddress)]
     private readonly byte* mapPath = null!;
-    
+
     private string lastMapPath = string.Empty;
 
     public MapManager()
@@ -66,7 +72,15 @@ public unsafe class MapManager : IDisposable
     private void UpdateCurrentMap(string mapTexturePath)
     {
         MapData.LoadMap(mapTexturePath);
-        mapMarkers.LoadMarkers();
+        RefreshMapComponents();
+    }
+
+    private void RefreshMapComponents()
+    {
+        foreach (var component in mapComponents)
+        {
+            component.Refresh();
+        }
     }
 
     public void DrawMap()
@@ -80,9 +94,10 @@ public unsafe class MapManager : IDisposable
             
         DrawMapImage();
 
-        mapMarkers.Draw();
-        gatheringPoints.Draw();
-        player.Draw();
+        foreach (var mapComponent in mapComponents)
+        {
+            mapComponent.Draw();
+        }
         
         DrawMapLayers();
     }
@@ -108,7 +123,7 @@ public unsafe class MapManager : IDisposable
                         if (ImGui.Selectable(layerSubName))
                         {
                             MapData.SelectMapLayer(layer);
-                            mapMarkers.LoadMarkers();
+                            RefreshMapComponents();
                         }
                     }
                 }

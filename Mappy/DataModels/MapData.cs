@@ -12,6 +12,7 @@ namespace Mappy.DataModels;
 
 public class MapData : IDisposable
 {
+    // Properties
     public TextureWrap? Texture { get; private set; }
     public Map? Map { get; private set; }
     public MapViewport Viewport { get; } = new();
@@ -34,6 +35,26 @@ public class MapData : IDisposable
         Texture?.Dispose();
     }
 
+    // Helpers
+    private static string GetMapIdString(string path) => path[7..14];
+    private static TextureWrap? GetMapTexture(string path) => Service.DataManager.GetImGuiTexture(path);
+    private static IEnumerable<Map> GetMapSheet() => Service.DataManager.GetExcelSheet<Map>()!;
+    private static Map? GetMap(string mapIdString) => GetMapSheet().Where(map => map.Id.RawString == mapIdString).FirstOrDefault();
+    public Vector2 GetScaledMapTextureSize() => GetMapTextureSize() * Viewport.Scale;
+    public Vector2 GetHalfMapTextureSize() => GetMapTextureSize() / 2.0f;
+    private string? GetPlaceName() => !MapAvailable ? null : Map.PlaceName.Value?.Name.RawString;
+    private string? GetPlaceSubName() => !MapAvailable ? null : Map.PlaceNameSub.Value?.Name.RawString;
+    public Vector2 GetScaledGameObjectPosition(Vector3 objectPosition) => GetGameObjectPosition(objectPosition) * Viewport.Scale;
+    public void SetDrawPosition(Vector2 texturePosition) => ImGui.SetCursorPos(-Viewport.ScaledTopLeft + texturePosition);
+    public void SetDrawPosition() => ImGui.SetCursorPos(-Viewport.ScaledTopLeft);
+    public Vector2 GetWindowDrawPosition(Vector2 texturePosition) => -Viewport.ScaledTopLeft + texturePosition + ImGui.GetWindowPos();
+    public Vector2 GetGameObjectPosition(Vector3 objectPosition) =>
+        new Vector2(objectPosition.X, objectPosition.Z) * GetMapScalar()
+        + GetScaledMapOffset()
+        + GetHalfMapTextureSize();
+    
+    // Methods
+    
     public void LoadMap(string path)
     {
         Texture = GetMapTexture(path);
@@ -75,13 +96,6 @@ public class MapData : IDisposable
         PluginLog.Debug($"Loaded {MapLayers.Count} May Layers");
     }
     
-    private string GetMapIdString(string path) => path[7..14];
-    private TextureWrap? GetMapTexture(string path) => Service.DataManager.GetImGuiTexture(path);
-    private Map? GetMap(string mapIdString) => GetMapSheet().Where(map => map.Id.RawString == mapIdString).FirstOrDefault();
-    private IEnumerable<Map> GetMapSheet() => Service.DataManager.GetExcelSheet<Map>()!;
-    public Vector2 GetScaledMapTextureSize() => GetMapTextureSize() * Viewport.Scale;
-    public Vector2 GetHalfMapTextureSize() => GetMapTextureSize() / 2.0f;
-
     public string GetCurrentMapName()
     {
         if(!MapAvailable) throw new NullReferenceException("Map is null");
@@ -92,9 +106,6 @@ public class MapData : IDisposable
         return string.Empty;
     }
 
-    private string? GetPlaceName() => !MapAvailable ? null : Map.PlaceName.Value?.Name.RawString;
-    private string? GetPlaceSubName() => !MapAvailable ? null : Map.PlaceNameSub.Value?.Name.RawString;
-
     public bool PlayerInCurrentMap()
     {
         if (!MapAvailable) return false;
@@ -102,37 +113,48 @@ public class MapData : IDisposable
         return Map.Id.RawString == playerMapKey;
     }
 
-    public Vector2 GetMapTextureSize()
+    private Vector2 GetMapTextureSize()
     {
         if(!TextureAvailable) throw new NullReferenceException("Texture is null");
         
         return new Vector2(Texture.Width, Texture.Height);
     }
 
-    public float GetMapScalar()
+    private float GetMapScalar()
     {
         if (!MapAvailable) throw new NullReferenceException("Map is null");
 
         return Map.SizeFactor / 100.0f;
     }
-    
-    public Vector2 GetScaledMapOffset()
+
+    private Vector2 GetScaledMapOffset()
     {
         if (!MapAvailable) throw new NullReferenceException("Map is null");
 
         return new Vector2(Map.OffsetX, Map.OffsetY) * GetMapScalar();
     }
 
-    public Vector2 GetScaledGameObjectPosition(Vector3 objectPosition) => GetGameObjectPosition(objectPosition) * Viewport.Scale;
-
-    public Vector2 GetGameObjectPosition(Vector3 objectPosition) =>
-        new Vector2(objectPosition.X, objectPosition.Z) * GetMapScalar()
-        + GetScaledMapOffset()
-        + GetHalfMapTextureSize();
+    public void DrawIcon(uint iconID, short x, short y)
+    {
+        var icon = Service.IconManager.GetIconTexture(iconID);
+        if (icon is null) return;
+        
+        var iconSize = new Vector2(icon.Width, icon.Height);
+        var iconPosition = new Vector2(x, y) * Viewport.Scale - iconSize / 2.0f;
+        
+        SetDrawPosition(iconPosition);
+        ImGui.Image(icon.ImGuiHandle, iconSize);
+    }
     
-    public Vector2 GetScaledPosition(Vector2 texturePosition) => new Vector2(texturePosition.X, texturePosition.Y) * Viewport.Scale;
+    public void DrawIcon(uint iconID, Vector3 location)
+    {
+        var icon = Service.IconManager.GetIconTexture(iconID);
+        if (icon is null) return;
 
-    public void SetDrawPosition(Vector2 texturePosition) => ImGui.SetCursorPos(-Viewport.ScaledTopLeft + texturePosition);
-    public void SetDrawPosition() => ImGui.SetCursorPos(-Viewport.ScaledTopLeft);
-    public Vector2 GetWindowDrawPosition(Vector2 texturePosition) => -Viewport.ScaledTopLeft + texturePosition + ImGui.GetWindowPos();
+        var iconSize = new Vector2(icon.Width, icon.Height);
+        var iconPosition = GetScaledGameObjectPosition(location) - iconSize / 2.0f;
+        
+        SetDrawPosition(iconPosition);
+        ImGui.Image(icon.ImGuiHandle, iconSize);
+    }
 }

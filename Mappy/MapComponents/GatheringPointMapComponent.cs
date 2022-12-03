@@ -6,13 +6,14 @@ using ImGuiNET;
 using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
+using Mappy.Interfaces;
 using ClientStructGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 namespace Mappy.MapComponents;
 
-public class GatheringPointMapComponent
+public class GatheringPointMapComponent : IMapComponent
 {
-    private static MapData MapData => Service.MapManager.MapData;
+    public MapData MapData => Service.MapManager.MapData;
     
     private readonly GatheringPointName mineralDeposit;
     private readonly GatheringPointName rockyOutcrop;
@@ -31,7 +32,12 @@ public class GatheringPointMapComponent
     {
         DrawGatheringNodes();
     }
-    
+
+    public void Refresh()
+    {
+        
+    }
+
     private void DrawGatheringNodes()
     {
         foreach (var obj in Service.ObjectTable)
@@ -42,10 +48,7 @@ public class GatheringPointMapComponent
             
             var iconId = GetIconIdForGatheringNode(obj);
             
-            if (Service.IconManager.GetIconTexture(iconId) is {} icon)
-            {
-                DrawGatheringMarker(icon, obj.Position);
-            }
+            MapData.DrawIcon(iconId, obj.Position);
         }
     }
 
@@ -55,17 +58,6 @@ public class GatheringPointMapComponent
         
         var csObject = (ClientStructGameObject*)gameObject.Address;
         return csObject->GetIsTargetable();
-    }
-    
-    private void DrawGatheringMarker(TextureWrap icon, Vector3 position)
-    {
-        if (!MapData.DataAvailable) return;
-        
-        var iconSize = new Vector2(icon.Width, icon.Height);
-        var iconPosition = MapData.GetScaledGameObjectPosition(position) - iconSize / 2.0f;
-
-        MapData.SetDrawPosition(iconPosition);
-        ImGui.Image(icon.ImGuiHandle, iconSize);
     }
     
     private uint GetIconIdForGatheringNode(GameObject gatheringNode)

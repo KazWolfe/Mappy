@@ -18,4 +18,6 @@ internal static class Colors
     public static Vector4 LightGrey = new(220/250.0f, 220/250.0f, 220/250f, 1.0f);
     public static Vector4 Orange = new(1.0f, 165.0f / 255.0f, 0.0f, 1.0f);
     public static Vector4 SoftGreen = new(0.2f, 0.8f, 0.2f, 1.0f);
+    public static Vector4 FatePink = new(0.58f, 0.388f, 0.827f, 0.33f);
+    public static Vector4 FateDarkPink = new(0.58f, 0.388f, 0.827f, 1.0f);
 }
