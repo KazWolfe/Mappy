@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Dalamud.Utility;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
 using Mappy.Interfaces;
-using Strings = Mappy.Localization.Strings;
 
 namespace Mappy.MapComponents;
 
@@ -87,6 +88,24 @@ public class MapMarkersMapComponent : IMapComponent
             case 3:
                 DrawAetheriteTooltip(marker);
                 break;
+            
+            case 4:
+                DrawAethernetTooltip(marker);
+                break;
+        }
+    }
+
+    private void DrawAethernetTooltip(MapMarker marker)
+    {
+        if (!ImGui.IsItemHovered()) return;
+        
+        var markerPlaceName = Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(marker.DataKey)!;
+
+        if (markerPlaceName.RowId != 0)
+        {
+            ImGui.BeginTooltip();
+            ImGui.Text(markerPlaceName.Name);
+            ImGui.EndTooltip();
         }
     }
 
@@ -99,7 +118,7 @@ public class MapMarkersMapComponent : IMapComponent
         if (markerPlaceName is not null && markerPlaceName.RowId != 0)
         {
             ImGui.BeginTooltip();
-            ImGui.Text(markerPlaceName.Name + $" {Strings.Map.Aetheryte}");
+            ImGui.Text(markerPlaceName.Name);
             ImGui.EndTooltip();
         }
     }
@@ -110,11 +129,26 @@ public class MapMarkersMapComponent : IMapComponent
         
         var markerPlaceName = marker.PlaceNameSubtext.Value;
 
+        // If there is name text, use it
         if (markerPlaceName is not null && markerPlaceName.RowId != 0)
         {
             ImGui.BeginTooltip();
-            ImGui.Text(markerPlaceName.Name);
+            ImGui.Text(markerPlaceName.Name.ToDalamudString().TextValue);
             ImGui.EndTooltip();
+        }
+        // If there isn't name text, use icon text
+        else
+        {
+            var mapSymbol = Service.DataManager.GetExcelSheet<MapSymbol>()!
+                .Where(symbol => symbol.Icon == marker.Icon)
+                .FirstOrDefault();
+
+            if (mapSymbol?.PlaceName.Value is {} placeName)
+            {
+                ImGui.BeginTooltip();
+                ImGui.Text(placeName.Name.ToDalamudString().TextValue);
+                ImGui.EndTooltip();
+            }
         }
     }
 
