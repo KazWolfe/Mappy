@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
-using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
-using Mappy.DataModels;
 using Mappy.Interfaces;
+using Mappy.Utilities;
 using ClientStructGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 namespace Mappy.MapComponents;
 
 public class GatheringPointMapComponent : IMapComponent
 {
-    public MapData MapData => Service.MapManager.MapData;
-    
     private readonly GatheringPointName mineralDeposit;
     private readonly GatheringPointName rockyOutcrop;
     private readonly GatheringPointName matureTree;
@@ -27,18 +23,14 @@ public class GatheringPointMapComponent : IMapComponent
         matureTree = Service.DataManager.GetExcelSheet<GatheringPointName>()!.GetRow(3)!;
         lushVegetation = Service.DataManager.GetExcelSheet<GatheringPointName>()!.GetRow(4)!;
     }
-    
-    public void Draw()
-    {
-        DrawGatheringNodes();
-    }
 
-    public void Refresh()
+    
+    public void Update(uint mapID)
     {
         
     }
 
-    private void DrawGatheringNodes()
+    public void Draw()
     {
         foreach (var obj in Service.ObjectTable)
         {
@@ -47,8 +39,25 @@ public class GatheringPointMapComponent : IMapComponent
             if(!IsTargetable(obj)) continue;
             
             var iconId = GetIconIdForGatheringNode(obj);
+            var icon = Service.Cache.IconCache.GetIconTexture(iconId);
+            var position = Service.MapManager.GetObjectPosition(obj);
             
-            MapData.DrawIcon(iconId, obj.Position);
+            MapRenderer.DrawIcon(icon, position);
+            DrawTooltip(obj);
+        }
+    }
+
+    private void DrawTooltip(GameObject gameObject)
+    {
+        if (!ImGui.IsItemHovered()) return;
+
+        var displayString = gameObject.Name.TextValue;
+        
+        if (displayString != string.Empty)
+        {
+            ImGui.BeginTooltip();
+            ImGui.TextUnformatted(displayString);
+            ImGui.EndTooltip();
         }
     }
 

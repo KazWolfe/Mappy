@@ -23,4 +23,10 @@ internal static class Condition
                Service.Condition[ConditionFlag.WatchingCutscene78] ||
                Service.Condition[ConditionFlag.OccupiedInQuestEvent];
     }
+
+    public static bool BetweenAreas()
+    {
+        return Service.Condition[ConditionFlag.BetweenAreas] ||
+               Service.Condition[ConditionFlag.BetweenAreas51];
+    }
 }

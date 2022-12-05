@@ -8,7 +8,6 @@ using Dalamud.Game.Gui;
 using Dalamud.Game.Gui.Toast;
 using Dalamud.IoC;
 using Dalamud.Plugin;
-using Lumina.Excel.GeneratedSheets;
 using Mappy.System;
 using CommandManager = Dalamud.Game.Command.CommandManager;
 using Condition = Dalamud.Game.ClientState.Conditions.Condition;
@@ -29,12 +28,13 @@ internal class Service
     [PluginService] public static ToastGui Toast { get; private set; } = null!;
     [PluginService] public static KeyState Keys { get; private set; } = null!;
 
+    public static CompositeLuminaCache Cache = null!;
+    
     public static Configuration Configuration = null!;
-    public static System.WindowManager WindowManager = null!;
+    public static WindowManager WindowManager = null!;
     public static System.CommandManager CommandManager = null!;
-    public static System.MapManager MapManager = null!;
-    public static System.LuminaCache<PlaceName> PlaceNameCache = null!;
-    public static System.IconManager IconManager = null!;
-    public static System.TeleportManager Teleporter = null!;
-    public static System.LocalizationManager Localization = null!;
+    public static TeleportManager Teleporter = null!;
+    public static LocalizationManager Localization = null!;
+
+    public static MapManager MapManager = null!;
 }

@@ -1,5 +1,4 @@
 ﻿using Dalamud.Plugin;
-using Lumina.Excel.GeneratedSheets;
 using Mappy.System;
 
 namespace Mappy;
@@ -15,24 +14,28 @@ public sealed class MappyPlugin : IDalamudPlugin
         Service.Configuration = Service.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Service.Configuration.Initialize(Service.PluginInterface);
 
+        // Load Localization First
         Service.Localization = new LocalizationManager();
-        Service.PlaceNameCache = new LuminaCache<PlaceName>();
-        Service.IconManager = new IconManager();
-        Service.Teleporter = new TeleportManager();
         
-        Service.WindowManager = new WindowManager();
-        Service.CommandManager = new CommandManager();
+        // Load Caches Next
+        Service.Cache = new CompositeLuminaCache();
+
+        // Load Non Critical Managers
+        Service.Teleporter = new TeleportManager();
         Service.MapManager = new MapManager();
+        
+        // Load Critical Managers
+        Service.CommandManager = new CommandManager();
+        Service.WindowManager = new WindowManager();
     }
 
     public void Dispose()
     {
         Service.Localization.Dispose();
-        Service.IconManager.Dispose();
         Service.Teleporter.Dispose();
-        
-        Service.WindowManager.Dispose();
         Service.CommandManager.Dispose();
+        Service.WindowManager.Dispose();
         Service.MapManager.Dispose();
+        Service.Cache.Dispose();
     }
 }

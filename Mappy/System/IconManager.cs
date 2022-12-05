@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Dalamud.Logging;
 using Dalamud.Utility;
@@ -14,7 +13,7 @@ public class IconManager : IDisposable
 
     public void Dispose() 
     {
-        foreach (var texture in iconTextures.Values.Where(texture => texture != null)) 
+        foreach (var texture in iconTextures.Values) 
         {
             texture?.Dispose();
         }

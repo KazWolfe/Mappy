@@ -21,4 +21,5 @@ internal static class Colors
     public static Vector4 FatePink = new(0.58f, 0.388f, 0.827f, 0.33f);
     public static Vector4 FateDarkPink = new(0.58f, 0.388f, 0.827f, 1.0f);
     public static Vector4 MapTextBrown = new(0.655f, 0.396f, 0.149f, 1.0f);
+    public static Vector4 BabyBlue = new(0.537f, 0.812f, 0.941f, 1.0f);
 }

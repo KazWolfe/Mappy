@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Numerics;
+﻿using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using Mappy.Localization;
@@ -16,6 +15,8 @@ public class ConfigurationWindow : Window
             MinimumSize = new Vector2(350,350),
             MaximumSize = new Vector2(350,350)
         };
+
+        IsOpen = true;
     }
 
     public override void Draw()

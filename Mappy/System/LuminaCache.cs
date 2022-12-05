@@ -1,13 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Lumina.Excel;
 
 namespace Mappy.System;
 
-internal class LuminaCache<T> where T : ExcelRow
+public class LuminaCache<T> where T : ExcelRow
 {
+    private readonly Func<uint, T> searchAction;
+
+    public LuminaCache(Func<uint, T>? action = null)
+    {
+        searchAction = action ?? (row => Service.DataManager.GetExcelSheet<T>()!.GetRow(row)!);
+    }
+
     private readonly Dictionary<uint, T> cache = new();
 
-    public T? GetRow(uint id)
+    public T GetRow(uint id)
     {
         if (cache.TryGetValue(id, out var value))
         {
@@ -15,7 +23,7 @@ internal class LuminaCache<T> where T : ExcelRow
         }
         else
         {
-            return cache[id] = Service.DataManager.GetExcelSheet<T>()!.GetRow(id)!;
+            return cache[id] = searchAction(id);
         }
     }
 }

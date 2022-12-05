@@ -4,7 +4,6 @@ using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using ImGuiNET;
 using ImGuiScene;
-using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Utilities;
 
@@ -12,32 +11,28 @@ namespace Mappy.MapComponents;
 
 public class PlayerMapComponent : IMapComponent
 {
-    public MapData MapData => Service.MapManager.MapData;
-    
+    public void Update(uint mapID)
+    {
+        
+    }
+
     public void Draw()
     {
-        if (!MapData.DataAvailable) return;
+        if (!Service.MapManager.PlayerInCurrentMap) return;
         if (Service.ClientState.LocalPlayer is not { } player) return;
-
-        if (!MapData.PlayerInCurrentMap()) return;
         
         DrawLookLine(player);
         DrawBluePlayerIcon(player);
     }
-
-    public void Refresh()
-    {
-        
-    }
-
+    
     private void DrawBluePlayerIcon(GameObject player)
     {
-        if (Service.IconManager.GetIconTexture(60443) is { } playerIcon)
+        if (Service.Cache.IconCache.GetIconTexture(60443) is { } playerIcon)
         {
             var angle = GetObjectRotation(player);
 
-            var playerPosition = MapData.GetScaledGameObjectPosition(player.Position);
-            var drawPosition = MapData.GetWindowDrawPosition(playerPosition);
+            var playerPosition = Service.MapManager.GetObjectPosition(player);
+            var drawPosition = MapRenderer.GetImGuiWindowDrawPosition(playerPosition);
             
             DrawImageRotated(playerIcon, drawPosition, angle, 1.25f);
         }
@@ -47,10 +42,10 @@ public class PlayerMapComponent : IMapComponent
     {
         var angle = GetCameraRotation();
 
-        var playerPosition = MapData.GetScaledGameObjectPosition(player.Position);
-        var drawPosition = MapData.GetWindowDrawPosition(playerPosition);
+        var playerPosition = Service.MapManager.GetObjectPosition(player);
+        var drawPosition = MapRenderer.GetImGuiWindowDrawPosition(playerPosition);
 
-        var lineLength = 90.0f * MapData.Viewport.Scale;
+        var lineLength = 90.0f * MapRenderer.Viewport.Scale;
         
         DrawAngledLineFromCenter(drawPosition, lineLength, angle - 0.25f * MathF.PI);
         DrawAngledLineFromCenter(drawPosition, lineLength, angle + 0.25f * MathF.PI);
@@ -99,7 +94,7 @@ public class PlayerMapComponent : IMapComponent
         return yaw + 0.5f * MathF.PI;
     }
 
-    private float GetObjectRotation(GameObject gameObject)
+    private static float GetObjectRotation(GameObject gameObject)
     {
         return -gameObject.Rotation + 0.5f * MathF.PI;
     }

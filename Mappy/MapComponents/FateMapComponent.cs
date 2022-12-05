@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Numerics;
-using Dalamud.Game.ClientState.Fates;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using ImGuiNET;
-using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Localization;
 using Mappy.UserInterface.Windows;
@@ -11,11 +8,14 @@ using Mappy.Utilities;
 
 namespace Mappy.MapComponents;
 
-public unsafe class FateMapComponent : IMapComponent
+public class FateMapComponent : IMapComponent
 {
-    public MapData MapData => Service.MapManager.MapData;
+    public void Update(uint mapID)
+    {
+        
+    }
 
-    public void Draw()
+    public unsafe void Draw()
     {
         var fateManager = FateManager.Instance()->Fates;
 
@@ -25,32 +25,27 @@ public unsafe class FateMapComponent : IMapComponent
             DrawFate(*fate.Value);
         }
     }
-
-    public void Refresh()
-    {
-        
-    }
     
-    private void DrawFate(FateContext fate)
-    {
-        if (!MapData.PlayerInCurrentMap()) return;
-        
-        DrawRing(fate);
-        MapData.DrawIcon(fate.IconId, fate.Location);
-        DrawTooltip(fate);
+     private void DrawFate(FateContext fate)
+     { 
+         var icon = Service.Cache.IconCache.GetIconTexture(fate.IconId);
+         var position = Service.MapManager.GetObjectPosition(fate.Location);   
+         
+             
+         DrawRing(fate);
+         MapRenderer.DrawIcon(icon, position);
+         DrawTooltip(fate);
     }
 
     private void DrawRing(FateContext fate)
     {
-        DebugWindow.AddString(fate.Location.ToString());
-        
         switch (fate.State)
         {
             case 2:
-                var position = MapData.GetScaledGameObjectPosition(fate.Location);
-                var drawPosition = MapData.GetWindowDrawPosition(position);
+                var position = Service.MapManager.GetObjectPosition(fate.Location);
+                var drawPosition = MapRenderer.GetImGuiWindowDrawPosition(position);
 
-                var radius = fate.Radius * MapData.Viewport.Scale;
+                var radius = fate.Radius * MapRenderer.Viewport.Scale;
                 var fatePink = ImGui.GetColorU32(Colors.FatePink);
                 
                 ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, fatePink);

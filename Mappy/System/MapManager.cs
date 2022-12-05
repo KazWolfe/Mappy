@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Interface;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
-using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using ImGuiNET;
+using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
-using Mappy.DataModels;
 using Mappy.Interfaces;
-using Mappy.Localization;
 using Mappy.MapComponents;
-using Mappy.UserInterface.Windows;
 using Mappy.Utilities;
 using csFramework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework;
 
@@ -22,206 +19,145 @@ namespace Mappy.System;
 
 public unsafe class MapManager : IDisposable
 {
-    public MapData MapData { get; } = new();
-    public bool FollowPlayer => Service.Configuration.FollowPlayer.Value;
+    private AgentMap* MapAgent => csFramework.Instance()->GetUiModule()->GetAgentModule()->GetAgentMap();
+    public TextureWrap? MapTexture;
+    public List<Map> MapLayers { get; private set; } = new();
+    public Map? Map;
+    public bool PlayerInCurrentMap => MapAgent->CurrentMapId == loadedMapId;
+    public uint PlayerLocationMapID => MapAgent->CurrentMapId;
+    
+    private uint loadedMapId;
+    private uint lastMapId;
 
-    private readonly List<IMapComponent> mapComponents = new()
+    public List<IMapComponent> MapComponents { get; } = new()
     {
+        new MapMarkersMapComponent(),
         new GatheringPointMapComponent(),
         new FateMapComponent(),
-        new MapMarkersMapComponent(),
-        new PlayerMapComponent(),
+        
+        new PlayerMapComponent(), // Render the player last
     };
-
-    private AgentMap* MapAgent => csFramework.Instance()->GetUiModule()->GetAgentModule()->GetAgentMap();
-    
-    private string lastMapPath = string.Empty;
 
     public MapManager()
     {
-        SignatureHelper.Initialise(this);
-
         Service.Framework.Update += OnFrameworkUpdate;
     }
-
-    private void OnFrameworkUpdate(Framework framework)
-    {
-        if (Service.Condition[ConditionFlag.BetweenAreas] || Service.Condition[ConditionFlag.BetweenAreas51]) return;
-
-        var pathString = MapAgent->CurrentMapPath.ToString();
-        if (pathString == string.Empty) return;
-            
-        if (lastMapPath != pathString)
-        {
-            PluginLog.Debug($"Map Path Updated: {pathString}.tex");
-            UpdateCurrentMap(pathString);
-            lastMapPath = pathString;
-        }
-    }
-
+    
     public void Dispose()
     {
-        MapData.Dispose();
         Service.Framework.Update -= OnFrameworkUpdate;
     }
     
-    private void UpdateCurrentMap(string mapTexturePath)
+    private void OnFrameworkUpdate(Framework framework)
     {
-        MapData.LoadMap(mapTexturePath);
-        RefreshMapComponents();
-    }
+        if (MapAgent is null) return;
+        if (Service.Condition[ConditionFlag.BetweenAreas] || Service.Condition[ConditionFlag.BetweenAreas51]) return;
 
-    private void RefreshMapComponents()
-    {
-        foreach (var component in mapComponents)
-        {
-            component.Refresh();
-        }
-    }
-
-    public void DrawMap()
-    {
-        if (!MapData.DataAvailable) return;
+        var currentMapId = MapAgent->CurrentMapId;
         
-        if (FollowPlayer && MapData.PlayerInCurrentMap())
+        if (lastMapId != currentMapId)
+        {
+            PluginLog.Debug($"Map ID Updated: {currentMapId}");
+            LoadSelectedMap(MapAgent->CurrentMapId);
+            lastMapId = currentMapId;
+        }
+
+        if (Service.Configuration.FollowPlayer.Value)
         {
             CenterOnPlayer();
         }
-            
-        DrawMapImage();
+    }
 
-        foreach (var mapComponent in mapComponents)
-        {
-            mapComponent.Draw();
-        }
+    public void LoadSelectedMap(uint mapID)
+    {
+        LoadMap(mapID);
+    }
 
-        if (Service.WindowManager.GetWindowOfType<MapWindow>(out var mapWindow) && mapWindow.IsFocused)
-        {
-            DrawMapLayers();
-        }
+    public Vector2 GetObjectPosition(GameObject gameObject) => GetObjectPosition(gameObject.Position);
+    public Vector2 GetObjectPosition(Vector3 position)
+    {
+        return new Vector2(position.X, position.Z) * MapAgent->CurrentMapSizeFactorFloat
+               - new Vector2(MapAgent->CurrentOffsetX, MapAgent->CurrentOffsetY) * MapAgent->CurrentMapSizeFactorFloat
+               + new Vector2(MapTexture?.Width ?? 0, MapTexture?.Height ?? 0) / 2.0f;
     }
     
-    private void DrawMapLayers()
+    private void LoadMap(uint mapId)
     {
-        var regionAvailable = ImGui.GetContentRegionAvail();
-        ImGui.SetCursorPos(regionAvailable with {Y = 0, X = 0});
-
-        ImGui.PushStyleColor(ImGuiCol.ChildBg, new Vector4(0.0f, 0.0f, 0.0f, 0.80f));        
-        if (ImGui.BeginChild("###Toolbar", regionAvailable with { Y = 40.0f }, true))
+        Task.Run(() => 
         {
-            LayerSelectionCombo();
-            ImGui.SameLine();
-            FollowPlayerButton();
-            ImGui.SameLine();
-            RecenterOnPlayer();
-        }
-        ImGui.EndChild();
-        ImGui.PopStyleColor();
-        
-    }
-
-    private void RecenterOnPlayer()
-    {
-        ImGui.PushID("CenterOnPlayer");
-        ImGui.PushFont(UiBuilder.IconFont);
-
-        if (ImGui.Button(FontAwesomeIcon.Crosshairs.ToIconString(), new Vector2(23.0f)))
-        {
-            MapData.LoadMap(MapAgent->CurrentMapPath.ToString());
-            if (Service.ClientState.LocalPlayer is { } player)
+            try
             {
-                MapData.Viewport.Center = MapData.GetGameObjectPosition(player.Position);
-            }
-        }
+                var lastMapTexture = MapTexture;
+                
+                Map = Service.Cache.MapCache.GetRow(mapId);
+                var path = GetPathFromMap(Map);
+                var tex = Service.DataManager.GetImGuiTexture(path);
+                
+                loadedMapId = mapId;
 
-        ImGui.PopFont();
-        ImGui.PopID();
-    }
+                MapLayers = Service.DataManager.GetExcelSheet<Map>()!
+                    .Where(eachMap => eachMap.TerritoryType.Row == Map.TerritoryType.Row)
+                    .Where(eachMap => !eachMap.IsEvent)
+                    .ToList();
 
-    private void FollowPlayerButton()
-    {
-        ImGui.PushID("FollowPlayerButton");
-        ImGui.PushFont(UiBuilder.IconFont);
+                LogMapLayers();
 
-        var followPlayer = Service.Configuration.FollowPlayer.Value;
-
-        if (followPlayer) ImGui.PushStyleColor(ImGuiCol.Button, Colors.Red);
-        if (ImGui.Button(FontAwesomeIcon.MapMarker.ToIconString(), new Vector2(23.0f)))
-        {
-            Service.Configuration.FollowPlayer.Value = !Service.Configuration.FollowPlayer.Value;
-        }
-
-        if (followPlayer) ImGui.PopStyleColor();
-
-        ImGui.PopFont();
-        ImGui.PopID();
-    }
-
-    private void LayerSelectionCombo()
-    {
-        ImGui.PushItemWidth(250.0f * ImGuiHelpers.GlobalScale);
-        if (ImGui.BeginCombo("###LayerCombo", MapData.GetCurrentMapName()))
-        {
-            if (MapData.MapLayers.Count == 1)
-            {
-                ImGui.TextColored(Colors.Orange, Strings.Map.NoLayers);
-            }
-            else
-            {
-                foreach (var layer in MapData.MapLayers)
+                if (tex is not null && tex.ImGuiHandle != IntPtr.Zero)
                 {
-                    if (GetLayerSubName(layer, out var layerSubName))
+                    MapTexture = tex;
+                    lastMapTexture?.Dispose();
+                    MapComponents.ForEach(component => component.Update(mapId));
+                    
+                    PluginLog.Debug($"Player here? {PlayerInCurrentMap}");
+                    
+                    if (!Service.Configuration.FollowPlayer.Value && !PlayerInCurrentMap)
                     {
-                        if (ImGui.Selectable(layerSubName))
-                        {
-                            MapData.SelectMapLayer(layer);
-                            RefreshMapComponents();
-                        }
+                        var newCenter = new Vector2(MapTexture.Width, MapTexture.Height) / 2.0f;
+                        MapRenderer.SetViewportCenter(newCenter);
                     }
+                    else if(PlayerInCurrentMap)
+                    {
+                        CenterOnPlayer();
+                    }
+                } 
+                else 
+                {
+                    tex?.Dispose();
                 }
+            } 
+            catch (Exception ex) 
+            {
+                PluginLog.LogError($"Failed loading texture for map {mapId} - {ex.Message}");
             }
-            ImGui.EndCombo();
-        }
-    }
-
-    private void CenterOnPlayer()
-    {
-        if (!MapData.DataAvailable) return;
-        
-        if (Service.ClientState.LocalPlayer is { } localPlayer)
-        {
-            var playerPosition = MapData.GetGameObjectPosition(localPlayer.Position);
-            
-            MapData.Viewport.Center = playerPosition;
-        }
+        });
     }
     
-    private void DrawMapImage()
+    private string GetPathFromMap(Map map)
     {
-        if (!MapData.DataAvailable) return;
-        
-        var textureSize = MapData.GetScaledMapTextureSize();
-        
-        MapData.SetDrawPosition();
-
-        if (Service.WindowManager.GetWindowOfType<MapWindow>(out var mapWindow))
-        {
-            if (Service.Configuration.FadeWhenUnfocused.Value && !mapWindow.IsFocused)
-            {
-                var fadePercent = 1.0f - Service.Configuration.FadePercent.Value;
-                ImGui.Image(MapData.Texture.ImGuiHandle, textureSize,Vector2.Zero, Vector2.One, Vector4.One with { W = fadePercent });
-            }
-            else
-            {
-                ImGui.Image(MapData.Texture.ImGuiHandle, textureSize);
-            }
-        }
+        var mapKey = map.Id.RawString;
+        var rawKey = mapKey.Replace("/", "");
+        return $"ui/map/{mapKey}/{rawKey}_m.tex";
     }
 
-    private bool GetLayerSubName(Map map, [NotNullWhen(true)] out string? subName)
+    private void LogMapLayers()
     {
-        subName = map.PlaceNameSub.Value?.Name.RawString;
+        var message = $"Loaded {MapLayers.Count} Map Layers\n";
 
-        return !string.IsNullOrEmpty(subName);
+        message = MapLayers.Aggregate(message, (current, layer) => current + $"{layer.PlaceNameSub.Value?.Name.RawString ?? "NameString Was Null"}\n");
+
+        PluginLog.Debug(message);
+    }
+
+    public void CenterOnPlayer()
+    {
+        if (!Service.MapManager.PlayerInCurrentMap)
+        {
+            Service.MapManager.LoadSelectedMap(Service.MapManager.PlayerLocationMapID);
+        }
+            
+        if (Service.ClientState.LocalPlayer is { } player)
+        {
+            MapRenderer.SetViewportCenter(Service.MapManager.GetObjectPosition(player));
+        }
     }
 }

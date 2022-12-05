@@ -1,11 +1,7 @@
-﻿using Mappy.DataModels;
-
-namespace Mappy.Interfaces;
+﻿namespace Mappy.Interfaces;
 
 public interface IMapComponent
 {
-    MapData MapData { get; }
-    
+    void Update(uint mapID);
     void Draw();
-    void Refresh();
 }
