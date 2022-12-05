@@ -13,7 +13,6 @@ public class PlayerMapComponent : IMapComponent
 {
     public void Update(uint mapID)
     {
-        
     }
 
     public void Draw()

@@ -3,7 +3,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using ImGuiNET;
 using Mappy.Interfaces;
 using Mappy.Localization;
-using Mappy.UserInterface.Windows;
 using Mappy.Utilities;
 
 namespace Mappy.MapComponents;
