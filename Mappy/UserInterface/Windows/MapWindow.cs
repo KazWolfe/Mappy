@@ -15,15 +15,21 @@ namespace Mappy.UserInterface.Windows;
 public class MapWindow : Window, IDisposable
 {
     private IEnumerable<SearchResult>? searchResults;
+    private bool shouldFocusMapSearch;
     private bool showMapSelectOverlay;
     private Vector2 mouseDragStart;
     private bool dragStarted;
     private Vector2 lastWindowSize = Vector2.Zero;
     private string searchString = "Search...";
-    private bool itemFocused;
     
     public MapWindow() : base("Mappy Map Window")
     {
+        SizeConstraints = new WindowSizeConstraints
+        {
+            MinimumSize = new Vector2(410,200),
+            MaximumSize = new Vector2(9999,9999)
+        };
+
         IsOpen = Service.Configuration.KeepOpen.Value;
     }
 
@@ -65,35 +71,48 @@ public class MapWindow : Window, IDisposable
 
     private void DrawMapSelect()
     {
+        var searchWidth = 250.0f * ImGuiHelpers.GlobalScale;
+        
         var drawStart = ImGui.GetWindowPos();
         var drawStop = drawStart + ImGui.GetWindowSize();
         var backgroundColor = ImGui.GetColorU32(Vector4.Zero with { W = 0.8f });
         
-        ImGui.GetWindowDrawList()
-            .AddRectFilled(drawStart, drawStop, backgroundColor);
+        ImGui.GetWindowDrawList().AddRectFilled(drawStart, drawStop, backgroundColor);
 
         var regionAvailable = ImGui.GetContentRegionAvail();
-        ImGui.SetCursorPos(regionAvailable / 2.0f - new Vector2(250.0f / 2.0f, 0.0f));
-        ImGui.PushItemWidth(250.0f * ImGuiHelpers.GlobalScale);
-        if (ImGui.InputText("###MapSearch", ref searchString, 60))
+        var searchPosition = regionAvailable with {X = regionAvailable.X / 2.0f, Y = regionAvailable.Y / 4.0f};
+        ImGui.SetCursorPos(searchPosition - new Vector2(searchWidth / 2.0f, 0.0f));
+        ImGui.PushItemWidth(searchWidth);
+        
+        if (shouldFocusMapSearch)
         {
-            searchResults = MapSearch.Search(searchString);
+            ImGui.SetKeyboardFocusHere();
+            shouldFocusMapSearch = false;
+        }
+        
+        if (ImGui.InputText("###MapSearch", ref searchString, 60, ImGuiInputTextFlags.AutoSelectAll))
+        {
+            searchResults = MapSearch.Search(searchString, 10);
         }
 
-        if (searchResults is not null)
+        ImGui.SetCursorPos(searchPosition - new Vector2(searchWidth / 2.0f, 0.0f) + ImGuiHelpers.ScaledVector2(0.0f, 30.0f));
+        if (ImGui.BeginChild("###SearchResultsChild", new Vector2(searchWidth, regionAvailable.Y * 3.0f / 4.0f )))
         {
-            foreach (var result in searchResults)
+            if (searchResults is not null)
             {
-                var cursorPosition = ImGui.GetCursorPos();
-                ImGui.SetCursorPos(cursorPosition with { X = regionAvailable.X / 2.0f - 250.0f * ImGuiHelpers.GlobalScale / 2.0f });
-                ImGui.SetNextItemWidth(250.0f * ImGuiHelpers.GlobalScale);
-                if (ImGui.Selectable(result.Label))
+                foreach (var result in searchResults)
                 {
-                    Service.MapManager.LoadMap(result.MapID);
-                    showMapSelectOverlay = false;
+                    ImGui.SetNextItemWidth(250.0f * ImGuiHelpers.GlobalScale);
+                    if (ImGui.Selectable(result.Label))
+                    {
+                        Service.Configuration.FollowPlayer.Value = false;
+                        Service.MapManager.LoadMap(result.MapID);
+                        showMapSelectOverlay = false;
+                    }
                 }
             }
         }
+        ImGui.EndChild();
     }
 
     private void DrawToolbar()
@@ -112,10 +131,28 @@ public class MapWindow : Window, IDisposable
             ImGui.SameLine();
             DrawFindMapWidget();
             ImGui.SameLine();
-            DrawSearchWidget();
+            DrawConfigurationButton();
         }
         ImGui.EndChild();
         ImGui.PopStyleColor();
+    }
+
+    private void DrawConfigurationButton()
+    {
+        ImGui.PushID("ConfigurationButton");
+        ImGui.PushFont(UiBuilder.IconFont);
+
+        if (ImGui.Button(FontAwesomeIcon.Cog.ToIconString(), new Vector2(25.0f, 23.0f)))
+        {
+            if (Service.WindowManager.GetWindowOfType<ConfigurationWindow>(out var configurationWindow))
+            {
+                configurationWindow.IsOpen = !configurationWindow.IsOpen;
+                configurationWindow.Collapsed = false;
+            }
+        }
+
+        ImGui.PopFont();
+        ImGui.PopID();
     }
 
     private void DrawFindMapWidget()
@@ -129,33 +166,14 @@ public class MapWindow : Window, IDisposable
         if (ImGui.Button(FontAwesomeIcon.Map.ToIconString(), new Vector2(26.0f, 23.0f)))
         {
             showMapSelectOverlay = !showMapSelectOverlay;
+            shouldFocusMapSearch = true;
         }
         if (showOverlay) ImGui.PopStyleColor();
 
         ImGui.PopFont();
         ImGui.PopID();
     }
-
-    private void DrawSearchWidget()
-    {
-        ImGui.PushItemWidth(200.0f);
-        if (ImGui.InputText("###SearchWidget", ref searchString, 50))
-        {
-            
-        }
-        
-        if (ImGui.IsItemFocused() && !itemFocused)
-        {
-            searchString = "";
-            itemFocused = true;
-        }
-        else if (!ImGui.IsItemFocused() && itemFocused)
-        {
-            searchString = "Search 2...";
-            itemFocused = false;
-        }
-    }
-
+    
     private void DrawMapLayersWidget()
     {
         ImGui.PushItemWidth(250.0f * ImGuiHelpers.GlobalScale);
@@ -163,7 +181,7 @@ public class MapWindow : Window, IDisposable
         {
             var mapLayers = Service.MapManager.MapLayers;
             
-            if (mapLayers.Count == 1)
+            if (mapLayers.Count == 0)
             {
                 ImGui.TextColored(Colors.Orange, Strings.Map.NoLayers);
             }
@@ -288,10 +306,6 @@ public class MapWindow : Window, IDisposable
         var headerSize = ImGui.GetWindowSize() with { Y = ImGui.GetWindowContentRegionMin().Y };
         
         return IsBoundedBy(ImGui.GetMousePos(), windowStart, windowStart + headerSize);
-    }
-    private static bool IsCursorInToolbar()
-    {
-        return false;
     }
     private static bool IsBoundedBy(Vector2 cursor, Vector2 minBounds, Vector2 maxBounds)
     {
