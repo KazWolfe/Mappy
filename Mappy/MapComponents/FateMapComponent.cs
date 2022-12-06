@@ -16,6 +16,8 @@ public class FateMapComponent : IMapComponent
 
     public unsafe void Draw()
     {
+        if (!Service.MapManager.PlayerInCurrentMap) return;
+        
         var fateManager = FateManager.Instance()->Fates;
 
         foreach (var fate in fateManager.Span)
@@ -29,7 +31,6 @@ public class FateMapComponent : IMapComponent
      { 
          var icon = Service.Cache.IconCache.GetIconTexture(fate.IconId);
          var position = Service.MapManager.GetObjectPosition(fate.Location);   
-         
              
          DrawRing(fate);
          MapRenderer.DrawIcon(icon, position);
