@@ -9,10 +9,10 @@ public class CompositeLuminaCache : IDisposable
     public LuminaCache<PlaceName> PlaceNameCache = new();
     public LuminaCache<Map> MapCache = new();
     public LuminaCache<Aetheryte> AetheryteCache = new();
-    public LuminaCache<MapMarker> MapMarkerCache = new();
     public LuminaCache<MapSymbol> MapSymbolCache = new(GetMapSymbol);
 
     public IconManager IconCache = new();
+    public MapTextureManager MapTextureCache = new();
 
     public void Dispose()
     {

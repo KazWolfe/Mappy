@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Dalamud.Logging;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
@@ -21,7 +22,7 @@ public class MapMarkersMapComponent : IMapComponent
 
     public void Draw()
     {
-        foreach (var marker in mapMarkers)
+        foreach (var marker in mapMarkers.TakeWhile(_ => !dataStale))
         {
             marker.Draw();
         }

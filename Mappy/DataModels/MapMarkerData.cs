@@ -64,7 +64,7 @@ public class MapMarkerData
         return DataType switch
         {
             0 => null, // Standard Map Marker
-            1 => () => Service.MapManager.LoadSelectedMap(DataMap.RowId), // Map Link
+            1 => () => Service.MapManager.LoadMap(DataMap.RowId), // Map Link
             2 => null, // Instance Links
             3 => () => Service.Teleporter.Teleport(DataAetheryte), // Aetherytes
             4 => null, // Aethernet
