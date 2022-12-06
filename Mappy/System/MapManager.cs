@@ -100,7 +100,6 @@ public unsafe class MapManager : IDisposable
 
         MapLayers = Service.DataManager.GetExcelSheet<Map>()!
             .Where(eachMap => eachMap.TerritoryType.Row == Map.TerritoryType.Row)
-            .Where(eachMap => !eachMap.IsEvent)
             .Where(eachMap => eachMap.MapIndex != 0)
             .ToList();
             
