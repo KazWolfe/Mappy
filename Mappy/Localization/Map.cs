@@ -11,7 +11,11 @@ public class MapStrings
 {
     public string NoLayers => Loc.Localize("Map_NoLayers", "Map has no layers");
     public string Aetheryte => Loc.Localize("Map_Aetheryte", "Aetheryte");
-
+    public string FollowPlayer => Loc.Localize("Map_FollowPlayerMouseover", "Follow Player");
+    public string CenterOnPlayer => Loc.Localize("Map_CenterOnPlayer", "Move Map To Player");
+    public string SearchForMap => Loc.Localize("Map_SearchForMap", "Search For Map");
+    public string Settings => Loc.Localize("Map_Settings", "Settings");
+    
     public FateStrings Fate { get; set; } = new();
 }
 

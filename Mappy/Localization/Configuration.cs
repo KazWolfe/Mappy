@@ -18,4 +18,5 @@ public class ConfigurationStrings
     public string FadeWhenUnfocused => Loc.Localize("Configuration_FadeWhenUnfocused", "Fade When Unfocused");
     public string FadePercent => Loc.Localize("Configuration_FadePercent", "Fade Percent");
     public string KeepOpen => Loc.Localize("Configuration_KeepOpen", "Keep Open");
+    public string AlwaysShowToolbar => Loc.Localize("Configuration_AlwaysShowToolbar", "Always Show Toolbar");
 }

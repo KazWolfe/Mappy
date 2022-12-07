@@ -28,8 +28,15 @@ public class ConfigurationWindow : Window
             .AddConfigCheckbox(Strings.Configuration.LockWindow, Service.Configuration.LockWindow)
             .AddConfigCheckbox(Strings.Configuration.HideWindowFrame, Service.Configuration.HideWindowFrame)
             .AddConfigCheckbox(Strings.Configuration.HideInDuties, Service.Configuration.HideInDuties)
+            .AddConfigCheckbox(Strings.Configuration.AlwaysShowToolbar, Service.Configuration.AlwaysShowToolbar)
             .AddConfigCheckbox(Strings.Configuration.FadeWhenUnfocused, Service.Configuration.FadeWhenUnfocused)
             .AddDragFloat(Strings.Configuration.FadePercent, Service.Configuration.FadePercent, 0.0f, 1.0f, 150.0f * ImGuiHelpers.GlobalScale)
             .Draw();
+
+        // Handle settings that aren't compatible with each other
+        if (Service.Configuration.HideWindowFrame.Value)
+        {
+            Service.Configuration.LockWindow.Value = true;
+        }
     }
 }

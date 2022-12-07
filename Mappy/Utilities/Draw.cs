@@ -34,6 +34,13 @@ public static class Draw
         
         drawList.AddText(font, fontSize, drawPosition, ImGui.GetColorU32(color), text);
     }
+
+    public static void DrawTooltip(string text)
+    {
+        ImGui.BeginTooltip();
+        ImGui.TextUnformatted(text);
+        ImGui.EndTooltip();
+    }
 }
 
 public static class VectorExtensions
