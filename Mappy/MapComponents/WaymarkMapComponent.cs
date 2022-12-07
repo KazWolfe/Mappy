@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Mappy.Interfaces;
 using Mappy.Utilities;
@@ -42,6 +43,7 @@ public class WaymarkMapComponent : IMapComponent
             5 => 60932,
             6 => 60933,
             7 => 63904,
+            _ => throw new IndexOutOfRangeException()
         };
     }
 }
