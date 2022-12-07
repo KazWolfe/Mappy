@@ -4,6 +4,7 @@ using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Aetherytes;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Game.ClientState.Objects;
+using Dalamud.Game.ClientState.Party;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Gui.Toast;
 using Dalamud.IoC;
@@ -26,7 +27,7 @@ internal class Service
     [PluginService] public static Condition Condition { get; private set; } = null!;
     [PluginService] public static AetheryteList AetheryteList { get; private set; } = null!;
     [PluginService] public static ToastGui Toast { get; private set; } = null!;
-    [PluginService] public static KeyState Keys { get; private set; } = null!;
+    [PluginService] public static PartyList PartyList { get; private set; } = null!;
 
     public static CompositeLuminaCache Cache = null!;
     

@@ -50,6 +50,7 @@ public unsafe class MapManager : IDisposable
         new MapMarkersMapComponent(),
         new GatheringPointMapComponent(),
         new FateMapComponent(),
+        new PartyMapComponent(),
         
         new PlayerMapComponent(), // Render the player last
     };

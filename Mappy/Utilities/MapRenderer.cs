@@ -22,16 +22,16 @@ public static class MapRenderer
         }
     }
 
-    public static void DrawIcon(TextureWrap? iconTexture, Vector2 position)
+    public static void DrawIcon(TextureWrap? iconTexture, Vector2 position, float scale = 1.0f)
     {
         if (iconTexture is not null)
         {
-            var iconSize = new Vector2(iconTexture.Width, iconTexture.Height);
+            var iconSize = new Vector2(iconTexture.Width, iconTexture.Height) * scale;
             SetImGuiDrawPosition(position * Viewport.Scale - iconSize / 2.0f);
             ImGui.Image(iconTexture.ImGuiHandle, iconSize);
         }
     }
-
+    
     public static void MoveViewportCenter(Vector2 offset) => Viewport.Center += offset / Viewport.Scale;
     public static void SetViewportCenter(Vector2 position) => Viewport.Center = position;
     public static void ZoomIn(float zoomAmount) => Viewport.Scale += zoomAmount;
