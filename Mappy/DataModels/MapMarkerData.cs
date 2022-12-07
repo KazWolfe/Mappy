@@ -9,6 +9,15 @@ using Action = System.Action;
 
 namespace Mappy.DataModels;
 
+public enum MapMarkerType
+{
+    Standard,
+    MapLink,
+    InstanceLink,
+    Aetheryte,
+    Aethernet
+}
+
 public class MapMarkerData
 {
     private readonly MapMarker data;
@@ -61,39 +70,39 @@ public class MapMarkerData
 
     private Action? GetClickAction()
     {
-        return DataType switch
+        return (MapMarkerType?) DataType switch
         {
-            0 => null, // Standard Map Marker
-            1 => () => Service.MapManager.LoadMap(DataMap.RowId), // Map Link
-            2 => null, // Instance Links
-            3 => () => Service.Teleporter.Teleport(DataAetheryte), // Aetherytes
-            4 => null, // Aethernet
+            MapMarkerType.Standard => null,
+            MapMarkerType.MapLink => MapLinkAction,
+            MapMarkerType.InstanceLink => null,
+            MapMarkerType.Aetheryte => AetheryteAction,
+            MapMarkerType.Aethernet => null,
             _ => null
         };
     }
     
     private string? GetDisplayString()
     {
-        return DataType switch
+        return (MapMarkerType?) DataType switch
         {
-            0 => GetStandardMarkerString(), // Standard Map Marker
-            1 => PlaceName.Name.ToDalamudString().TextValue, // Map Link
-            2 => DataMap.PlaceName.Value?.Name.ToDalamudString().TextValue, // Instance Links
-            3 => DataAetheryte.PlaceName.Value?.Name.ToDalamudString().TextValue, // Aetherytes
-            4 => DataPlaceName.Name.ToDalamudString().TextValue, // Aethernet
+            MapMarkerType.Standard => GetStandardMarkerString(),
+            MapMarkerType.MapLink => PlaceName.Name.ToDalamudString().TextValue,
+            MapMarkerType.InstanceLink => DataMap.PlaceName.Value?.Name.ToDalamudString().TextValue,
+            MapMarkerType.Aetheryte => DataAetheryte.PlaceName.Value?.Name.ToDalamudString().TextValue,
+            MapMarkerType.Aethernet => DataPlaceName.Name.ToDalamudString().TextValue,
             _ => null
         };
     }
 
     private Vector4 GetDisplayColor()
     {
-        return DataType switch
+        return (MapMarkerType?) DataType switch
         {
-            0 => Colors.White, // Standard Map Marker
-            1 => Colors.MapTextBrown, // Map Link
-            2 => Colors.Orange, // Instance Links
-            3 => Colors.Blue, // Aetherytes
-            4 => Colors.BabyBlue, // Aethernet
+            MapMarkerType.Standard => Colors.White,
+            MapMarkerType.MapLink => Colors.MapTextBrown,
+            MapMarkerType.InstanceLink => Colors.Orange,
+            MapMarkerType.Aetheryte => Colors.Blue,
+            MapMarkerType.Aethernet => Colors.White,
             _ => Colors.White
         };
     }
@@ -105,5 +114,16 @@ public class MapMarkerData
 
         var mapSymbol = Service.Cache.MapSymbolCache.GetRow(data.Icon);
         return mapSymbol.PlaceName.Value?.Name.ToDalamudString().TextValue;
+    }
+
+    private void MapLinkAction()
+    {
+        Service.MapManager.LoadMap(DataMap.RowId);
+        Service.Configuration.FollowPlayer.Value = false;
+    }
+
+    private void AetheryteAction()
+    {
+        Service.Teleporter.Teleport(DataAetheryte);
     }
 }
