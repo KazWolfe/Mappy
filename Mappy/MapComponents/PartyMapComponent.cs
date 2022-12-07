@@ -33,6 +33,8 @@ public class PartyMapComponent : IMapComponent
 
     public void Draw()
     {
+        if (!Service.MapManager.PlayerInCurrentMap) return;
+        
         DrawPlayers();
         DrawPets();
         DrawAllianceMembers();
