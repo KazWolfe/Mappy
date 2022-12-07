@@ -20,51 +20,49 @@ public class PartyMapComponent : IMapComponent
         DrawPlayers();
         DrawPets();
     }
-
-    private void DrawPets()
-    {
-        if (Service.PartyList.Length == 0)
-        {
-            if (Service.ClientState.LocalPlayer is { } localPlayer)
-            {
-                foreach (var obj in OwnedPets(localPlayer.ObjectId))
-                {
-                    var petPosition = Service.MapManager.GetObjectPosition(obj.Position);
-                    var icon = Service.Cache.IconCache.GetIconTexture(60961);
-                    
-                    MapRenderer.DrawIcon(icon, petPosition, 1.5f);
-                    DrawTooltip(obj.Name.TextValue);
-                }
-            }
-        }
-        else
-        {
-            foreach (var partyMember in Service.PartyList)
-            {
-                foreach (var obj in OwnedPets(partyMember.ObjectId))
-                {
-                    var petPosition = Service.MapManager.GetObjectPosition(obj.Position);
-                    var icon = Service.Cache.IconCache.GetIconTexture(60961);
-                    
-                    MapRenderer.DrawIcon(icon, petPosition, 1.5f);
-                    DrawTooltip(obj.Name.TextValue);
-                }
-            }
-        }
-    }
-
+    
     private void DrawPlayers()
     {
         foreach (var player in Service.PartyList)
         {
             var playerPosition = Service.MapManager.GetObjectPosition(player.Position);
             var icon = Service.Cache.IconCache.GetIconTexture(60421);
-            
-            MapRenderer.DrawIcon(icon, playerPosition);
+
+            MapRenderer.DrawIcon(icon, playerPosition, 1.5f);
             DrawTooltip(player.Name.TextValue);
         }
     }
     
+    private void DrawPets()
+    {
+        if (Service.PartyList.Length == 0)
+        {
+            if (Service.ClientState.LocalPlayer is { } localPlayer)
+            {
+                DrawPet(localPlayer.ObjectId);
+            }
+        }
+        else
+        {
+            foreach (var partyMember in Service.PartyList)
+            {
+                DrawPet(partyMember.ObjectId);
+            }
+        }
+    }
+
+    private void DrawPet(uint ownerID)
+    {
+        foreach (var obj in OwnedPets(ownerID))
+        {
+            var petPosition = Service.MapManager.GetObjectPosition(obj.Position);
+            var icon = Service.Cache.IconCache.GetIconTexture(60961);
+                    
+            MapRenderer.DrawIcon(icon, petPosition, 1.5f);
+            DrawTooltip(obj.Name.TextValue);
+        }
+    }
+
     private void DrawTooltip(string playerName)
     {
         if (!ImGui.IsItemHovered()) return;
@@ -83,12 +81,12 @@ public class PartyMapComponent : IMapComponent
     {
         var battleNpc = gameObject as BattleNpc;
 
-        return battleNpc?.SubKind switch
+        return  (BattleNpcSubKind?)battleNpc?.SubKind switch
         {
-            (byte) BattleNpcSubKind.Chocobo => true,
-            (byte) BattleNpcSubKind.Enemy => false,
-            (byte) BattleNpcSubKind.None => false,
-            (byte) BattleNpcSubKind.Pet => true,
+            BattleNpcSubKind.Chocobo => true,
+            BattleNpcSubKind.Enemy => false,
+            BattleNpcSubKind.None => false,
+            BattleNpcSubKind.Pet => true,
             _ => false
         };
     }
