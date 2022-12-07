@@ -81,7 +81,7 @@ public class MapToolbar
         
         if (ImGui.IsItemHovered())
         {
-            Utilities.Draw.DrawTooltip(Strings.Map.FollowPlayer);
+            Utilities.Draw.DrawTooltip(Strings.Map.FollowPlayer, Colors.White);
         }
 
         ImGui.PopID();
@@ -101,7 +101,7 @@ public class MapToolbar
         
         if (ImGui.IsItemHovered())
         {
-            Utilities.Draw.DrawTooltip(Strings.Map.CenterOnPlayer);
+            Utilities.Draw.DrawTooltip(Strings.Map.CenterOnPlayer, Colors.White);
         }
 
         ImGui.PopID();
@@ -125,7 +125,7 @@ public class MapToolbar
                 
         if (ImGui.IsItemHovered())
         {
-            Utilities.Draw.DrawTooltip(Strings.Map.Settings);
+            Utilities.Draw.DrawTooltip(Strings.Map.Settings, Colors.White);
         }
         
         ImGui.PopID();

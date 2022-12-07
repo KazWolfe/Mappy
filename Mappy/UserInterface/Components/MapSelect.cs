@@ -34,7 +34,7 @@ public class MapSelectOverlay
         
         if (ImGui.IsItemHovered())
         {
-            Utilities.Draw.DrawTooltip(Strings.Map.SearchForMap);
+            Utilities.Draw.DrawTooltip(Strings.Map.SearchForMap, Colors.White);
         }
 
         ImGui.PopID();

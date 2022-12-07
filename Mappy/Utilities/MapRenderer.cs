@@ -39,7 +39,7 @@ public static class MapRenderer
         if (texture is not null)
         {
             var objectPosition = Service.MapManager.GetObjectPosition(gameObject.Position);
-            var center = GetImGuiWindowDrawPosition(objectPosition) - new Vector2(texture.Width, texture.Height) / 2.0f;
+            var center = GetImGuiWindowDrawPosition(objectPosition);
             var angle = GetObjectRotation(gameObject);
         
             var size = new Vector2(texture.Width, texture.Height) * iconScale;

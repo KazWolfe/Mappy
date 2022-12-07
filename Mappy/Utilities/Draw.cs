@@ -35,10 +35,10 @@ public static class Draw
         drawList.AddText(font, fontSize, drawPosition, ImGui.GetColorU32(color), text);
     }
 
-    public static void DrawTooltip(string text)
+    public static void DrawTooltip(string text, Vector4 color)
     {
         ImGui.BeginTooltip();
-        ImGui.TextUnformatted(text);
+        ImGui.TextColored(color, text);
         ImGui.EndTooltip();
     }
 }
