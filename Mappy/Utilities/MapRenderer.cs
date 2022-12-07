@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
+using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
 using ImGuiScene;
 using Mappy.DataModels;
@@ -22,7 +24,7 @@ public static class MapRenderer
         }
     }
 
-    public static void DrawIcon(TextureWrap? iconTexture, Vector2 position, float scale = 1.0f)
+    public static void DrawIcon(TextureWrap? iconTexture, Vector2 position, float scale = 0.5f)
     {
         if (iconTexture is not null)
         {
@@ -30,6 +32,42 @@ public static class MapRenderer
             SetImGuiDrawPosition(position * Viewport.Scale - iconSize / 2.0f);
             ImGui.Image(iconTexture.ImGuiHandle, iconSize);
         }
+    }
+    
+    public static void DrawImageRotated(TextureWrap? texture, GameObject gameObject, float iconScale = 0.5f)
+    {
+        if (texture is not null)
+        {
+            var objectPosition = Service.MapManager.GetObjectPosition(gameObject.Position);
+            var center = GetImGuiWindowDrawPosition(objectPosition) - new Vector2(texture.Width, texture.Height) / 2.0f;
+            var angle = GetObjectRotation(gameObject);
+        
+            var size = new Vector2(texture.Width, texture.Height) * iconScale;
+
+            var cosA = MathF.Cos(angle + 0.5f * MathF.PI);
+            var sinA = MathF.Sin(angle + 0.5f * MathF.PI);
+
+            Vector2[] vectors =
+            {
+                center + ImRotate(new Vector2(-size.X * 0.5f, -size.Y * 0.5f), cosA, sinA),
+                center + ImRotate(new Vector2(+size.X * 0.5f, -size.Y * 0.5f), cosA, sinA),
+                center + ImRotate(new Vector2(+size.X * 0.5f, +size.Y * 0.5f), cosA, sinA),
+                center + ImRotate(new Vector2(-size.X * 0.5f, +size.Y * 0.5f), cosA, sinA)
+            };
+
+            var windowDrawList = ImGui.GetWindowDrawList();
+            windowDrawList.AddImageQuad(texture.ImGuiHandle, vectors[0], vectors[1], vectors[2], vectors[3]);
+        }
+    }
+
+    private static float GetObjectRotation(GameObject gameObject)
+    {
+        return -gameObject.Rotation + 0.5f * MathF.PI;
+    }
+    
+    private static Vector2 ImRotate(Vector2 v, float cosA, float sinA) 
+    { 
+        return new Vector2(v.X * cosA - v.Y * sinA, v.X * sinA + v.Y * cosA);
     }
     
     public static void MoveViewportCenter(Vector2 offset) => Viewport.Center += offset / Viewport.Scale;
