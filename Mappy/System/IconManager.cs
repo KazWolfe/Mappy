@@ -11,6 +11,8 @@ public class IconManager : IDisposable
 {
     private readonly Dictionary<uint, TextureWrap?> iconTextures = new();
 
+    private const string IconFilePath = "ui/icon/{0:D3}000/{1:D6}_hr1.tex";
+    
     public void Dispose() 
     {
         foreach (var texture in iconTextures.Values) 
@@ -25,20 +27,20 @@ public class IconManager : IDisposable
     {
         Task.Run(() => 
         {
-            try 
+            try
             {
-                var iconTex = Service.DataManager.GetIcon(iconId);
-                if (iconTex == null) return;
+                var idUpper = iconId / 1000;
+                var path = IconFilePath.Format(idUpper, iconId);
                 
-                var tex = Service.PluginInterface.UiBuilder.LoadImageRaw(iconTex.GetRgbaImageData(), iconTex.Header.Width, iconTex.Header.Height, 4);
+                var tex = Service.DataManager.GetImGuiTexture(path);
 
-                if (tex.ImGuiHandle != IntPtr.Zero) 
+                if (tex is not null && tex.ImGuiHandle != IntPtr.Zero) 
                 {
                     iconTextures[iconId] = tex;
                 } 
                 else 
                 {
-                    tex.Dispose();
+                    tex?.Dispose();
                 }
             } 
             catch (Exception ex) 
