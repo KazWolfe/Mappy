@@ -3,14 +3,23 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
+using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Utilities;
 using ClientStructGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 namespace Mappy.MapComponents;
 
+public class GatheringPointSettings
+{
+    public Setting<bool> ShowIcon = new(true);
+    public Setting<bool> ShowTooltip = new(true);
+}
+
 public class GatheringPointMapComponent : IMapComponent
 {
+    private static GatheringPointSettings Settings => Service.Configuration.GatheringPoints;
+    
     private readonly GatheringPointName mineralDeposit;
     private readonly GatheringPointName rockyOutcrop;
     private readonly GatheringPointName matureTree;
@@ -39,11 +48,9 @@ public class GatheringPointMapComponent : IMapComponent
             if(!IsTargetable(obj)) continue;
             
             var iconId = GetIconIdForGatheringNode(obj);
-            var icon = Service.Cache.IconCache.GetIconTexture(iconId);
-            var position = Service.MapManager.GetObjectPosition(obj);
             
-            MapRenderer.DrawIcon(icon, position);
-            DrawTooltip(obj);
+            if(Settings.ShowIcon.Value) MapRenderer.DrawIcon(iconId, obj);
+            if(Settings.ShowTooltip.Value) DrawTooltip(obj);
         }
     }
 

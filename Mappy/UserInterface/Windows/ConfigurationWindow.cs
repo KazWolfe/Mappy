@@ -18,6 +18,7 @@ public class ConfigurationWindow : Window
         new PlayerOptions(),
         new AllianceMemberOptions(),
         new FateOptions(),
+        new GatheringPointOptions(),
     };
 
     public ConfigurationWindow() : base("Mappy Configuration")

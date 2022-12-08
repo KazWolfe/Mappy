@@ -41,6 +41,8 @@ public class FateStrings
 public class GatheringStrings
 {
     public string Label => Loc.Localize("Gathering_Label", "Gathering Points");
+    public string ShowTooltip => Loc.Localize("Gathering_ShowTooltip", "Show Tooltip");
+    public string ShowIcon => Loc.Localize("Gathering_ShowIcon", "Show Icon");
 }
 
 public class MarkerStrings

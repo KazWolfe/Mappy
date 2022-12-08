@@ -23,7 +23,8 @@ public class Configuration : IPluginConfiguration
     public PlayerMapComponentSettings PlayerSettings = new();
     public AllianceMemberSettings AllianceSettings = new();
     public FateSettings FateSettings = new();
-    
+    public GatheringPointSettings GatheringPoints = new();
+
     [NonSerialized]
     private DalamudPluginInterface? pluginInterface;
     public void Initialize(DalamudPluginInterface inputPluginInterface) => pluginInterface = inputPluginInterface;
