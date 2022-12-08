@@ -105,7 +105,7 @@ public unsafe class MapManager : IDisposable
         Map = Service.Cache.MapCache.GetRow(mapId);
 
         MapLayers = Service.DataManager.GetExcelSheet<Map>()!
-            .Where(eachMap => eachMap.TerritoryType.Row == Map.TerritoryType.Row)
+            .Where(eachMap => eachMap.PlaceName.Row == Map.PlaceName.Row)
             .Where(eachMap => eachMap.MapIndex != 0)
             .ToList();
             
