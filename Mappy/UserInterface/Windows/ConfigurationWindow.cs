@@ -20,6 +20,7 @@ public class ConfigurationWindow : Window
         new AllianceMemberOptions(),
         new FateOptions(),
         new GatheringPointOptions(),
+        new MapMarkerOptions(),
     };
 
     public ConfigurationWindow() : base("Mappy Configuration")

@@ -22,6 +22,13 @@ public abstract class DrawList<T>
         }
     }
 
+    public T AddDummy(float value)
+    {
+        DrawActions.Add(() => ImGuiHelpers.ScaledDummy(value));
+
+        return DrawListOwner;
+    }
+    
     public T AddIndent(int tab)
     {
         DrawActions.Add(() => ImGui.Indent(15.0f * tab));

@@ -11,11 +11,15 @@ namespace Mappy.MapComponents;
 
 public class FateSettings
 {
+    public Setting<bool> Enable = new(true);
+    
     public Setting<bool> ShowRing = new(true);
     public Setting<bool> ShowTooltip = new(true);
     public Setting<bool> ShowIcon = new(true);
+    public Setting<float> IconScale = new(0.5f);
 
     public Setting<Vector4> Color = new(Colors.FatePink);
+    public Setting<Vector4> TooltipColor = new(Colors.White);
 }
 
 public class FateMapComponent : IMapComponent
@@ -30,6 +34,7 @@ public class FateMapComponent : IMapComponent
     public unsafe void Draw()
     {
         if (!Service.MapManager.PlayerInCurrentMap) return;
+        if (!Settings.Enable.Value) return;
         
         var fateManager = FateManager.Instance()->Fates;
 
@@ -45,7 +50,7 @@ public class FateMapComponent : IMapComponent
          var position = Service.MapManager.GetObjectPosition(fate.Location);   
              
          if(Settings.ShowRing.Value) DrawRing(fate);
-         if(Settings.ShowIcon.Value) MapRenderer.DrawIcon(fate.IconId, position);
+         if(Settings.ShowIcon.Value) MapRenderer.DrawIcon(fate.IconId, position, Settings.IconScale.Value);
          if(Settings.ShowTooltip.Value) DrawTooltip(fate);
     }
 
@@ -77,13 +82,13 @@ public class FateMapComponent : IMapComponent
             case 2:
                 var remainingTime = GetTimeFormatted(GetTimeRemaining(fate));
 
-                ImGui.Text($"{Strings.Map.Fate.Level} {fate.Level} {fate.Name}\n" +
+                ImGui.TextColored(Settings.TooltipColor.Value,$"{Strings.Map.Fate.Level} {fate.Level} {fate.Name}\n" +
                            $"{Strings.Map.Fate.TimeRemaining}: {remainingTime}\n" +
                            $"{Strings.Map.Fate.Progress}: {fate.Progress}%%");
                 break;
             
             case 7:
-                ImGui.Text($"{Strings.Map.Fate.Level} {fate.Level} {fate.Name}");
+                ImGui.TextColored(Settings.TooltipColor.Value,$"{Strings.Map.Fate.Level} {fate.Level} {fate.Name}");
                 break;
         }
         

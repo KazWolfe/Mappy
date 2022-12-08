@@ -11,6 +11,8 @@ namespace Mappy.MapComponents;
 
 public class PlayerMapComponentSettings
 {
+    public Setting<bool> Enable = new(true);
+    
     public Setting<Vector4> OutlineColor = new(Colors.Grey);
     public Setting<Vector4> FillColor = new(Colors.Blue with {W = 0.20f});
     public Setting<float> IconScale = new(0.6f);
@@ -31,6 +33,7 @@ public class PlayerMapComponent : IMapComponent
 
     public void Draw()
     {
+        if (!Settings.Enable.Value) return;
         if (!Service.MapManager.PlayerInCurrentMap) return;
         if (Service.ClientState.LocalPlayer is not { } player) return;
         

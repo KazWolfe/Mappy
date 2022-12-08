@@ -27,6 +27,7 @@ public class GeneralOptions : ISelectable
         if (Service.Configuration.HideWindowFrame.Value)
         {
             Service.Configuration.LockWindow.Value = true;
+            Service.Configuration.Save();
         }
     }
 }

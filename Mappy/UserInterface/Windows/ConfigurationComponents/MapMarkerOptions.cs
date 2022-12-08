@@ -8,25 +8,25 @@ using Mappy.Utilities;
 
 namespace Mappy.UserInterface.Windows.ConfigurationComponents;
 
-public class AllianceMemberOptions : ISelectable
+public class MapMarkerOptions : ISelectable
 {
-    private static AllianceMemberSettings Settings => Service.Configuration.AllianceSettings;
+    private static MapMarkersSettings Settings => Service.Configuration.MapMarkers;
     
-    public ComponentName ComponentName => ComponentName.AllianceMember;
-    
+    public ComponentName ComponentName => ComponentName.MapMarker;
     public void Draw()
     {
         InfoBox.Instance
             .AddTitle(Strings.Configuration.FeatureToggles)
-            .AddConfigCheckbox(Strings.Map.AllianceMembers.Enable, Settings.Enable)
-            .AddDummy(8.0f)
-            .AddConfigCheckbox(Strings.Map.AllianceMembers.ShowIcon, Settings.ShowIcon)
-            .AddConfigCheckbox(Strings.Map.AllianceMembers.ShowTooltip, Settings.ShowTooltip)
+            .AddConfigCheckbox(Strings.Map.Markers.Enable, Settings.ShowIcons)
             .Draw();
         
         InfoBox.Instance
             .AddTitle(Strings.Configuration.ColorOptions)
-            .AddConfigColor(Strings.Map.AllianceMembers.TooltipColor, Settings.TooltipColor, Colors.ForestGreen)
+            .AddConfigColor(Strings.Map.DefaultTooltipColor, Settings.StandardColor, Colors.White)
+            .AddConfigColor(Strings.Map.MapLinkTooltipColor, Settings.MapLink, Colors.MapTextBrown)
+            .AddConfigColor(Strings.Map.InstanceLinkTooltipColor, Settings.InstanceLink, Colors.Orange)
+            .AddConfigColor(Strings.Map.AetheryteTooltipColor, Settings.Aetheryte, Colors.Blue)
+            .AddConfigColor(Strings.Map.AethernetTooltipColor, Settings.Aethernet, Colors.BabyBlue)
             .Draw();
         
         InfoBox.Instance
@@ -38,11 +38,11 @@ public class AllianceMemberOptions : ISelectable
                 Service.Configuration.Save();
             }, ImGuiHelpers.ScaledVector2(InfoBox.Instance.InnerWidth, 23.0f))
             .Draw();
-
+        
         InfoBox.Instance
             .AddTitle(Strings.Configuration.IconSelect)
             .BeginFlexGrid()
-            .SingleSelect(Settings.SelectedIcon, 60358, 60359, 60360, 60361)
+            .MultiSelect(Settings.IconSettings)
             .EndFlexGrid()
             .Draw();
     }

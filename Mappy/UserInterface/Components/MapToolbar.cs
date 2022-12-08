@@ -74,6 +74,7 @@ public class MapToolbar
         if (ImGui.Button(FontAwesomeIcon.MapMarkerAlt.ToIconString(), new Vector2(23.0f)))
         {
             Service.Configuration.FollowPlayer.Value = !Service.Configuration.FollowPlayer.Value;
+            Service.Configuration.Save();
         }
         if (followPlayer) ImGui.PopStyleColor();
 

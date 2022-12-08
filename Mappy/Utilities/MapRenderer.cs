@@ -34,22 +34,22 @@ public static class MapRenderer
         }
     }
 
-    public static void DrawIcon(TextureWrap? iconTexture, GameObject gameObject)
+    public static void DrawIcon(TextureWrap? iconTexture, GameObject gameObject, float scale = 0.50f)
     {
-        DrawIcon(iconTexture, Service.MapManager.GetObjectPosition(gameObject));
+        DrawIcon(iconTexture, Service.MapManager.GetObjectPosition(gameObject), scale);
     }
 
-    public static void DrawIcon(uint iconId, Vector2 position)
+    public static void DrawIcon(uint iconId, Vector2 position, float scale = 0.50f)
     {
-        DrawIcon(Service.Cache.IconCache.GetIconTexture(iconId), position);
+        DrawIcon(Service.Cache.IconCache.GetIconTexture(iconId), position, scale);
     }
 
-    public static void DrawIcon(uint iconId, GameObject gameObject)
+    public static void DrawIcon(uint iconId, GameObject gameObject, float scale = 0.50f)
     {
         var icon = Service.Cache.IconCache.GetIconTexture(iconId);
         var position = Service.MapManager.GetObjectPosition(gameObject);
         
-        DrawIcon(icon, position);
+        DrawIcon(icon, position, scale);
     }
     
     public static void DrawImageRotated(TextureWrap? texture, GameObject gameObject, float iconScale = 0.5f)

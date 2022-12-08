@@ -24,6 +24,7 @@ public class Configuration : IPluginConfiguration
     public AllianceMemberSettings AllianceSettings = new();
     public FateSettings FateSettings = new();
     public GatheringPointSettings GatheringPoints = new();
+    public MapMarkersSettings MapMarkers = new();
 
     [NonSerialized]
     private DalamudPluginInterface? pluginInterface;

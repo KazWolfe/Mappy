@@ -4,6 +4,7 @@ using Dalamud.Utility;
 using ImGuiNET;
 using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
+using Mappy.MapComponents;
 using Mappy.Utilities;
 using Action = System.Action;
 
@@ -20,6 +21,8 @@ public enum MapMarkerType
 
 public class MapMarkerData
 {
+    private static MapMarkersSettings Settings => Service.Configuration.MapMarkers;
+    
     private readonly MapMarker data;
     private Vector2 Position => new(data.X, data.Y);
     public TextureWrap? Icon => Service.Cache.IconCache.GetIconTexture(data.Icon);
@@ -28,6 +31,7 @@ public class MapMarkerData
     private Aetheryte DataAetheryte => Service.Cache.AetheryteCache.GetRow(data.DataKey);
     private PlaceName DataPlaceName => Service.Cache.PlaceNameCache.GetRow(data.DataKey);
     private byte DataType => data.DataType;
+    public uint IconId => data.Icon;
     
     [MemberNotNullWhen(true, nameof(Icon))]
     private bool HasIcon => Icon != null && data.Icon != 0;
@@ -41,7 +45,7 @@ public class MapMarkerData
     {
         if (!HasIcon) return;
         
-        MapRenderer.DrawIcon(Icon, Position);
+        MapRenderer.DrawIcon(Icon, Position, Settings.IconScale.Value);
         DrawTooltip();
         OnClick();
     }
@@ -98,12 +102,12 @@ public class MapMarkerData
     {
         return (MapMarkerType?) DataType switch
         {
-            MapMarkerType.Standard => Colors.White,
-            MapMarkerType.MapLink => Colors.MapTextBrown,
-            MapMarkerType.InstanceLink => Colors.Orange,
-            MapMarkerType.Aetheryte => Colors.Blue,
-            MapMarkerType.Aethernet => Colors.White,
-            _ => Colors.White
+            MapMarkerType.Standard => Settings.StandardColor.Value,
+            MapMarkerType.MapLink => Settings.MapLink.Value,
+            MapMarkerType.InstanceLink => Settings.InstanceLink.Value,
+            MapMarkerType.Aetheryte => Settings.Aetheryte.Value,
+            MapMarkerType.Aethernet => Settings.Aethernet.Value,
+            _ => Settings.StandardColor.Value
         };
     }
 

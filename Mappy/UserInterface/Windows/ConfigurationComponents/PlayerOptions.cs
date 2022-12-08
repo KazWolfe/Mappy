@@ -18,6 +18,8 @@ public class PlayerOptions : ISelectable
     {
         InfoBox.Instance
             .AddTitle(Strings.Configuration.FeatureToggles)
+            .AddConfigCheckbox(Strings.Map.Player.Enable, Settings.Enable)
+            .AddDummy(8.0f)
             .AddConfigCheckbox(Strings.Map.Player.ShowIcon, Settings.ShowIcon)
             .AddConfigCheckbox(Strings.Map.Player.ShowCone, Settings.ShowCone)
             .Draw();

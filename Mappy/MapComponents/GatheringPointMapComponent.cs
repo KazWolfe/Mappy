@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
@@ -12,8 +13,11 @@ namespace Mappy.MapComponents;
 
 public class GatheringPointSettings
 {
+    public Setting<bool> Enable = new(true);
     public Setting<bool> ShowIcon = new(true);
     public Setting<bool> ShowTooltip = new(true);
+    public Setting<Vector4> TooltipColor = new(Colors.White);
+    public Setting<float> IconScale = new(0.5f);
 }
 
 public class GatheringPointMapComponent : IMapComponent
@@ -41,6 +45,8 @@ public class GatheringPointMapComponent : IMapComponent
 
     public void Draw()
     {
+        if (!Settings.Enable.Value) return;
+        
         foreach (var obj in Service.ObjectTable)
         {
             if(obj.ObjectKind != ObjectKind.GatheringPoint) continue;
@@ -49,7 +55,7 @@ public class GatheringPointMapComponent : IMapComponent
             
             var iconId = GetIconIdForGatheringNode(obj);
             
-            if(Settings.ShowIcon.Value) MapRenderer.DrawIcon(iconId, obj);
+            if(Settings.ShowIcon.Value) MapRenderer.DrawIcon(iconId, obj, Settings.IconScale.Value);
             if(Settings.ShowTooltip.Value) DrawTooltip(obj);
         }
     }
@@ -63,7 +69,7 @@ public class GatheringPointMapComponent : IMapComponent
         if (displayString != string.Empty)
         {
             ImGui.BeginTooltip();
-            ImGui.TextUnformatted(displayString);
+            ImGui.TextColored(Settings.TooltipColor.Value, displayString);
             ImGui.EndTooltip();
         }
     }
