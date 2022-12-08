@@ -12,7 +12,7 @@ namespace Mappy.MapComponents;
 public class AllianceMemberSettings
 {
     public Setting<bool> ShowIcon = new(true);
-    public Setting<AllianceMarkers> SelectedIcon = new(AllianceMarkers.Green);
+    public Setting<uint> SelectedIcon = new((uint) AllianceMarkers.Green);
 }
 
 public class AllianceMemberMapComponent : IMapComponent

@@ -134,6 +134,11 @@ public class InfoBox : DrawList<InfoBox>, IDrawable
         return new InfoBoxList(this);
     }
 
+    public InfoBoxIconFlexGrid BeginFlexGrid()
+    {
+        return new InfoBoxIconFlexGrid(this);
+    }
+
     public InfoBox AddList(IEnumerable<IInfoBoxListConfigurationRow> rows)
     {
         return BeginList()

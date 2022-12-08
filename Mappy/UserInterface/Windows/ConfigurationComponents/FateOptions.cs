@@ -18,8 +18,8 @@ public class FateOptions : ISelectable
         InfoBox.Instance
             .AddTitle(Strings.Configuration.FeatureToggles)
             .AddConfigCheckbox(Strings.Map.Fate.ShowIcon, Settings.ShowIcon)
-            .AddConfigCheckbox(Strings.Map.Fate.ShowRing, Settings.ShowRing)
             .AddConfigCheckbox(Strings.Map.Fate.ShowTooltip, Settings.ShowTooltip)
+            .AddConfigCheckbox(Strings.Map.Fate.ShowRing, Settings.ShowRing)
             .Draw();
         
         InfoBox.Instance

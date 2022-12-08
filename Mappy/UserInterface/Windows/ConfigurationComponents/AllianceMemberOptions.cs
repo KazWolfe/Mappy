@@ -22,9 +22,9 @@ public class AllianceMemberOptions : ISelectable
 
         InfoBox.Instance
             .AddTitle(Strings.Configuration.IconSelect)
-            .AddString(Strings.Configuration.SelectedIcon)
-            .AddIconImage((uint) Settings.SelectedIcon.Value)
-            .AddConfigCombo(Enum.GetValues<AllianceMarkers>(), Settings.SelectedIcon, AllianceMarkersExtensions.GetTranslatedString, width: InfoBox.Instance.InnerWidth)
+            .BeginFlexGrid()
+            .SingleSelect(Settings.SelectedIcon, 60358, 60359, 60360, 60361)
+            .EndFlexGrid()
             .Draw();
     }
 }

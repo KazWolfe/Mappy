@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Interface.Windowing;
+using ImGuiNET;
 using Mappy.Interfaces;
 using Mappy.UserInterface.Components;
 using Mappy.UserInterface.Windows.ConfigurationComponents;
@@ -25,7 +26,7 @@ public class ConfigurationWindow : Window
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(550, 300),
+            MinimumSize = new Vector2(610, 300),
             MaximumSize = new Vector2(9999,9999)
         };
 
@@ -40,5 +41,14 @@ public class ConfigurationWindow : Window
         selectionFrame.Draw();
 
         configurationFrame.Draw(selectionFrame.Selected);
+
+        if (ImGui.IsItemHovered())
+        {
+            Flags |= ImGuiWindowFlags.NoMove;
+        }
+        else
+        {
+            Flags &= ~ImGuiWindowFlags.NoMove;
+        }
     }
 }
