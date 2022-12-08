@@ -1,10 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Lumina.Excel.GeneratedSheets;
+using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Utilities;
 
 namespace Mappy.MapComponents;
+
+
+
+public class AllianceMemberSettings
+{
+    public Setting<bool> ShowIcon = new(true);
+    public Setting<AllianceMarkers> SelectedIcon = new(AllianceMarkers.Green);
+}
 
 public class AllianceMemberMapComponent : IMapComponent
 {

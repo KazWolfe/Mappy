@@ -16,7 +16,7 @@ public class ConfigurationWindow : Window
     {
         new GeneralOptions(),
         new PlayerOptions(),
-        
+        new AllianceMemberOptions(),
     };
 
     public ConfigurationWindow() : base("Mappy Configuration")
@@ -27,7 +27,7 @@ public class ConfigurationWindow : Window
             MaximumSize = new Vector2(9999,9999)
         };
 
-        selectionFrame = new SelectionFrame(selectables, 0.30f);
+        selectionFrame = new SelectionFrame(selectables);
         configurationFrame = new ConfigurationFrame();
         
         IsOpen = true;

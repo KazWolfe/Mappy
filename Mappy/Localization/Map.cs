@@ -57,6 +57,11 @@ public class PetStrings
 public class AllianceMemberStrings
 {
     public string Label => Loc.Localize("AllianceMember_Label", "Alliance Members");
+    public string ShowIcon => Loc.Localize("AllianceMember_ShowIcon", "Show Icon");
+    public string GreenMarker => Loc.Localize("AllianceMember_GreenMarker", "Green Marker");
+    public string RedMarker => Loc.Localize("AllianceMember_RedMarker", "Red Marker");
+    public string YellowMarker => Loc.Localize("AllianceMember_YellowMarker", "Yellow Marker");
+    public string BlueMarker => Loc.Localize("AllianceMember_BlueMarker", "Blue Marker");
 }
 
 public class PlayerStrings

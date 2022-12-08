@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using Dalamud.Interface;
 using ImGuiNET;
-using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Utilities;
 
@@ -42,9 +40,7 @@ internal class SelectionFrame : IDrawable
             {
                 ImGui.PopStyleColor();
 
-                var modules = Selectables.OrderBy(item => item.ComponentName.GetTranslatedString()).ToList();
-
-                foreach (var item in modules)
+                foreach (var item in Selectables)
                 {
                     ImGui.PushID(item.ComponentName.ToString());
 

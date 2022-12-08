@@ -204,6 +204,21 @@ public abstract class DrawList<T>
 
         return DrawListOwner;
     }
+    
+    public T AddIconImage(uint iconId)
+    {
+        DrawActions.Add(() =>
+        {
+            if (Service.Cache.IconCache.GetIconTexture(iconId) is { } icon)
+            {
+                var iconSize = new Vector2(icon.Width, icon.Height);
+            
+                ImGui.Image(icon.ImGuiHandle, iconSize);
+            }
+        });
+
+        return DrawListOwner;
+    }
 
     public T AddConfigRadio<TU>(string label, Setting<TU> setting, TU buttonValue, string? helpText = null ) where TU : struct
     {
@@ -217,6 +232,36 @@ public abstract class DrawList<T>
                 Service.Configuration.Save();
             }
 
+            if (helpText != null)
+            {
+                ImGuiComponents.HelpMarker(helpText);
+            }
+        });
+
+        return DrawListOwner;
+    }
+
+    public T AddConfigIconRadio(string label, Setting<uint> setting, uint iconValue, string? helpText = null)
+    {
+        DrawActions.Add(() =>
+        {
+            var value = Convert.ToInt32(setting.Value);
+
+            var cursorPosition = ImGui.GetCursorPos();
+            if (Service.Cache.IconCache.GetIconTexture(iconValue) is { } icon)
+            {
+                var iconSize = new Vector2(icon.Width, icon.Height) / 2.0f;
+                
+                ImGui.SetCursorPos(cursorPosition with { Y = cursorPosition.Y + iconSize.Y / 2.0f });
+                if (ImGui.RadioButton($"##{label}", ref value, (int)iconValue))
+                {
+                    setting.Value = (uint)value;
+                    Service.Configuration.Save();
+                }
+
+                ImGui.SetCursorPos(cursorPosition with { X = cursorPosition.X + 20.0f * ImGuiHelpers.GlobalScale});
+                ImGui.Image(icon.ImGuiHandle, new Vector2(icon.Width, icon.Height));
+            }
             if (helpText != null)
             {
                 ImGuiComponents.HelpMarker(helpText);

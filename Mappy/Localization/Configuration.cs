@@ -25,4 +25,5 @@ public class ConfigurationStrings
     public string IconSelect => Loc.Localize("Configuration_IconSelect", "Icon Selection");
     public string Reset => Loc.Localize("Configuration_Reset", "Reset to Default");
     public string Default => Loc.Localize("Configuration_Default", "Default");
+    public string SelectedIcon => Loc.Localize("Configuration_SelectedIcon", "Selected Icon");
 }

@@ -119,10 +119,7 @@ public unsafe class MapManager : IDisposable
         }
         else if (PlayerInCurrentMap)
         {
-            if (Service.ClientState.LocalPlayer is { } player)
-            {
-                MapRenderer.SetViewportCenter(Service.MapManager.GetObjectPosition(player));
-            }
+            CenterOnPlayer();
         }
     }
     

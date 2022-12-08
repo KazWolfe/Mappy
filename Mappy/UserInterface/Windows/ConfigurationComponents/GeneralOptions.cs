@@ -1,5 +1,4 @@
 ﻿using Dalamud.Interface;
-using ImGuiNET;
 using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Localization;
@@ -10,11 +9,6 @@ namespace Mappy.UserInterface.Windows.ConfigurationComponents;
 public class GeneralOptions : ISelectable
 {
     public ComponentName ComponentName => ComponentName.General;
-    
-    public void DrawLabel()
-    {
-        ImGui.Text(ComponentName.GetTranslatedString());
-    }
 
     public void Draw()
     {

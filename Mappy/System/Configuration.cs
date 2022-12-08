@@ -21,6 +21,7 @@ public class Configuration : IPluginConfiguration
     public Setting<bool> AlwaysShowToolbar = new(false);
 
     public PlayerMapComponentSettings PlayerSettings = new();
+    public AllianceMemberSettings AllianceSettings = new();
     
     [NonSerialized]
     private DalamudPluginInterface? pluginInterface;
