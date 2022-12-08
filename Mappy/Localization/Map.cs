@@ -44,13 +44,17 @@ public class Generic
 
 public class FateStrings
 {
-    public string Label => Loc.Localize("Fate_Label", "Fates");
+    public string Label => Loc.Localize("Fate_Label", "FATEs");
     public string Level => Loc.Localize("Fate_Level", "Lv.");
     public string TimeRemaining => Loc.Localize("Fate_TimeRemaining", "Time Remaining");
     public string Progress => Loc.Localize("Fate_Progress", "Progress");
     public string ShowRing => Loc.Localize("Fate_ShowRing", "Show Ring");
     public string Color => Loc.Localize("Fate_Color", "Circle Color");
-
+    public string ExpiringWarning => Loc.Localize("Fate_ExpiringWarning", "Expiring Warning");
+    public string ExpirationWarningHelp => Loc.Localize("Fate_ExpiringWarningHelp", "Changes the color of the FATE circle\nWhen the FATE is about to expire");
+    public string EarlyWarningTime => Loc.Localize("Fate_EarlyWarningTime", "Early Warning Time");
+    public string ExpirationColor => Loc.Localize("Fate_ExpiringColor", "Expiring Color");
+    public string InSeconds => Loc.Localize("Fate_InSeconds", "Time in Seconds");
 }
 
 public class GatheringStrings
@@ -66,7 +70,6 @@ public class MarkerStrings
 public class PartyMemberStrings
 {
     public string Label => Loc.Localize("PartyMember_Label", "Party Members");
-
 }
 
 public class PetStrings
@@ -88,6 +91,7 @@ public class PlayerStrings
     public string ConeAngle => Loc.Localize("Player_ConeAngle", "Vision Cone Angle");
     public string ConeThickness => Loc.Localize("Player_ConeThickness", "Outline Thickness");
     public string ShowCone => Loc.Localize("Player_ShowCone", "Show Look Cone");
+    public string AngleInDegrees => Loc.Localize("Player_AngleInDegrees", "Angle in Degrees");
 }
 
 public class WaymarkStrings

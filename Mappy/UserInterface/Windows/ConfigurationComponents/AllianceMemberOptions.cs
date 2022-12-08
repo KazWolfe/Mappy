@@ -1,4 +1,5 @@
-﻿using Dalamud.Interface;
+﻿using System.Numerics;
+using Dalamud.Interface;
 using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Localization;
@@ -36,7 +37,7 @@ public class AllianceMemberOptions : IModuleSettings
             {
                 Settings.IconScale.Value = 0.50f;
                 Service.Configuration.Save();
-            }, ImGuiHelpers.ScaledVector2(InfoBox.Instance.InnerWidth, 23.0f))
+            }, new Vector2(InfoBox.Instance.InnerWidth, 23.0f * ImGuiHelpers.GlobalScale))
             .Draw();
 
         InfoBox.Instance

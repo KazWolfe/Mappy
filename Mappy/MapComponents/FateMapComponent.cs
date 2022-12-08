@@ -17,9 +17,12 @@ public class FateSettings
     public Setting<bool> ShowTooltip = new(true);
     public Setting<bool> ShowIcon = new(true);
     public Setting<float> IconScale = new(0.5f);
+    public Setting<bool> ExpiringWarning = new(false);
+    public Setting<int> EarlyWarningTime = new(300);
 
     public Setting<Vector4> Color = new(Colors.FatePink);
     public Setting<Vector4> TooltipColor = new(Colors.White);
+    public Setting<Vector4> ExpiringColor = new(Colors.SoftRed with {W = 0.33f});
 }
 
 public class FateMapComponent : IMapComponent
@@ -56,6 +59,15 @@ public class FateMapComponent : IMapComponent
 
     private void DrawRing(FateContext fate)
     {
+        var timeRemaining = GetTimeRemaining(fate);
+        var earlyWarningTime = TimeSpan.FromSeconds(Settings.EarlyWarningTime.Value);
+        var color = ImGui.GetColorU32(Settings.Color.Value);
+
+        if (Settings.ExpiringWarning.Value && timeRemaining > TimeSpan.Zero && timeRemaining <= earlyWarningTime)
+        {
+            color = ImGui.GetColorU32(Settings.ExpiringColor.Value);
+        }
+
         switch (fate.State)
         {
             case 2:
@@ -63,7 +75,6 @@ public class FateMapComponent : IMapComponent
                 var drawPosition = MapRenderer.GetImGuiWindowDrawPosition(position);
 
                 var radius = fate.Radius * MapRenderer.Viewport.Scale;
-                var color = ImGui.GetColorU32(Settings.Color.Value);
                 
                 ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, color);
                 ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 35, 4);

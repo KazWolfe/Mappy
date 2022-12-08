@@ -86,7 +86,7 @@ public class InfoBoxIconFlexGrid
                         selection.Value.Enabled ? ImGui.GetColorU32(Colors.SoftGreen) : ImGui.GetColorU32(Colors.Red), 5.0f,
                         ImDrawFlags.RoundCornersAll, 3.0f);
 
-                    totalSize += iconSize.X + 7.0f * ImGuiHelpers.GlobalScale;
+                    totalSize += iconSize.X + 7.0f;
                     
                     if (ImGui.IsItemClicked())
                     {

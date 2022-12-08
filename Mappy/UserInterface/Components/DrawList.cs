@@ -6,6 +6,7 @@ using Dalamud.Interface.Components;
 using ImGuiNET;
 using Mappy.DataModels;
 using Mappy.Localization;
+using Mappy.Utilities;
 
 namespace Mappy.UserInterface.Components;
 
@@ -165,7 +166,7 @@ public abstract class DrawList<T>
         {
             if (width != 0.0f)
             {
-                ImGui.SetNextItemWidth(width * ImGuiHelpers.GlobalScale);
+                ImGui.SetNextItemWidth(width);
             }
             else
             {
@@ -325,13 +326,54 @@ public abstract class DrawList<T>
     {
         DrawActions.Add(() =>
         {
-            ImGui.SetNextItemWidth(width * ImGuiHelpers.GlobalScale);
+            ImGui.SetNextItemWidth(width);
             ImGui.InputInt(label, ref settingsPriority.Value, step, stepFast);
             if (ImGui.IsItemDeactivatedAfterEdit())
             {
                 settingsPriority.Value = Math.Clamp(settingsPriority.Value, min, max);
                 Service.Configuration.Save();
             }
+        });
+
+        return DrawListOwner;
+    }
+
+    public T AddHelpMarker(string helpText)
+    {
+        DrawActions.Add(() =>
+        {
+            ImGuiComponents.HelpMarker(helpText);
+        });
+
+        return DrawListOwner;
+    }
+
+    public T BeginDisabled(bool shouldDisable)
+    {
+        DrawActions.Add(() =>
+        {
+            ImGui.BeginDisabled(shouldDisable);
+        });
+
+        return DrawListOwner;
+    }
+    
+    public T EndDisabled()
+    {
+        DrawActions.Add(ImGui.EndDisabled);
+
+        return DrawListOwner;
+    }
+
+    public T AddSeparator()
+    {
+        DrawActions.Add(() =>
+        {
+            var startPosition = ImGui.GetCursorScreenPos();
+            var stopPosition = startPosition with { X = startPosition.X + InfoBox.Instance.InnerWidth };
+            var color = ImGui.GetColorU32(Colors.White);
+            
+            ImGui.GetWindowDrawList().AddLine(startPosition, stopPosition, color);
         });
 
         return DrawListOwner;

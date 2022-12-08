@@ -21,7 +21,7 @@ public class MapToolbar
             
             ImGui.SetCursorPos(Vector2.Zero);
             ImGui.PushStyleColor(ImGuiCol.ChildBg, new Vector4(0.0f, 0.0f, 0.0f, 0.80f));        
-            if (ImGui.BeginChild("###Toolbar", regionAvailable with { Y = 40.0f }, true))
+            if (ImGui.BeginChild("###Toolbar", regionAvailable with { Y = 40.0f * ImGuiHelpers.GlobalScale }, true))
             {
                 DrawMapLayersWidget();
                 ImGui.SameLine();
@@ -71,7 +71,7 @@ public class MapToolbar
         var followPlayer = Service.Configuration.FollowPlayer.Value;
 
         if (followPlayer) ImGui.PushStyleColor(ImGuiCol.Button, Colors.Red);
-        if (ImGui.Button(FontAwesomeIcon.MapMarkerAlt.ToIconString(), new Vector2(23.0f)))
+        if (ImGui.Button(FontAwesomeIcon.MapMarkerAlt.ToIconString(), ImGuiHelpers.ScaledVector2(23.0f)))
         {
             Service.Configuration.FollowPlayer.Value = !Service.Configuration.FollowPlayer.Value;
             Service.Configuration.Save();
@@ -93,7 +93,7 @@ public class MapToolbar
         ImGui.PushID("CenterOnPlayer");
         ImGui.PushFont(UiBuilder.IconFont);
 
-        if (ImGui.Button(FontAwesomeIcon.Crosshairs.ToIconString(), new Vector2(23.0f)))
+        if (ImGui.Button(FontAwesomeIcon.Crosshairs.ToIconString(), ImGuiHelpers.ScaledVector2(23.0f)))
         {
             MapManager.CenterOnPlayer();
         }
@@ -113,7 +113,7 @@ public class MapToolbar
         ImGui.PushID("ConfigurationButton");
         ImGui.PushFont(UiBuilder.IconFont);
 
-        if (ImGui.Button(FontAwesomeIcon.Cog.ToIconString(), new Vector2(25.0f, 23.0f)))
+        if (ImGui.Button(FontAwesomeIcon.Cog.ToIconString(), ImGuiHelpers.ScaledVector2(25.0f, 23.0f)))
         {
             if (Service.WindowManager.GetWindowOfType<ConfigurationWindow>(out var configurationWindow))
             {

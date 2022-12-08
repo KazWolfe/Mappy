@@ -23,7 +23,7 @@ public class MapSelectOverlay
         var showOverlay = ShowMapSelectOverlay;
 
         if (showOverlay) ImGui.PushStyleColor(ImGuiCol.Button, Colors.Red);
-        if (ImGui.Button(FontAwesomeIcon.Map.ToIconString(), new Vector2(26.0f, 23.0f)))
+        if (ImGui.Button(FontAwesomeIcon.Map.ToIconString(), ImGuiHelpers.ScaledVector2(26.0f, 23.0f)))
         {
             ShowMapSelectOverlay = true;
             shouldFocusMapSearch = true;

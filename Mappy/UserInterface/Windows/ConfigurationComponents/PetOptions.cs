@@ -1,4 +1,5 @@
-﻿using Dalamud.Interface;
+﻿using System.Numerics;
+using Dalamud.Interface;
 using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Localization;
@@ -35,7 +36,7 @@ public class PetOptions : IModuleSettings
             {
                 Settings.IconScale.Value = 0.75f;
                 Service.Configuration.Save();
-            }, ImGuiHelpers.ScaledVector2(InfoBox.Instance.InnerWidth, 23.0f))
+            }, new Vector2(InfoBox.Instance.InnerWidth, 23.0f * ImGuiHelpers.GlobalScale))
             .Draw();
     }
 }

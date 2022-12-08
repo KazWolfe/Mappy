@@ -1,4 +1,5 @@
-﻿using Dalamud.Interface;
+﻿using System.Numerics;
+using Dalamud.Interface;
 using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Localization;
@@ -35,6 +36,7 @@ public class PlayerOptions : IModuleSettings
             .AddDragFloat(Strings.Map.Generic.IconScale, Settings.IconScale, 0.1f, 5.0f, InfoBox.Instance.InnerWidth / 2.0f)
             .AddDragFloat(Strings.Map.Player.ConeRadius, Settings.ConeRadius, 30.0f, 240f, InfoBox.Instance.InnerWidth / 2.0f)
             .AddDragFloat(Strings.Map.Player.ConeAngle, Settings.ConeAngle, 0.0f, 180.0f, InfoBox.Instance.InnerWidth / 2.0f)
+            .AddHelpMarker(Strings.Map.Player.AngleInDegrees)
             .AddDragFloat(Strings.Map.Player.ConeThickness, Settings.OutlineThickness, 0.5f, 10.0f, InfoBox.Instance.InnerWidth / 2.0f)
             .AddButton(Strings.Configuration.Reset, () =>
             {
@@ -43,7 +45,7 @@ public class PlayerOptions : IModuleSettings
                 Settings.ConeAngle.Value = 90.0f;
                 Settings.OutlineThickness.Value = 2.0f;
                 Service.Configuration.Save();
-            }, ImGuiHelpers.ScaledVector2(InfoBox.Instance.InnerWidth, 23.0f))
+            }, new Vector2(InfoBox.Instance.InnerWidth, 23.0f * ImGuiHelpers.GlobalScale))
             .Draw();
     }
 }
