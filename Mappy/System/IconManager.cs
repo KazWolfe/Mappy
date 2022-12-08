@@ -29,8 +29,7 @@ public class IconManager : IDisposable
         {
             try
             {
-                var idUpper = iconId / 1000;
-                var path = IconFilePath.Format(idUpper, iconId);
+                var path = IconFilePath.Format(iconId / 1000, iconId);
                 
                 var tex = Service.DataManager.GetImGuiTexture(path);
 
