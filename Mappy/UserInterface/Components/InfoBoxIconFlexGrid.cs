@@ -37,7 +37,7 @@ public class InfoBoxIconFlexGrid
                     {
                         var cursorPosition = ImGui.GetCursorScreenPos();
                         ImGui.Image(icon.ImGuiHandle, iconSize, Vector2.Zero, Vector2.One, Vector4.One);
-                        ImGui.GetWindowDrawList().AddRect(cursorPosition,  cursorPosition + iconSize, ImGui.GetColorU32(Colors.Green), 5.0f, ImDrawFlags.RoundCornersAll, 5.0f);
+                        ImGui.GetWindowDrawList().AddRect(cursorPosition,  cursorPosition + iconSize, ImGui.GetColorU32(Colors.Green), 5.0f, ImDrawFlags.RoundCornersAll, 3.0f);
                     }
                     else
                     {
@@ -84,7 +84,7 @@ public class InfoBoxIconFlexGrid
                     ImGui.Image(icon.ImGuiHandle, iconSize);
                     ImGui.GetWindowDrawList().AddRect(cursorPosition, cursorPosition + iconSize,
                         selection.Value.Enabled ? ImGui.GetColorU32(Colors.SoftGreen) : ImGui.GetColorU32(Colors.Red), 5.0f,
-                        ImDrawFlags.RoundCornersAll, 5.0f);
+                        ImDrawFlags.RoundCornersAll, 3.0f);
 
                     totalSize += iconSize.X + 7.0f * ImGuiHelpers.GlobalScale;
                     

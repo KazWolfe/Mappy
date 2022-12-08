@@ -44,7 +44,7 @@ public class Generic
 
 public class FateStrings
 {
-    public string Label => Loc.Localize("Fate_Label", "Fate");
+    public string Label => Loc.Localize("Fate_Label", "Fates");
     public string Level => Loc.Localize("Fate_Level", "Lv.");
     public string TimeRemaining => Loc.Localize("Fate_TimeRemaining", "Time Remaining");
     public string Progress => Loc.Localize("Fate_Progress", "Progress");
