@@ -1,5 +1,4 @@
-﻿using Dalamud.Interface;
-using Mappy.DataModels;
+﻿using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Localization;
 using Mappy.UserInterface.Components;
@@ -10,8 +9,6 @@ namespace Mappy.UserInterface.Windows.ConfigurationComponents;
 public class GeneralOptions : IModuleSettings
 {
     public ComponentName ComponentName => ComponentName.General;
-
-    private readonly Setting<bool> dummySetting = new(true);
 
     public void Draw()
     {

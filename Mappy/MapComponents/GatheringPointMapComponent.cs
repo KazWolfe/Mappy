@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
 using Mappy.Interfaces;
+using Mappy.Localization;
+using Mappy.UserInterface.Windows;
 using Mappy.Utilities;
 using ClientStructGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
+using GatheringPoint = Lumina.Excel.GeneratedSheets.GatheringPoint;
 
 namespace Mappy.MapComponents;
 
@@ -23,20 +28,6 @@ public class GatheringPointSettings
 public class GatheringPointMapComponent : IMapComponent
 {
     private static GatheringPointSettings Settings => Service.Configuration.GatheringPoints;
-    
-    private readonly GatheringPointName mineralDeposit;
-    private readonly GatheringPointName rockyOutcrop;
-    private readonly GatheringPointName matureTree;
-    private readonly GatheringPointName lushVegetation;
-    
-    public GatheringPointMapComponent()
-    {
-        mineralDeposit = Service.DataManager.GetExcelSheet<GatheringPointName>()!.GetRow(1)!;
-        rockyOutcrop = Service.DataManager.GetExcelSheet<GatheringPointName>()!.GetRow(2)!;
-        matureTree = Service.DataManager.GetExcelSheet<GatheringPointName>()!.GetRow(3)!;
-        lushVegetation = Service.DataManager.GetExcelSheet<GatheringPointName>()!.GetRow(4)!;
-    }
-
     
     public void Update(uint mapID)
     {
@@ -64,7 +55,10 @@ public class GatheringPointMapComponent : IMapComponent
     {
         if (!ImGui.IsItemHovered()) return;
 
-        var displayString = gameObject.Name.TextValue;
+        var gatheringPoint = Service.Cache.GatheringPointCache.GetRow(gameObject.DataId);
+        var gatheringPointBase = Service.Cache.GatheringPointBaseCache.GetRow(gatheringPoint.GatheringPointBase.Row);
+        
+        var displayString = $"{Strings.Map.Fate.Level} {gatheringPointBase.GatheringLevel} {gameObject.Name.TextValue}";
         
         if (displayString != string.Empty)
         {
@@ -82,28 +76,18 @@ public class GatheringPointMapComponent : IMapComponent
         return csObject->GetIsTargetable();
     }
     
-    private uint GetIconIdForGatheringNode(GameObject gatheringNode)
+    private uint GetIconIdForGatheringNode(GameObject gameObject)
     {
-        var iconId = 0u;
-        var nodeName = gatheringNode.Name.TextValue.ToLower();
-        
-        if (nodeName == mineralDeposit.Singular)
-        {
-            iconId = 60438;
-        }
-        else if (nodeName == rockyOutcrop.Singular)
-        {
-            iconId = 60437;
-        }
-        else if (nodeName == matureTree.Singular)
-        {
-            iconId = 60433;
-        }
-        else if (nodeName == lushVegetation.Singular)
-        {
-            iconId = 60432;
-        }
+        var gatheringPoint = Service.Cache.GatheringPointCache.GetRow(gameObject.DataId);
+        var gatheringPointBase = Service.Cache.GatheringPointBaseCache.GetRow(gatheringPoint.GatheringPointBase.Row);
 
-        return iconId;
+        return gatheringPointBase.GatheringType.Row switch
+        {
+            0 => 60438,
+            1 => 60437,
+            2 => 60433,
+            3 => 60432,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

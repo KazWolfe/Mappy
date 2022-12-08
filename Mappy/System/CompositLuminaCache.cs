@@ -10,6 +10,8 @@ public class CompositeLuminaCache : IDisposable
     public LuminaCache<Map> MapCache = new();
     public LuminaCache<Aetheryte> AetheryteCache = new();
     public LuminaCache<MapSymbol> MapSymbolCache = new(GetMapSymbol);
+    public LuminaCache<GatheringPoint> GatheringPointCache = new();
+    public LuminaCache<GatheringPointBase> GatheringPointBaseCache = new();
 
     public IconManager IconCache = new();
     public MapTextureManager MapTextureCache = new();
@@ -17,6 +19,7 @@ public class CompositeLuminaCache : IDisposable
     public void Dispose()
     {
         IconCache.Dispose();
+        MapTextureCache.Dispose();
     }
 
     private static MapSymbol GetMapSymbol(uint iconId)
