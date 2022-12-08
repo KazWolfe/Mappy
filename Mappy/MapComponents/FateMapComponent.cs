@@ -1,14 +1,27 @@
 ﻿using System;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using ImGuiNET;
+using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Localization;
 using Mappy.Utilities;
 
 namespace Mappy.MapComponents;
 
+public class FateSettings
+{
+    public Setting<bool> ShowRing = new(true);
+    public Setting<bool> ShowTooltip = new(true);
+    public Setting<bool> ShowIcon = new(true);
+
+    public Setting<Vector4> Color = new(Colors.FatePink);
+}
+
 public class FateMapComponent : IMapComponent
 {
+    private static FateSettings Settings => Service.Configuration.FateSettings;
+    
     public void Update(uint mapID)
     {
         
@@ -29,12 +42,11 @@ public class FateMapComponent : IMapComponent
     
      private void DrawFate(FateContext fate)
      { 
-         var icon = Service.Cache.IconCache.GetIconTexture(fate.IconId);
          var position = Service.MapManager.GetObjectPosition(fate.Location);   
              
-         DrawRing(fate);
-         MapRenderer.DrawIcon(icon, position);
-         DrawTooltip(fate);
+         if(Settings.ShowRing.Value) DrawRing(fate);
+         if(Settings.ShowIcon.Value) MapRenderer.DrawIcon(fate.IconId, position);
+         if(Settings.ShowTooltip.Value) DrawTooltip(fate);
     }
 
     private void DrawRing(FateContext fate)
@@ -46,10 +58,10 @@ public class FateMapComponent : IMapComponent
                 var drawPosition = MapRenderer.GetImGuiWindowDrawPosition(position);
 
                 var radius = fate.Radius * MapRenderer.Viewport.Scale;
-                var fatePink = ImGui.GetColorU32(Colors.FatePink);
+                var color = ImGui.GetColorU32(Settings.Color.Value);
                 
-                ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, fatePink);
-                ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, fatePink, 35, 4);
+                ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, color);
+                ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 35, 4);
                 break;
         }
     }

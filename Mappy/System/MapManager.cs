@@ -117,10 +117,6 @@ public unsafe class MapManager : IDisposable
             MapRenderer.SetViewportCenter(newCenter);
             MapRenderer.SetViewportZoom(0.4f);
         }
-        else if (PlayerInCurrentMap)
-        {
-            CenterOnPlayer();
-        }
     }
     
     public static void CenterOnPlayer()

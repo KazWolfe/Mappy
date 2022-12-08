@@ -32,6 +32,10 @@ public class FateStrings
     public string Level => Loc.Localize("Fate_Level", "Lv.");
     public string TimeRemaining => Loc.Localize("Fate_TimeRemaining", "Time Remaining");
     public string Progress => Loc.Localize("Fate_Progress", "Progress");
+    public string ShowRing => Loc.Localize("Fate_ShowRing", "Show Ring");
+    public string ShowTooltip => Loc.Localize("Fate_ShowTooltip", "Show Tooltip");
+    public string ShowIcon => Loc.Localize("Fate_ShowIcon", "Show Icon");
+    public string Color => Loc.Localize("Fate_Color", "Circle Color");
 }
 
 public class GatheringStrings

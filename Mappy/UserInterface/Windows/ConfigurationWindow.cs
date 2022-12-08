@@ -17,6 +17,7 @@ public class ConfigurationWindow : Window
         new GeneralOptions(),
         new PlayerOptions(),
         new AllianceMemberOptions(),
+        new FateOptions(),
     };
 
     public ConfigurationWindow() : base("Mappy Configuration")
