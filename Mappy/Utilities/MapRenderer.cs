@@ -33,6 +33,24 @@ public static class MapRenderer
             ImGui.Image(iconTexture.ImGuiHandle, iconSize);
         }
     }
+
+    public static void DrawIcon(TextureWrap? iconTexture, GameObject gameObject)
+    {
+        DrawIcon(iconTexture, Service.MapManager.GetObjectPosition(gameObject));
+    }
+
+    public static void DrawIcon(uint iconId, Vector2 position)
+    {
+        DrawIcon(Service.Cache.IconCache.GetIconTexture(iconId), position);
+    }
+
+    public static void DrawIcon(uint iconId, GameObject gameObject)
+    {
+        var icon = Service.Cache.IconCache.GetIconTexture(iconId);
+        var position = Service.MapManager.GetObjectPosition(gameObject);
+        
+        DrawIcon(icon, position);
+    }
     
     public static void DrawImageRotated(TextureWrap? texture, GameObject gameObject, float iconScale = 0.5f)
     {
@@ -58,6 +76,13 @@ public static class MapRenderer
             var windowDrawList = ImGui.GetWindowDrawList();
             windowDrawList.AddImageQuad(texture.ImGuiHandle, vectors[0], vectors[1], vectors[2], vectors[3]);
         }
+    }
+    
+    public static void DrawTooltip(string text, Vector4 color)
+    {
+        if (!ImGui.IsItemHovered()) return;
+        
+        Draw.DrawTooltip(text, color);
     }
 
     private static float GetObjectRotation(GameObject gameObject)

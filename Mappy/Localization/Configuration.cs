@@ -9,9 +9,8 @@ public static partial class Strings
 
 public class ConfigurationStrings
 {
-    public string Label => Loc.Localize("Configuration_Label", "Configuration");
+    public string Label => Loc.Localize("Configuration_Label", "General Configuration");
     public string GeneralSettings => Loc.Localize("Configuration_GeneralSettings", "General Settings");
-    public string FollowPlayer => Loc.Localize("Configuration_FollowPlayer", "Follow Player");
     public string LockWindow => Loc.Localize("Configuration_LockWindow", "Lock Window Position");
     public string HideWindowFrame => Loc.Localize("Configuration_HideWindowFrame", "Hide Window Frame");
     public string HideInDuties => Loc.Localize("Configuration_HideInDuties", "Hide In Duties");
@@ -19,4 +18,11 @@ public class ConfigurationStrings
     public string FadePercent => Loc.Localize("Configuration_FadePercent", "Fade Percent");
     public string KeepOpen => Loc.Localize("Configuration_KeepOpen", "Keep Open");
     public string AlwaysShowToolbar => Loc.Localize("Configuration_AlwaysShowToolbar", "Always Show Toolbar");
+    public string ModuleNotSelected => Loc.Localize("Configuration_ModuleNotSelected", "Select an item to configure in the left pane");
+    public string FeatureToggles => Loc.Localize("Configuration_FeatureToggles", "Feature Toggles");
+    public string ColorOptions => Loc.Localize("Configuration_ColorOptions", "Color Options");
+    public string Adjustments => Loc.Localize("Configuration_Adjustments", "Adjustments");
+    public string IconSelect => Loc.Localize("Configuration_IconSelect", "Icon Selection");
+    public string Reset => Loc.Localize("Configuration_Reset", "Reset to Default");
+    public string Default => Loc.Localize("Configuration_Default", "Default");
 }

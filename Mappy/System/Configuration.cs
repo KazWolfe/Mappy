@@ -2,6 +2,7 @@
 using Dalamud.Configuration;
 using Dalamud.Plugin;
 using Mappy.DataModels;
+using Mappy.MapComponents;
 
 namespace Mappy.System;
 
@@ -18,6 +19,8 @@ public class Configuration : IPluginConfiguration
     public Setting<bool> HideInDuties = new(true);
     public Setting<float> FadePercent = new(0.6f);
     public Setting<bool> AlwaysShowToolbar = new(false);
+
+    public PlayerMapComponentSettings PlayerSettings = new();
     
     [NonSerialized]
     private DalamudPluginInterface? pluginInterface;

@@ -5,6 +5,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using ImGuiNET;
 using Mappy.DataModels;
+using Mappy.Localization;
 
 namespace Mappy.UserInterface.Components;
 
@@ -113,10 +114,39 @@ public abstract class DrawList<T>
     {
         DrawActions.Add(() =>
         {
-            if (ImGui.ColorEdit4(label, ref setting.Value, ImGuiColorEditFlags.NoInputs))
+            if (ImGui.ColorEdit4(label, ref setting.Value, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaPreviewHalf))
             {
                 Service.Configuration.Save();
             }
+        });
+
+        return DrawListOwner;
+    }
+    
+    public T AddConfigColor(string label, Setting<Vector4> setting, Vector4 defaultValue)
+    {
+        DrawActions.Add(() =>
+        {
+            ImGui.PushID(label);
+            
+            if (ImGui.ColorEdit4($"##{label}", ref setting.Value, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaPreviewHalf))
+            {
+                Service.Configuration.Save();
+            }
+            
+            ImGui.SameLine();
+            ImGui.BeginDisabled(setting.Value == defaultValue);
+            if (ImGui.Button(Strings.Configuration.Default))
+            {
+                setting.Value = defaultValue;
+                Service.Configuration.Save();
+            }
+            ImGui.EndDisabled();
+            
+            ImGui.SameLine();
+            ImGui.TextUnformatted(label);
+            
+            ImGui.PopID();
         });
 
         return DrawListOwner;
@@ -135,7 +165,7 @@ public abstract class DrawList<T>
                 ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
             }
 
-            ImGui.DragFloat(label, ref setting.Value, 0.01f, minValue, maxValue, "%.2f");
+            ImGui.DragFloat(label, ref setting.Value, 0.01f * maxValue, minValue, maxValue, "%.2f");
             if (ImGui.IsItemDeactivatedAfterEdit())
             {
                 Service.Configuration.Save();

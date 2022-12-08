@@ -1,42 +1,42 @@
-﻿using System.Numerics;
-using Dalamud.Interface;
+﻿using System.Collections.Generic;
+using System.Numerics;
 using Dalamud.Interface.Windowing;
-using Mappy.Localization;
+using Mappy.Interfaces;
 using Mappy.UserInterface.Components;
+using Mappy.UserInterface.Windows.ConfigurationComponents;
 
 namespace Mappy.UserInterface.Windows;
 
 public class ConfigurationWindow : Window
 {
+    private readonly SelectionFrame selectionFrame;
+    private readonly ConfigurationFrame configurationFrame;
+
+    private readonly List<ISelectable> selectables = new()
+    {
+        new GeneralOptions(),
+        new PlayerOptions(),
+        
+    };
+
     public ConfigurationWindow() : base("Mappy Configuration")
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(350,350),
-            MaximumSize = new Vector2(350,350)
+            MinimumSize = new Vector2(550, 300),
+            MaximumSize = new Vector2(9999,9999)
         };
 
+        selectionFrame = new SelectionFrame(selectables, 0.30f);
+        configurationFrame = new ConfigurationFrame();
+        
         IsOpen = true;
     }
 
     public override void Draw()
     {
-        InfoBox.Instance
-            .AddTitle(Strings.Configuration.GeneralSettings)
-            .AddConfigCheckbox(Strings.Configuration.KeepOpen, Service.Configuration.KeepOpen)
-            .AddConfigCheckbox(Strings.Configuration.FollowPlayer, Service.Configuration.FollowPlayer)
-            .AddConfigCheckbox(Strings.Configuration.LockWindow, Service.Configuration.LockWindow)
-            .AddConfigCheckbox(Strings.Configuration.HideWindowFrame, Service.Configuration.HideWindowFrame)
-            .AddConfigCheckbox(Strings.Configuration.HideInDuties, Service.Configuration.HideInDuties)
-            .AddConfigCheckbox(Strings.Configuration.AlwaysShowToolbar, Service.Configuration.AlwaysShowToolbar)
-            .AddConfigCheckbox(Strings.Configuration.FadeWhenUnfocused, Service.Configuration.FadeWhenUnfocused)
-            .AddDragFloat(Strings.Configuration.FadePercent, Service.Configuration.FadePercent, 0.0f, 1.0f, 150.0f * ImGuiHelpers.GlobalScale)
-            .Draw();
+        selectionFrame.Draw();
 
-        // Handle settings that aren't compatible with each other
-        if (Service.Configuration.HideWindowFrame.Value)
-        {
-            Service.Configuration.LockWindow.Value = true;
-        }
+        configurationFrame.Draw(selectionFrame.Selected);
     }
 }

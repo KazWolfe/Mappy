@@ -42,7 +42,9 @@ public unsafe class MapManager : IDisposable
     public uint PlayerLocationMapID => MapAgent->CurrentMapId;
 
     public bool LoadingNextMap { get; private set; }
+
     private uint loadedMapId;
+
     private uint lastMapId;
 
     public List<IMapComponent> MapComponents { get; } = new()
@@ -50,6 +52,8 @@ public unsafe class MapManager : IDisposable
         new MapMarkersMapComponent(),
         new GatheringPointMapComponent(),
         new FateMapComponent(),
+        new AllianceMemberMapComponent(),
+        new PetMapComponent(),
         new PartyMapComponent(),
         new WaymarkMapComponent(),
         
