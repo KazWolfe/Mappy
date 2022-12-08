@@ -9,7 +9,7 @@ namespace Mappy.UserInterface.Components;
 
 public class ConfigurationFrame
 {
-    public void Draw(ISelectable? selected)
+    public void Draw(IModuleSettings? selected)
     {
         DrawVerticalLine();
         ImGuiHelpers.ScaledDummy(0.0f);

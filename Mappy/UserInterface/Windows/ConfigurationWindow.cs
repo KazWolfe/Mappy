@@ -13,14 +13,17 @@ public class ConfigurationWindow : Window
     private readonly SelectionFrame selectionFrame;
     private readonly ConfigurationFrame configurationFrame;
 
-    private readonly List<ISelectable> selectables = new()
+    private readonly List<IModuleSettings> selectables = new()
     {
         new GeneralOptions(),
         new PlayerOptions(),
-        new AllianceMemberOptions(),
-        new FateOptions(),
-        new GatheringPointOptions(),
         new MapMarkerOptions(),
+        new PartyMemberOptions(),
+        new AllianceMemberOptions(),
+        new PetOptions(),
+        new WaymarkOptions(),
+        new GatheringPointOptions(),
+        new FateOptions(),
     };
 
     public ConfigurationWindow() : base("Mappy Configuration")

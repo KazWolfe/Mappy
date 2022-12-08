@@ -6,7 +6,7 @@ using Mappy.UserInterface.Components;
 
 namespace Mappy.UserInterface.Windows.ConfigurationComponents;
 
-public class GeneralOptions : ISelectable
+public class GeneralOptions : IModuleSettings
 {
     public ComponentName ComponentName => ComponentName.General;
 

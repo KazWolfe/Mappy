@@ -8,12 +8,11 @@ using Mappy.Utilities;
 
 namespace Mappy.UserInterface.Windows.ConfigurationComponents;
 
-public class GatheringPointOptions : IModuleSettings
+public class PartyMemberOptions : IModuleSettings
 {
-    private static GatheringPointSettings Settings => Service.Configuration.GatheringPoints;
-    
-    public ComponentName ComponentName => ComponentName.GatheringPoint;
-    
+    private static PartyMemberSettings Settings => Service.Configuration.PartyMembers;
+
+    public ComponentName ComponentName => ComponentName.PartyMember;
     public void Draw()
     {
         InfoBox.Instance
@@ -26,7 +25,7 @@ public class GatheringPointOptions : IModuleSettings
         
         InfoBox.Instance
             .AddTitle(Strings.Configuration.ColorOptions)
-            .AddConfigColor(Strings.Map.Generic.TooltipColor, Settings.TooltipColor, Colors.White)
+            .AddConfigColor(Strings.Map.Generic.TooltipColor, Settings.TooltipColor, Colors.Blue)
             .Draw();
         
         InfoBox.Instance

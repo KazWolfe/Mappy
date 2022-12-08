@@ -3,7 +3,7 @@ using Mappy.DataModels;
 
 namespace Mappy.Interfaces;
 
-public interface ISelectable
+public interface IModuleSettings
 {
     ComponentName ComponentName { get; }
 

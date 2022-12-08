@@ -25,6 +25,9 @@ public class Configuration : IPluginConfiguration
     public FateSettings FateSettings = new();
     public GatheringPointSettings GatheringPoints = new();
     public MapMarkersSettings MapMarkers = new();
+    public PartyMemberSettings PartyMembers = new();
+    public PetSettings Pet = new();
+    public WaymarkSettings Waymarks = new();
 
     [NonSerialized]
     private DalamudPluginInterface? pluginInterface;

@@ -1,14 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
+using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Utilities;
 
 namespace Mappy.MapComponents;
 
+public class PetSettings
+{
+    public Setting<bool> Enable = new(true);
+    public Setting<bool> ShowIcon = new(true);
+    public Setting<bool> ShowTooltip = new(true);
+    public Setting<float> IconScale = new(0.75f);
+    public Setting<Vector4> TooltipColor = new(Colors.Purple);
+}
+
 public class PetMapComponent : IMapComponent
 {
+    private static PetSettings Settings => Service.Configuration.Pet;
+    
     public void Update(uint mapID)
     {
         
@@ -16,6 +29,7 @@ public class PetMapComponent : IMapComponent
 
     public void Draw()
     {
+        if (!Settings.Enable.Value) return;
         if (!Service.MapManager.PlayerInCurrentMap) return;
 
         DrawPets();
@@ -43,8 +57,8 @@ public class PetMapComponent : IMapComponent
     {
         foreach (var obj in OwnedPets(ownerID))
         {
-            MapRenderer.DrawIcon(60961, obj);
-            MapRenderer.DrawTooltip(obj.Name.TextValue, Colors.Purple);
+            if(Settings.ShowIcon.Value) MapRenderer.DrawIcon(60961, obj, Settings.IconScale.Value);
+            if(Settings.ShowTooltip.Value) MapRenderer.DrawTooltip(obj.Name.TextValue, Settings.TooltipColor.Value);
         }
     }
     

@@ -54,7 +54,7 @@ public unsafe class MapManager : IDisposable
         new FateMapComponent(),
         new AllianceMemberMapComponent(),
         new PetMapComponent(),
-        new PartyMapComponent(),
+        new PartyMemberMapComponent(),
         new WaymarkMapComponent(),
         
         new PlayerMapComponent(), // Render the player last

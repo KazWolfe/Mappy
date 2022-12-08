@@ -12,7 +12,7 @@ namespace Mappy.MapComponents;
 
 public class MapMarkersSettings
 {
-    public Setting<bool> ShowIcons = new(true);
+    public Setting<bool> Enable = new(true);
     public List<Setting<IconSelection>> IconSettings = new();
     public Setting<float> IconScale = new(0.5f);
     public Setting<Vector4> StandardColor = new(Colors.White);
@@ -77,7 +77,7 @@ public class MapMarkersMapComponent : IMapComponent
 
     public void Draw()
     {
-        foreach (var marker in mapMarkers.TakeWhile(_ => !dataStale && Settings.ShowIcons.Value))
+        foreach (var marker in mapMarkers.TakeWhile(_ => !dataStale && Settings.Enable.Value))
         {
             if (GetSettingForIconID(marker.IconId) is null or {Enabled: true})
             {

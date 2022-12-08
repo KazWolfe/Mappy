@@ -1,13 +1,22 @@
 ﻿using System;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Utilities;
 
 namespace Mappy.MapComponents;
 
+public class WaymarkSettings
+{
+    public Setting<bool> Enable = new(true);
+    public Setting<float> IconScale = new(0.5f);
+}
+
 public class WaymarkMapComponent : IMapComponent
 {
+    private static WaymarkSettings Settings => Service.Configuration.Waymarks;
+    
     public void Update(uint mapID)
     {
         
@@ -15,6 +24,7 @@ public class WaymarkMapComponent : IMapComponent
 
     public unsafe void Draw()
     {
+        if (!Settings.Enable.Value) return;
         if (!Service.MapManager.PlayerInCurrentMap) return;
 
         var fieldMarkers = MarkingController.Instance()->FieldMarkerSpan;
@@ -24,9 +34,8 @@ public class WaymarkMapComponent : IMapComponent
             if (fieldMarkers[index] is { Active: true } marker)
             {
                 var position = Service.MapManager.GetObjectPosition(marker.Position);
-                var icon = Service.Cache.IconCache.GetIconTexture(GetIconForMarkerIndex(index));
                     
-                MapRenderer.DrawIcon(icon, position);
+                MapRenderer.DrawIcon(GetIconForMarkerIndex(index), position, Settings.IconScale.Value);
             }
         }
     }

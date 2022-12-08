@@ -15,7 +15,7 @@ public class AllianceMemberSettings
     public Setting<bool> Enable = new(true);
     public Setting<bool> ShowIcon = new(true);
     public Setting<bool> ShowTooltip = new(true);
-    public Setting<uint> SelectedIcon = new((uint) AllianceMarkers.Green);
+    public Setting<uint> SelectedIcon = new(60358);
     public Setting<float> IconScale = new(0.50f);
     public Setting<Vector4> TooltipColor = new(Colors.ForestGreen);
 }

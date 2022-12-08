@@ -8,7 +8,7 @@ using Mappy.Utilities;
 
 namespace Mappy.UserInterface.Windows.ConfigurationComponents;
 
-public class FateOptions : ISelectable
+public class FateOptions : IModuleSettings
 {
     private static FateSettings Settings => Service.Configuration.FateSettings;
     
@@ -18,22 +18,22 @@ public class FateOptions : ISelectable
     {
         InfoBox.Instance
             .AddTitle(Strings.Configuration.FeatureToggles)
-            .AddConfigCheckbox(Strings.Map.Fate.Enable, Settings.Enable)
+            .AddConfigCheckbox(Strings.Map.Generic.Enable, Settings.Enable)
             .AddDummy(8.0f)
-            .AddConfigCheckbox(Strings.Map.Fate.ShowIcon, Settings.ShowIcon)
-            .AddConfigCheckbox(Strings.Map.Fate.ShowTooltip, Settings.ShowTooltip)
+            .AddConfigCheckbox(Strings.Map.Generic.ShowIcon, Settings.ShowIcon)
+            .AddConfigCheckbox(Strings.Map.Generic.ShowTooltip, Settings.ShowTooltip)
             .AddConfigCheckbox(Strings.Map.Fate.ShowRing, Settings.ShowRing)
             .Draw();
         
         InfoBox.Instance
             .AddTitle(Strings.Configuration.ColorOptions)
             .AddConfigColor(Strings.Map.Fate.Color, Settings.Color, Colors.FatePink)
-            .AddConfigColor(Strings.Map.Fate.TooltipColor, Settings.TooltipColor, Colors.White)
+            .AddConfigColor(Strings.Map.Generic.TooltipColor, Settings.TooltipColor, Colors.White)
             .Draw();
 
         InfoBox.Instance
             .AddTitle(Strings.Configuration.Adjustments)
-            .AddDragFloat(Strings.Map.Fate.IconScale, Settings.IconScale, 0.10f, 5.0f, InfoBox.Instance.InnerWidth / 2.0f)
+            .AddDragFloat(Strings.Map.Generic.IconScale, Settings.IconScale, 0.10f, 5.0f, InfoBox.Instance.InnerWidth / 2.0f)
             .AddButton(Strings.Configuration.Reset, () =>
             {
                 Settings.IconScale.Value = 0.50f;

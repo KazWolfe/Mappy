@@ -10,15 +10,15 @@ namespace Mappy.UserInterface.Components;
 
 internal class SelectionFrame : IDrawable
 {
-    public ISelectable? Selected { get; private set; }
-    private IEnumerable<ISelectable> Selectables { get; }
+    public IModuleSettings? Selected { get; private set; }
+    private IEnumerable<IModuleSettings> Selectables { get; }
     private readonly IDrawable? extraDrawable;
     private float Weight { get; }
     private readonly string pluginVersion;
 
-    public SelectionFrame(IEnumerable<ISelectable> selectables, float weight = 0.30f, IDrawable? extraDrawable = null)
+    public SelectionFrame(IEnumerable<IModuleSettings> selectables, float weight = 0.30f, IDrawable? extraDrawable = null)
     {
-        Selectables = new List<ISelectable>(selectables);
+        Selectables = new List<IModuleSettings>(selectables);
         Weight = weight;
         this.extraDrawable = extraDrawable;
 

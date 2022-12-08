@@ -8,7 +8,7 @@ using Mappy.Utilities;
 
 namespace Mappy.UserInterface.Windows.ConfigurationComponents;
 
-public class MapMarkerOptions : ISelectable
+public class MapMarkerOptions : IModuleSettings
 {
     private static MapMarkersSettings Settings => Service.Configuration.MapMarkers;
     
@@ -17,7 +17,7 @@ public class MapMarkerOptions : ISelectable
     {
         InfoBox.Instance
             .AddTitle(Strings.Configuration.FeatureToggles)
-            .AddConfigCheckbox(Strings.Map.Markers.Enable, Settings.ShowIcons)
+            .AddConfigCheckbox(Strings.Map.Generic.Enable, Settings.Enable)
             .Draw();
         
         InfoBox.Instance
@@ -31,7 +31,7 @@ public class MapMarkerOptions : ISelectable
         
         InfoBox.Instance
             .AddTitle(Strings.Configuration.Adjustments)
-            .AddDragFloat(Strings.Map.Markers.IconScale, Settings.IconScale, 0.10f, 5.0f, InfoBox.Instance.InnerWidth / 2.0f)
+            .AddDragFloat(Strings.Map.Generic.IconScale, Settings.IconScale, 0.10f, 5.0f, InfoBox.Instance.InnerWidth / 2.0f)
             .AddButton(Strings.Configuration.Reset, () =>
             {
                 Settings.IconScale.Value = 0.50f;
@@ -41,6 +41,8 @@ public class MapMarkerOptions : ISelectable
         
         InfoBox.Instance
             .AddTitle(Strings.Configuration.IconSelect)
+            .AddString(Strings.Map.Info)
+            .AddDummy(8.0f)
             .BeginFlexGrid()
             .MultiSelect(Settings.IconSettings)
             .EndFlexGrid()

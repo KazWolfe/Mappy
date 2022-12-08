@@ -8,7 +8,7 @@ using Mappy.Utilities;
 
 namespace Mappy.UserInterface.Windows.ConfigurationComponents;
 
-public class PlayerOptions : ISelectable
+public class PlayerOptions : IModuleSettings
 {
     private static PlayerMapComponentSettings Settings => Service.Configuration.PlayerSettings;
     
@@ -18,9 +18,9 @@ public class PlayerOptions : ISelectable
     {
         InfoBox.Instance
             .AddTitle(Strings.Configuration.FeatureToggles)
-            .AddConfigCheckbox(Strings.Map.Player.Enable, Settings.Enable)
+            .AddConfigCheckbox(Strings.Map.Generic.Enable, Settings.Enable)
             .AddDummy(8.0f)
-            .AddConfigCheckbox(Strings.Map.Player.ShowIcon, Settings.ShowIcon)
+            .AddConfigCheckbox(Strings.Map.Generic.ShowIcon, Settings.ShowIcon)
             .AddConfigCheckbox(Strings.Map.Player.ShowCone, Settings.ShowCone)
             .Draw();
         
@@ -32,7 +32,7 @@ public class PlayerOptions : ISelectable
         
         InfoBox.Instance
             .AddTitle(Strings.Configuration.Adjustments)
-            .AddDragFloat(Strings.Map.Player.IconScale, Settings.IconScale, 0.1f, 5.0f, InfoBox.Instance.InnerWidth / 2.0f)
+            .AddDragFloat(Strings.Map.Generic.IconScale, Settings.IconScale, 0.1f, 5.0f, InfoBox.Instance.InnerWidth / 2.0f)
             .AddDragFloat(Strings.Map.Player.ConeRadius, Settings.ConeRadius, 30.0f, 240f, InfoBox.Instance.InnerWidth / 2.0f)
             .AddDragFloat(Strings.Map.Player.ConeAngle, Settings.ConeAngle, 0.0f, 180.0f, InfoBox.Instance.InnerWidth / 2.0f)
             .AddDragFloat(Strings.Map.Player.ConeThickness, Settings.OutlineThickness, 0.5f, 10.0f, InfoBox.Instance.InnerWidth / 2.0f)
