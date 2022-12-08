@@ -13,7 +13,7 @@ namespace Mappy.MapComponents;
 public class MapMarkersSettings
 {
     public Setting<bool> Enable = new(true);
-    public List<Setting<IconSelection>> IconSettings = new();
+    public Dictionary<uint,Setting<IconSelection>> IconSettings = new();
     public Setting<float> IconScale = new(0.5f);
     public Setting<Vector4> StandardColor = new(Colors.White);
     public Setting<Vector4> MapLink = new(Colors.MapTextBrown);
@@ -42,7 +42,7 @@ public class MapMarkersMapComponent : IMapComponent
             {
                 if(mapIcon.Icon == 0) continue;
                 
-                Settings.IconSettings.Add(new Setting<IconSelection>(new IconSelection((uint)mapIcon.Icon, true)));
+                Settings.IconSettings.Add((uint)mapIcon.Icon, new Setting<IconSelection>(new IconSelection((uint)mapIcon.Icon, true)));
                 Service.Configuration.Save();
             }
         }
@@ -62,7 +62,7 @@ public class MapMarkersMapComponent : IMapComponent
                 if (newEntry is not null)
                 {
                     PluginLog.Warning($"Adding [{newEntry.PlaceName.Value?.Name ?? "Unknown Name"}] [IconID: {newEntry.Icon}");
-                    Settings.IconSettings.Add(new Setting<IconSelection>(new IconSelection((uint)newEntry.Icon, true)));
+                    Settings.IconSettings.Add((uint)newEntry.Icon, new Setting<IconSelection>(new IconSelection((uint)newEntry.Icon, true)));
                     Service.Configuration.Save();
                 }
             }
@@ -79,7 +79,14 @@ public class MapMarkersMapComponent : IMapComponent
     {
         foreach (var marker in mapMarkers.TakeWhile(_ => !dataStale && Settings.Enable.Value))
         {
-            if (GetSettingForIconID(marker.IconId) is null or {Enabled: true})
+            if (Settings.IconSettings.TryGetValue(marker.IconId, out var settings))
+            {
+                if (settings.Value.Enabled)
+                {
+                    marker.Draw();
+                }
+            }
+            else
             {
                 marker.Draw();
             }
@@ -110,12 +117,5 @@ public class MapMarkersMapComponent : IMapComponent
                         $"Marker Count: {mapMarkers.Count}");
 
         dataStale = false;
-    }
-
-    private IconSelection? GetSettingForIconID(uint id)
-    {
-        var settingValues = Settings.IconSettings.Select(setting => setting.Value);
-
-        return settingValues.FirstOrDefault(values => values.IconID == id);
     }
 }
