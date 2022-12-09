@@ -14,6 +14,7 @@ public enum ComponentName
     Player,
     Waymark,
     General,
+    TemporaryMarker,
 }
 
 public static class ComponentNameExtensions
@@ -31,6 +32,7 @@ public static class ComponentNameExtensions
             ComponentName.Player => Strings.Map.Player.Label,
             ComponentName.Waymark => Strings.Map.Waymarks.Label,
             ComponentName.General => Strings.Configuration.Label,
+            ComponentName.TemporaryMarker => Strings.Map.TemporaryMarkers.Label,
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
         };
     }

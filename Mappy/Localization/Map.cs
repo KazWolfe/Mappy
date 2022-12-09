@@ -34,6 +34,7 @@ public class MapStrings
     public AllianceMemberStrings AllianceMembers { get; } = new();
     public PlayerStrings Player { get; } = new();
     public WaymarkStrings Waymarks { get; } = new();
+    public TemporaryMarkerStrings TemporaryMarkers { get; } = new();
 }
 
 public class Generic
@@ -101,4 +102,13 @@ public class PlayerStrings
 public class WaymarkStrings
 {
     public string Label => Loc.Localize("Waymark_Label", "Waymarks");
+}
+
+public class TemporaryMarkerStrings
+{
+    public string Label => Loc.Localize("TemporaryMarker_Label", "Temporary Markers");
+    public string About => Loc.Localize("TemporaryMarker_About", "This module controls the flag map marker\nand the gathering area marker");
+    public string GatheringColor => Loc.Localize("TemporaryMarker_GatheringRingColor", "Gathering Ring Color");
+    public string FlagScale => Loc.Localize("TemporaryMarker_FlagScale", "Flag Scale");
+    public string GatheringAreaScale => Loc.Localize("TemporaryMarker_GatheringAreaScale", "Gathering Area Scale");
 }

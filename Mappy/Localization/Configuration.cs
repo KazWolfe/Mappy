@@ -25,6 +25,7 @@ public class ConfigurationStrings
     public string IconSelect => Loc.Localize("Configuration_IconSelect", "Icon Selection");
     public string Reset => Loc.Localize("Configuration_Reset", "Reset to Default");
     public string Default => Loc.Localize("Configuration_Default", "Default");
+    public string Info => Loc.Localize("Configuration_Info", "Info");
     public string SelectedIcon => Loc.Localize("Configuration_SelectedIcon", "Selected Icon");
     public string RenderAboveGameUI => Loc.Localize("Generic_RenderAboveGameUI", "Displaying Above Game UI");
     public string RenderAboveGameUIHelp => Loc.Localize("Generic_RenderAboveGameUIHelp", "It is not possible to display Mappy's visual components below the game's user interface.");

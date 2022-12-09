@@ -30,6 +30,7 @@ public class Configuration : IPluginConfiguration
     public PartyMemberSettings PartyMembers = new();
     public PetSettings Pet = new();
     public WaymarkSettings Waymarks = new();
+    public TemporaryMarkerSettings TemporaryMarkers = new();
 
     [NonSerialized]
     private DalamudPluginInterface? pluginInterface;

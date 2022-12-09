@@ -23,6 +23,7 @@ public class ConfigurationWindow : Window
         new PetOptions(),
         new WaymarkOptions(),
         new GatheringPointOptions(),
+        new TemporaryMarkerOptions(),
         new FateOptions(),
     };
 

@@ -4,11 +4,20 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Logging;
 using ImGuiNET;
+using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Localization;
 using Mappy.Utilities;
 
 namespace Mappy.MapComponents;
+
+public class TemporaryMarkerSettings
+{
+    public Setting<float> FlagScale = new(0.5f);
+    public Setting<float> GatheringScale = new(0.5f);
+    public Setting<Vector4> GatheringColor = new(Colors.Blue with {W = 0.33f});
+    public Setting<Vector4> TooltipColor = new(Colors.White);
+}
 
 public enum MarkerType
 {
@@ -24,7 +33,6 @@ public class TemporaryMarker
     public uint IconID { get; set; } = 0;
     public Vector2 Position { get; set; } = Vector2.Zero;
     public float Radius { get; set; } = 0.0f;
-    public float Scale { get; set; } = 0.5f;
     public string TooltipText { get; set; } = string.Empty;
 
     public Vector2 AdjustedPosition => Service.MapManager.GetTextureOffsetPosition(Position);
@@ -32,6 +40,8 @@ public class TemporaryMarker
 
 public class TemporaryMarkersMapComponent : IMapComponent
 {
+    private static TemporaryMarkerSettings Settings => Service.Configuration.TemporaryMarkers;
+    
     private static readonly List<TemporaryMarker> TemporaryMarkers = new();
     private static readonly List<TemporaryMarker> StaleMarkers = new();
     public static TemporaryMarker? TempMarker;
@@ -82,7 +92,7 @@ public class TemporaryMarkersMapComponent : IMapComponent
         if (!ImGui.IsItemHovered()) return;
         
         ImGui.BeginTooltip();
-        ImGui.TextColored(Colors.White, marker.TooltipText);
+        ImGui.TextColored(Settings.TooltipColor.Value, marker.TooltipText);
         ImGui.EndTooltip();
     }
     
@@ -91,12 +101,12 @@ public class TemporaryMarkersMapComponent : IMapComponent
         switch (marker.Type)
         {
             case MarkerType.Flag:
-                MapRenderer.DrawIcon(marker.IconID, marker.AdjustedPosition, marker.Scale);
+                MapRenderer.DrawIcon(marker.IconID, marker.AdjustedPosition, Settings.FlagScale.Value);
                 break;
             
             case MarkerType.Gathering:
                 DrawRing(marker);
-                MapRenderer.DrawIcon(marker.IconID, marker.AdjustedPosition, marker.Scale);
+                MapRenderer.DrawIcon(marker.IconID, marker.AdjustedPosition, Settings.GatheringScale.Value);
                 break;
         }
     }
@@ -114,7 +124,7 @@ public class TemporaryMarkersMapComponent : IMapComponent
         var drawPosition = MapRenderer.GetImGuiWindowDrawPosition(marker.AdjustedPosition);
 
         var radius = marker.Radius * MapRenderer.Viewport.Scale;
-        var color = ImGui.GetColorU32(Colors.Blue with { W = 0.33f });
+        var color = ImGui.GetColorU32(Settings.GatheringColor.Value);
         
         ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, color);
         ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 35, 4);
