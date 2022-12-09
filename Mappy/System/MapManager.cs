@@ -138,15 +138,18 @@ public unsafe class MapManager : IDisposable
             }
         }
     }
-    
-    public static void CenterOnPlayer()
+
+    public static void MoveMapToPlayer()
     {
         if (!Service.MapManager.PlayerInCurrentMap)
         {
             Service.MapManager.LoadMap(Service.MapManager.PlayerLocationMapID);
         }
-            
-        if (Service.ClientState.LocalPlayer is { } player)
+    }
+    
+    public static void CenterOnPlayer()
+    {
+        if (Service.ClientState.LocalPlayer is { } player && Service.MapManager.PlayerInCurrentMap)
         {
             MapRenderer.SetViewportCenter(Service.MapManager.GetObjectPosition(player));
         }

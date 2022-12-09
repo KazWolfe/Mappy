@@ -74,6 +74,7 @@ public class MapToolbar
         if (followPlayer) ImGui.PushStyleColor(ImGuiCol.Button, Colors.Red);
         if (ImGui.Button(FontAwesomeIcon.MapMarkerAlt.ToIconString(), ImGuiHelpers.ScaledVector2(23.0f)))
         {
+            MapManager.MoveMapToPlayer();
             Service.Configuration.FollowPlayer.Value = !Service.Configuration.FollowPlayer.Value;
             Service.Configuration.Save();
         }
@@ -96,6 +97,7 @@ public class MapToolbar
 
         if (ImGui.Button(FontAwesomeIcon.Crosshairs.ToIconString(), ImGuiHelpers.ScaledVector2(23.0f)))
         {
+            MapManager.MoveMapToPlayer();
             MapManager.CenterOnPlayer();
         }
 
