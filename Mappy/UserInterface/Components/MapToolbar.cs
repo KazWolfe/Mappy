@@ -32,6 +32,8 @@ public class MapToolbar
                 MapSelect.DrawWidget();
                 ImGui.SameLine();
                 DrawConfigurationButton();
+                ImGui.SameLine();
+                DrawLockUnlockWidget();
             }
             ImGui.EndChild();
             ImGui.PopStyleColor();
@@ -126,6 +128,49 @@ public class MapToolbar
         if (ImGui.IsItemHovered())
         {
             Utilities.Draw.DrawTooltip(Strings.Map.Settings, Colors.White);
+        }
+        
+        ImGui.PopID();
+    }
+    
+    
+    private void DrawLockUnlockWidget()
+    {
+        ImGui.PushID("LockUnlockWidget");
+
+        if (Service.Configuration.HideWindowFrame.Value)
+        {
+            ImGui.PushFont(UiBuilder.IconFont);
+            ImGui.PushID("OpenLock");
+            if (ImGui.Button(FontAwesomeIcon.Unlock.ToIconString(), ImGuiHelpers.ScaledVector2(25.0f, 23.0f)))
+            {
+                Service.Configuration.HideWindowFrame.Value = false;
+                Service.Configuration.Save();
+            }
+            ImGui.PopFont();
+            
+            if (ImGui.IsItemHovered())
+            {
+                Utilities.Draw.DrawTooltip(Strings.Configuration.ShowAndUnlock, Colors.White);
+            }
+            ImGui.PopID();
+        }
+        else
+        {
+            ImGui.PushFont(UiBuilder.IconFont);
+            ImGui.PushID("ClosedLock");
+            if (ImGui.Button(FontAwesomeIcon.Lock.ToIconString(), ImGuiHelpers.ScaledVector2(25.0f, 23.0f)))
+            {
+                Service.Configuration.HideWindowFrame.Value = true;
+                Service.Configuration.Save();
+            }
+            ImGui.PopFont();
+            
+            if (ImGui.IsItemHovered())
+            {
+                Utilities.Draw.DrawTooltip(Strings.Configuration.HideAndLock, Colors.White);
+            }
+            ImGui.PopID();
         }
         
         ImGui.PopID();

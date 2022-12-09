@@ -32,4 +32,6 @@ public class ConfigurationStrings
     public string EnableIntegrations => Loc.Localize("Configuration_EnableIntegrations", "Enable Integrations");
     public string IntegrationsHelp => Loc.Localize("Configuration_IntegrationsHelp", "Replaces all of the games normal map functions with Mappy functions instead.");
     public string HideBetweenAreas => Loc.Localize("Configuration_HideBetweenAreas", "Hide Between Areas");
+    public string ShowAndUnlock => Loc.Localize("Configuration_ShowAndUnlock", "Show window frame\nUnlock window position");
+    public string HideAndLock => Loc.Localize("Configuration_HideAndLock", "Hide window frame\nLock window position");
 }
