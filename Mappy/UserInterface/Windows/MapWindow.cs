@@ -3,7 +3,6 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using Mappy.System;
 using Mappy.UserInterface.Components;
 using Mappy.Utilities;
 using Condition = Mappy.Utilities.Condition;
