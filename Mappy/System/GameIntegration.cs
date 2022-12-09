@@ -120,8 +120,7 @@ public unsafe class GameIntegration : IDisposable
                 {
                     stagedMarker.MapID = mapInfo->MapId;
                     
-                    var position = Service.MapManager.GetObjectPosition(stagedMarker.Position);
-                    MapRenderer.SetViewportCenter(position);
+                    MapRenderer.SetViewportCenter(stagedMarker.AdjustedPosition);
                     MapRenderer.SetViewportZoom(0.8f);
                 
                     TemporaryMarkersMapComponent.AddMarker(stagedMarker);

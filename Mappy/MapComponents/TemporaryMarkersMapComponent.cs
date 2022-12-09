@@ -27,7 +27,7 @@ public class TemporaryMarker
     public float Scale { get; set; } = 0.5f;
     public string TooltipText { get; set; } = string.Empty;
 
-    public Vector2 AdjustedPosition => Service.MapManager.GetObjectPosition(Position);
+    public Vector2 AdjustedPosition => Service.MapManager.GetTextureOffsetPosition(Position);
 }
 
 public class TemporaryMarkersMapComponent : IMapComponent
@@ -111,8 +111,7 @@ public class TemporaryMarkersMapComponent : IMapComponent
 
     private void DrawRing(TemporaryMarker marker)
     {
-        var position = Service.MapManager.GetObjectPosition(marker.Position);
-        var drawPosition = MapRenderer.GetImGuiWindowDrawPosition(position);
+        var drawPosition = MapRenderer.GetImGuiWindowDrawPosition(marker.AdjustedPosition);
 
         var radius = marker.Radius * MapRenderer.Viewport.Scale;
         var color = ImGui.GetColorU32(Colors.Blue with { W = 0.33f });
