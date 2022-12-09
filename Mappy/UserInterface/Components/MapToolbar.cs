@@ -145,6 +145,7 @@ public class MapToolbar
             if (ImGui.Button(FontAwesomeIcon.Unlock.ToIconString(), ImGuiHelpers.ScaledVector2(25.0f, 23.0f)))
             {
                 Service.Configuration.HideWindowFrame.Value = false;
+                Service.Configuration.LockWindow.Value = false;
                 Service.Configuration.Save();
             }
             ImGui.PopFont();
@@ -162,6 +163,7 @@ public class MapToolbar
             if (ImGui.Button(FontAwesomeIcon.Lock.ToIconString(), ImGuiHelpers.ScaledVector2(25.0f, 23.0f)))
             {
                 Service.Configuration.HideWindowFrame.Value = true;
+                Service.Configuration.LockWindow.Value = true;
                 Service.Configuration.Save();
             }
             ImGui.PopFont();
