@@ -106,6 +106,8 @@ public unsafe class MapManager : IDisposable
 
     public void LoadMap(uint mapId)
     {
+        if (LoadedMapId == mapId) return;
+        
         PluginLog.Debug($"Loading Map: {mapId}");
         
         Service.Configuration.FollowPlayer.Value = false;
