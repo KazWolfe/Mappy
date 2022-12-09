@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
-using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Localization;
-using Mappy.UserInterface.Windows;
 using Mappy.Utilities;
 using ClientStructGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
-using GatheringPoint = Lumina.Excel.GeneratedSheets.GatheringPoint;
 
 namespace Mappy.MapComponents;
 
@@ -71,7 +66,7 @@ public class GatheringPointMapComponent : IMapComponent
     private unsafe bool IsTargetable(GameObject gameObject)
     {
         if (gameObject.Address == IntPtr.Zero) return false;
-        
+
         var csObject = (ClientStructGameObject*)gameObject.Address;
         return csObject->GetIsTargetable();
     }
