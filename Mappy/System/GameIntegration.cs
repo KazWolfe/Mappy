@@ -27,7 +27,7 @@ public unsafe class GameIntegration : IDisposable
     private delegate void SetGatheringMarkerDelegate(AgentInterface* agent, uint styleFlags, int mapX, int mapY, uint iconID, int radius, Utf8String* tooltip);
     private readonly Hook<SetGatheringMarkerDelegate>? setGatheringMarkerHook;
     
-    private delegate void ShowMapDelegate(AgentInterface* agent, byte a2, byte a3);
+    private delegate void ShowMapDelegate();
     [Signature("E8 ?? ?? ?? ?? 40 B6 01 C7 44 24 ?? ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8B CF E8 ?? ?? ?? ?? 84 C0 74 15", DetourName = nameof(OnShowHook))]
     private readonly Hook<ShowMapDelegate>? showHook = null;
 
@@ -142,7 +142,7 @@ public unsafe class GameIntegration : IDisposable
         }
     }
     
-    private void OnShowHook(AgentInterface* agent, byte a2, byte a3)
+    private void OnShowHook()
     {
         try
         {
