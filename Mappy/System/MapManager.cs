@@ -97,20 +97,13 @@ public unsafe class MapManager : IDisposable
 
     public Vector2 GetObjectPosition(Vector2 position)
     {
-        if (Map is not null)
-        {
-            return position * Map.SizeFactor / 100.0f
-                   - new Vector2(Map.OffsetX, Map.OffsetY) * Map.SizeFactor / 100.0f
-                   + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
-        }
-        else
-        {
-            return position * MapAgent->CurrentMapSizeFactorFloat
-                   - new Vector2(MapAgent->CurrentOffsetX, MapAgent->CurrentOffsetY) * MapAgent->CurrentMapSizeFactorFloat
-                   + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
-        }
+        return position * MapAgent->CurrentMapSizeFactorFloat
+               - new Vector2(MapAgent->CurrentOffsetX, MapAgent->CurrentOffsetY) * MapAgent->CurrentMapSizeFactorFloat
+               + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
     }
-    
+
+    public Vector2 GetTextureOffsetPosition(Vector2 coordinates) => coordinates + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
+
     public void LoadMap(uint mapId)
     {
         PluginLog.Debug($"Loading Map: {mapId}");
