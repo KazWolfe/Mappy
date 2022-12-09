@@ -48,8 +48,8 @@ public class AboutWindow : Window
             .AddTitle("Support")
             .AddString("If you would like to help me out, \nI have setup a Ko-Fi to support my projects")
             .AddString("Even if you choose not to donate, know that I genuinely appreciate that you are enjoying using what I have put my heart into creating for you. <3")
-            .AddAction(() => ImGuiHelpers.ScaledDummy(10.0f))
-            .AddButton("Support me on Ko-Fi", () => Process.Start(new ProcessStartInfo {FileName = "https://ko-fi.com/midorikami", UseShellExecute = true}), ImGuiHelpers.ScaledVector2(InfoBox.Instance.InnerWidth, 27.0f))
+            .AddDummy(10.0f)
+            .AddButton("Support me on Ko-Fi", () => Process.Start(new ProcessStartInfo {FileName = "https://ko-fi.com/midorikami", UseShellExecute = true}), new Vector2(InfoBox.Instance.InnerWidth, 27.0f * ImGuiHelpers.GlobalScale))
             .Draw();
         
         ImGui.PopStyleColor(3);
@@ -59,7 +59,7 @@ public class AboutWindow : Window
     {
         var windowSize = ImGui.GetWindowSize();
 
-        var position = windowSize - ImGuiHelpers.ScaledVector2(70.0f, 50.0f);
+        var position = windowSize - ImGuiHelpers.ScaledVector2(60.0f, 40.0f);
 
         ImGui.PushFont(UiBuilder.IconFont);
         ImGui.SetCursorPos(position);
@@ -68,9 +68,9 @@ public class AboutWindow : Window
 
         ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, Vector2.Zero);
         
-        if(ImGui.BeginChild("###InfoButtonChild", ImGuiHelpers.ScaledVector2(40.0f), false, ImGuiWindowFlags.NoScrollbar))
+        if(ImGui.BeginChild("###InfoButtonChild", ImGuiHelpers.ScaledVector2(30.0f), false, ImGuiWindowFlags.NoScrollbar))
         {
-            if (ImGui.Button(FontAwesomeIcon.InfoCircle.ToIconString(), ImGuiHelpers.ScaledVector2(40.0f)))
+            if (ImGui.Button(FontAwesomeIcon.InfoCircle.ToIconString(), ImGuiHelpers.ScaledVector2(30.0f)))
             {
                 if (Service.WindowManager.GetWindowOfType<AboutWindow>(out var window))
                 {
