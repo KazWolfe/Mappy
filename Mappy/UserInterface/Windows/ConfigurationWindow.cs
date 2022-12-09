@@ -36,8 +36,6 @@ public class ConfigurationWindow : Window
 
         selectionFrame = new SelectionFrame(selectables);
         configurationFrame = new ConfigurationFrame();
-        
-        IsOpen = true;
     }
 
     public override void Draw()
