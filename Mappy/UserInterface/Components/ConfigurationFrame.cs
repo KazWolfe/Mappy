@@ -17,7 +17,7 @@ public class ConfigurationFrame
 
         var regionAvailable = ImGui.GetContentRegionAvail();
 
-        if (ImGui.BeginChild("###ConfigurationFrame", new Vector2(regionAvailable.X, 0), false, ImGuiWindowFlags.AlwaysVerticalScrollbar))
+        if (ImGui.BeginChild("###ConfigurationFrame", regionAvailable with {Y = 0}, false, ImGuiWindowFlags.AlwaysVerticalScrollbar))
         {
             if (selected != null)
             {
