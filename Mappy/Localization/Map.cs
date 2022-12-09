@@ -22,6 +22,9 @@ public class MapStrings
                                                    "Icons with a red border are disabled.\n" +
                                                    "Click on an icon to enable/disable.");
 
+    public string RemoveFlag => Loc.Localize("Map_RemoveFlag", "Remove Flag");
+    public string RemoveGatheringArea => Loc.Localize("Map_RemoveGatheringArea", "Remove Gathering Area");
+
     public Generic Generic { get; } = new();
     public FateStrings Fate { get; } = new();
     public GatheringStrings Gathering { get; } = new();

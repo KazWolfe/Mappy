@@ -27,6 +27,7 @@ public sealed class MappyPlugin : IDalamudPlugin
         // Load Critical Managers
         Service.CommandManager = new CommandManager();
         Service.WindowManager = new WindowManager();
+        Service.GameIntegration = new GameIntegration();
     }
 
     public void Dispose()
@@ -37,5 +38,6 @@ public sealed class MappyPlugin : IDalamudPlugin
         Service.WindowManager.Dispose();
         Service.MapManager.Dispose();
         Service.Cache.Dispose();
+        Service.GameIntegration.Dispose();
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using Mappy.System;
 using Mappy.UserInterface.Components;
 using Mappy.Utilities;
 using Condition = Mappy.Utilities.Condition;
@@ -14,7 +15,9 @@ public class MapWindow : Window, IDisposable
     private Vector2 mouseDragStart;
     private bool dragStarted;
     private Vector2 lastWindowSize = Vector2.Zero;
-
+    private bool betweenAreas;
+    private bool lastWindowState;
+    
     private readonly MapToolbar toolbar = new();
     
     public MapWindow() : base("Mappy Map Window")
@@ -38,8 +41,26 @@ public class MapWindow : Window, IDisposable
         
         if (Service.ClientState.IsPvP) IsOpen = false;
         if (!Service.ClientState.IsLoggedIn) IsOpen = false;
-        if (Condition.BetweenAreas()) IsOpen = false;
-        if (Service.Configuration.HideInDuties.Value && Condition.IsBoundByDuty()) IsOpen = false; 
+        if (Service.Configuration.HideInDuties.Value && Condition.IsBoundByDuty()) IsOpen = false;
+
+        if (Service.Configuration.HideBetweenAreas.Value)
+        {
+            if (Condition.BetweenAreas() && !betweenAreas)
+            {
+                betweenAreas = true;
+                lastWindowState = IsOpen;
+                IsOpen = false;
+            }
+            else if (Condition.BetweenAreas())
+            {
+                IsOpen = false;
+            }
+            else if (!Condition.BetweenAreas() && betweenAreas)
+            {
+                betweenAreas = false;
+                IsOpen = lastWindowState;
+            }
+        }
     }
     
     public override void Draw()

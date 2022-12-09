@@ -112,10 +112,6 @@ public class MapMarkersMapComponent : IMapComponent
             }
         }
 
-        PluginLog.Debug($"Loaded Markers for MapID: {newMapId}\n" +
-                        $"Marker Range: {map.MapMarkerRange}\n" +
-                        $"Marker Count: {mapMarkers.Count}");
-
         dataStale = false;
     }
 }

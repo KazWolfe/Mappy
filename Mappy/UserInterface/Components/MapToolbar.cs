@@ -54,7 +54,6 @@ public class MapToolbar
 
                 if (ImGui.Selectable(subAreaName))
                 {
-                    Service.Configuration.FollowPlayer.Value = false;
                     Service.MapManager.LoadMap(layer.RowId);
                 }
             }

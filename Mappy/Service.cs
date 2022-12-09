@@ -37,4 +37,5 @@ internal class Service
     public static LocalizationManager Localization = null!;
 
     public static MapManager MapManager = null!;
+    public static GameIntegration GameIntegration = null!;
 }

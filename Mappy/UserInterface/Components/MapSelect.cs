@@ -79,7 +79,6 @@ public class MapSelectOverlay
                     ImGui.SetNextItemWidth(250.0f * ImGuiHelpers.GlobalScale);
                     if (ImGui.Selectable(result.Label))
                     {
-                        Service.Configuration.FollowPlayer.Value = false;
                         Service.MapManager.LoadMap(result.MapID);
                         ShowMapSelectOverlay = false;
                     }

@@ -23,7 +23,7 @@ public unsafe class MapManager : IDisposable
     {
         get
         {
-            if (Service.Cache.MapTextureCache.GetMapTexture(loadedMapId) is { } mapTexture)
+            if (Service.Cache.MapTextureCache.GetMapTexture(LoadedMapId) is { } mapTexture)
             {
                 lastTexture = mapTexture;
                 LoadingNextMap = false;
@@ -38,12 +38,12 @@ public unsafe class MapManager : IDisposable
     private TextureWrap? lastTexture;
     public List<Map> MapLayers { get; private set; } = new();
     public Map? Map;
-    public bool PlayerInCurrentMap => MapAgent->CurrentMapId == loadedMapId;
+    public bool PlayerInCurrentMap => MapAgent->CurrentMapId == LoadedMapId;
     public uint PlayerLocationMapID => MapAgent->CurrentMapId;
 
     public bool LoadingNextMap { get; private set; }
 
-    private uint loadedMapId;
+    public uint LoadedMapId { get; private set; }
 
     private uint lastMapId;
 
@@ -56,10 +56,11 @@ public unsafe class MapManager : IDisposable
         new PetMapComponent(),
         new PartyMemberMapComponent(),
         new WaymarkMapComponent(),
+        new TemporaryMarkersMapComponent(),
         
         new PlayerMapComponent(), // Render the player last
     };
-
+    
     public MapManager()
     {
         Service.Framework.Update += OnFrameworkUpdate;
@@ -91,16 +92,32 @@ public unsafe class MapManager : IDisposable
     }
 
     public Vector2 GetObjectPosition(GameObject gameObject) => GetObjectPosition(gameObject.Position);
-    public Vector2 GetObjectPosition(Vector3 position)
+    
+    public Vector2 GetObjectPosition(Vector3 position) => GetObjectPosition(new Vector2(position.X, position.Z));
+
+    public Vector2 GetObjectPosition(Vector2 position)
     {
-        return new Vector2(position.X, position.Z) * MapAgent->CurrentMapSizeFactorFloat
-               - new Vector2(MapAgent->CurrentOffsetX, MapAgent->CurrentOffsetY) * MapAgent->CurrentMapSizeFactorFloat
-               + new Vector2(MapTexture?.Width ?? 0, MapTexture?.Height ?? 0) / 2.0f;
+        if (Map is not null)
+        {
+            return position * Map.SizeFactor / 100.0f
+                   - new Vector2(Map.OffsetX, Map.OffsetY) * Map.SizeFactor / 100.0f
+                   + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
+        }
+        else
+        {
+            return position * MapAgent->CurrentMapSizeFactorFloat
+                   - new Vector2(MapAgent->CurrentOffsetX, MapAgent->CurrentOffsetY) * MapAgent->CurrentMapSizeFactorFloat
+                   + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
+        }
     }
     
     public void LoadMap(uint mapId)
     {
-        loadedMapId = mapId;
+        PluginLog.Debug($"Loading Map: {mapId}");
+        
+        Service.Configuration.FollowPlayer.Value = false;
+        
+        LoadedMapId = mapId;
         
         Map = Service.Cache.MapCache.GetRow(mapId);
 
@@ -111,7 +128,7 @@ public unsafe class MapManager : IDisposable
             
         MapComponents.ForEach(component => component.Update(mapId));
                     
-        if (!Service.Configuration.FollowPlayer.Value && !PlayerInCurrentMap && MapTexture is not null)
+        if (!PlayerInCurrentMap && MapTexture is not null)
         {
             var newCenter = new Vector2(MapTexture.Width, MapTexture.Height) / 2.0f;
             MapRenderer.SetViewportCenter(newCenter);

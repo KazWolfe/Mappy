@@ -123,7 +123,6 @@ public class MapMarkerData
     private void MapLinkAction()
     {
         Service.MapManager.LoadMap(DataMap.RowId);
-        Service.Configuration.FollowPlayer.Value = false;
     }
 
     private void AetheryteAction()

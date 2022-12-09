@@ -29,4 +29,7 @@ public class ConfigurationStrings
     public string RenderAboveGameUI => Loc.Localize("Generic_RenderAboveGameUI", "Displaying Above Game UI");
     public string RenderAboveGameUIHelp => Loc.Localize("Generic_RenderAboveGameUIHelp", "It is not possible to display Mappy's visual components below the game's user interface.");
     public string RenderAboveGameUIHelpExtended => Loc.Localize("Generic_RenderAboveGameUIHelpExtended", "This is a technical limitation of the tools we use to develop plugin user interfaces.");
+    public string EnableIntegrations => Loc.Localize("Configuration_EnableIntegrations", "Enable Integrations");
+    public string IntegrationsHelp => Loc.Localize("Configuration_IntegrationsHelp", "Replaces all of the games normal map functions with Mappy functions instead.");
+    public string HideBetweenAreas => Loc.Localize("Configuration_HideBetweenAreas", "Hide Between Areas");
 }
