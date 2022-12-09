@@ -23,7 +23,7 @@ public class MapWindow : Window, IDisposable
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(410,200),
+            MinimumSize = new Vector2(445,200),
             MaximumSize = new Vector2(9999,9999)
         };
 
