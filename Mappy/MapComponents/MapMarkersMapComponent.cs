@@ -13,6 +13,7 @@ namespace Mappy.MapComponents;
 public class MapMarkersSettings
 {
     public Setting<bool> Enable = new(true);
+    public Setting<bool> AetherytesOnTop = new(true);
     public Dictionary<uint,Setting<IconSelection>> IconSettings = new();
     public Setting<float> IconScale = new(0.5f);
     public Setting<Vector4> StandardColor = new(Colors.White);
@@ -77,24 +78,34 @@ public class MapMarkersMapComponent : IMapComponent
 
     public void Draw()
     {
-        foreach (var marker in mapMarkers.TakeWhile(_ => !dataStale && Settings.Enable.Value))
+        if (Settings.AetherytesOnTop.Value)
         {
-            if (Settings.IconSettings.TryGetValue(marker.IconId, out var settings))
-            {
-                if (settings.Value.Enabled)
-                {
-                    marker.Draw();
-                }
-            }
-            else
-            {
-                marker.Draw();
-            }
+            DrawMarkers(mapMarkers.Where(marker => marker.IconId != 60453));
+            DrawMarkers(mapMarkers.Where(marker => marker.IconId == 60453));
+        }
+        else
+        {
+            DrawMarkers(mapMarkers);
         }
 
         if (dataStale)
         {
             LoadMarkers();
+        }
+    }
+
+    private void DrawMarkers(IEnumerable<MapMarkerData> markers)
+    {
+        foreach (var marker in markers.TakeWhile(_ => !dataStale && Settings.Enable.Value))
+        {
+            if (Settings.IconSettings.TryGetValue(marker.IconId, out var settings) && settings.Value.Enabled)
+            {
+                marker.Draw();
+            }
+            else
+            {
+                marker.Draw();
+            }
         }
     }
 

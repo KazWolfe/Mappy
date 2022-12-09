@@ -19,6 +19,7 @@ public class MapMarkerOptions : IModuleSettings
         InfoBox.Instance
             .AddTitle(Strings.Configuration.FeatureToggles)
             .AddConfigCheckbox(Strings.Map.Generic.Enable, Settings.Enable)
+            .AddConfigCheckbox(Strings.Map.Markers.AetherytesOnTop, Settings.AetherytesOnTop)
             .Draw();
         
         InfoBox.Instance

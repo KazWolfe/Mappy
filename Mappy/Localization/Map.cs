@@ -68,6 +68,7 @@ public class GatheringStrings
 public class MarkerStrings
 {
     public string Label => Loc.Localize("Marker_Label", "Map Markers");
+    public string AetherytesOnTop => Loc.Localize("Marker_AetherytesOnTop", "Draw Aetherytes On Top");
 }
 
 public class PartyMemberStrings
