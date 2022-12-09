@@ -1,5 +1,5 @@
 # Mappy
-[![Download count](https://img.shields.io/endpoint?url=https://vz32sgcoal.execute-api.us-east-1.amazonaws.com/DailyDuty)](https://github.com/MidoriKami/DailyDuty) [!
+[![Download count](https://img.shields.io/endpoint?url=https://vz32sgcoal.execute-api.us-east-1.amazonaws.com/Mappy)](https://github.com/MidoriKami/Mappy)
 
 Mappy is a XivLauncher/Dalamud Plugin for a better ingame map.
 
