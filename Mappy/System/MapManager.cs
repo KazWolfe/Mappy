@@ -110,8 +110,6 @@ public unsafe class MapManager : IDisposable
         
         PluginLog.Debug($"Loading Map: {mapId}");
         
-        Service.Configuration.FollowPlayer.Value = false;
-        
         LoadedMapId = mapId;
         
         Map = Service.Cache.MapCache.GetRow(mapId);
@@ -125,9 +123,19 @@ public unsafe class MapManager : IDisposable
                     
         if (!PlayerInCurrentMap && MapTexture is not null)
         {
-            var newCenter = new Vector2(MapTexture.Width, MapTexture.Height) / 2.0f;
-            MapRenderer.SetViewportCenter(newCenter);
-            MapRenderer.SetViewportZoom(0.4f);
+            if (Service.Configuration.FollowPlayer.Value)
+            {
+                if (Service.ClientState.LocalPlayer is { } player)
+                {
+                    MapRenderer.SetViewportCenter(Service.MapManager.GetObjectPosition(player));
+                }
+            }
+            else
+            {
+                var newCenter = new Vector2(MapTexture.Width, MapTexture.Height) / 2.0f;
+                MapRenderer.SetViewportCenter(newCenter);
+                MapRenderer.SetViewportZoom(0.4f);
+            }
         }
     }
     
