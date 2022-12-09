@@ -52,5 +52,7 @@ public class ConfigurationWindow : Window
         {
             Flags &= ~ImGuiWindowFlags.NoMove;
         }
+        
+        AboutWindow.DrawInfoButton();
     }
 }

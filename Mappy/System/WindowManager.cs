@@ -17,6 +17,7 @@ internal class WindowManager : IDisposable
         new ConfigurationWindow(),
         new MapWindow(),
         new DebugWindow(),
+        new AboutWindow(),
     };
 
     public WindowManager()
