@@ -31,7 +31,7 @@ public class ConfigurationWindow : Window
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(610, 300),
+            MinimumSize = new Vector2(610, 350),
             MaximumSize = new Vector2(9999,9999)
         };
 
