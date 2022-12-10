@@ -172,6 +172,22 @@ public unsafe class GameIntegration : IDisposable
                 IconID = iconId,
                 Position = new Vector2(mapX, mapY),
             };
+
+            if (Service.MapManager.LoadedMapId != mapId)
+            {
+                MapRenderer.SetViewportCenter(stagedMarker.AdjustedPosition);
+                MapRenderer.SetViewportZoom(0.8f);
+            }
+            
+            var flagSetByte = (byte*) AgentMap.Instance() + 0x59B3;
+
+            if (*flagSetByte > 0)
+            {
+                *flagSetByte = 0;
+            }
+                
+            TemporaryMarkersMapComponent.AddMarker(stagedMarker);
+            setFlagMarkerHook!.Original(agent, territoryId, mapId, mapX, mapY, iconId);
         }
         catch (Exception e)
         {
