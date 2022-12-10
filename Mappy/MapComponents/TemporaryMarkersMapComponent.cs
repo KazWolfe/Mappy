@@ -6,7 +6,8 @@ using Dalamud.Logging;
 using ImGuiNET;
 using Mappy.DataModels;
 using Mappy.Interfaces;
-using Mappy.Localization;
+using Mappy.UserInterface.Components;
+using Mappy.UserInterface.Windows;
 using Mappy.Utilities;
 
 namespace Mappy.MapComponents;
@@ -45,7 +46,7 @@ public class TemporaryMarkersMapComponent : IMapComponent
     private static readonly List<TemporaryMarker> TemporaryMarkers = new();
     private static readonly List<TemporaryMarker> StaleMarkers = new();
     public static TemporaryMarker? TempMarker;
-    private bool dataStale;
+    private static bool _dataStale;
     
     public void Update(uint mapID)
     {
@@ -54,12 +55,12 @@ public class TemporaryMarkersMapComponent : IMapComponent
 
     public void Draw()
     {
-        foreach (var marker in TemporaryMarkers.TakeWhile(_ => !dataStale))
+        foreach (var marker in TemporaryMarkers.TakeWhile(_ => !_dataStale))
         {
             if (Service.MapManager.LoadedMapId == marker.MapID)
             {
                 DrawIcon(marker);
-                ShowContextMenu(marker)?.Invoke(marker);
+                ShowContextMenu(marker);
                 ShowTooltip(marker)?.Invoke(marker);
             }
         }
@@ -72,7 +73,7 @@ public class TemporaryMarkersMapComponent : IMapComponent
             }
             
             StaleMarkers.Clear();
-            dataStale = false;
+            _dataStale = false;
         }
     }
 
@@ -130,45 +131,44 @@ public class TemporaryMarkersMapComponent : IMapComponent
         ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 35, 4);
     }
 
-    private Action<TemporaryMarker>? ShowContextMenu(TemporaryMarker marker)
+    private void ShowContextMenu(TemporaryMarker marker)
     {
-        return marker.Type switch
+        if (!ImGui.IsItemClicked(ImGuiMouseButton.Right)) return;
+
+        switch (marker.Type)
         {
-            MarkerType.Flag => FlagContextMenu,
-            MarkerType.Gathering => GatheringContextMenu,
-            _ => null
-        };
-    }
-    
-    private void FlagContextMenu(TemporaryMarker marker)
-    {
-        if (!ImGui.IsItemClicked(ImGuiMouseButton.Right))
-        {
-            if(ImGui.BeginPopupContextItem($"##{marker.Type}{marker.Position}"))
-            {
-                if (ImGui.Selectable(Strings.Map.RemoveFlag))
-                {
-                    StaleMarkers.Add(marker);
-                    dataStale = true;
-                }
-                ImGui.EndPopup();
-            }
+            case MarkerType.Flag:
+                MapWindow.ContextMenu.Show(ContextMenuType.Flag);
+                break;
+            
+            case MarkerType.Gathering:
+                MapWindow.ContextMenu.Show(ContextMenuType.GatheringArea);
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
-    private void GatheringContextMenu(TemporaryMarker marker)
+    public static void RemoveFlag()
     {
-        if (!ImGui.IsItemClicked(ImGuiMouseButton.Right))
+        var flag = TemporaryMarkers.FirstOrDefault(marker => marker.Type == MarkerType.Flag);
+
+        if (flag is not null)
         {
-            if(ImGui.BeginPopupContextItem($"##{marker.Type}{marker.Position}"))
-            {
-                if (ImGui.Selectable(Strings.Map.RemoveGatheringArea))
-                {
-                    StaleMarkers.Add(marker);
-                    dataStale = true;
-                }
-                ImGui.EndPopup();
-            }
+            StaleMarkers.Add(flag);
+            _dataStale = true;
+        }
+    }
+
+    public static void RemoveGatheringArea()
+    {
+        var flag = TemporaryMarkers.FirstOrDefault(marker => marker.Type == MarkerType.Gathering);
+
+        if (flag is not null)
+        {
+            StaleMarkers.Add(flag);
+            _dataStale = true;
         }
     }
 }

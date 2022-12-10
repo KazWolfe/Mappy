@@ -18,6 +18,8 @@ public class MapWindow : Window, IDisposable
     private bool lastWindowState;
     
     private readonly MapToolbar toolbar = new();
+    public static MapContextMenu ContextMenu = new();
+    public static Vector2 MapContentsStart;
     
     public MapWindow() : base("Mappy Map Window")
     {
@@ -67,6 +69,7 @@ public class MapWindow : Window, IDisposable
         SetFlags();
         if (!toolbar.MapSelect.ShowMapSelectOverlay) ReadMouse();
 
+        MapContentsStart = ImGui.GetCursorScreenPos();
         if (ImGui.BeginChild("###MapFrame", ImGui.GetContentRegionAvail(), false, Flags))
         {
             var shouldFadeMap = Service.Configuration.FadeWhenUnfocused.Value && !IsFocused;
@@ -79,6 +82,7 @@ public class MapWindow : Window, IDisposable
             }
 
             toolbar.Draw(IsFocused);
+            ContextMenu.Draw();
         }
         ImGui.EndChild();
     }
@@ -89,6 +93,11 @@ public class MapWindow : Window, IDisposable
         {
             if (IsCursorInWindow() && !IsCursorInWindowHeader())
             {
+                if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                {
+                    ContextMenu.Show(ContextMenuType.General);
+                }
+                
                 if (ImGui.GetIO().MouseWheel > 0) // Mouse Wheel Up
                 {
                     MapRenderer.ZoomIn(0.2f);
