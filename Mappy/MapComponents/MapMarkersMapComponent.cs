@@ -14,7 +14,7 @@ public class MapMarkersSettings
 {
     public Setting<bool> Enable = new(true);
     public Setting<bool> AetherytesOnTop = new(true);
-    public Dictionary<uint,Setting<IconSelection>> IconSettings = new();
+    public Dictionary<uint,Setting<IconSelection>> IconSettingList = new();
     public Setting<float> IconScale = new(0.5f);
     public Setting<Vector4> StandardColor = new(Colors.White);
     public Setting<Vector4> MapLink = new(Colors.MapTextBrown);
@@ -37,23 +37,23 @@ public class MapMarkersMapComponent : IMapComponent
         var expectedCount = Service.DataManager.GetExcelSheet<MapSymbol>()!.Count() - 1;
         
         // If we have an empty icon settings object
-        if (Settings.IconSettings.Count == 0)
+        if (Settings.IconSettingList.Count == 0)
         {
             foreach (var mapIcon in Service.DataManager.GetExcelSheet<MapSymbol>()!)
             {
                 if(mapIcon.Icon == 0) continue;
                 
-                Settings.IconSettings.Add((uint)mapIcon.Icon, new Setting<IconSelection>(new IconSelection((uint)mapIcon.Icon, true)));
+                Settings.IconSettingList.Add((uint)mapIcon.Icon, new Setting<IconSelection>(new IconSelection((uint)mapIcon.Icon, true)));
                 Service.Configuration.Save();
             }
         }
         
         // If the datasheet contains more elements than we have
-        else if (Settings.IconSettings.Count != expectedCount)
+        else if (Settings.IconSettingList.Count != expectedCount)
         {
             PluginLog.Warning("Mismatched number of MapMarkers, attempting to load new markers.");
             
-            var startPoint = Settings.IconSettings.Count;
+            var startPoint = Settings.IconSettingList.Count;
             var difference = expectedCount - startPoint;
             foreach (var index in Enumerable.Range(startPoint, difference))
             {
@@ -63,7 +63,7 @@ public class MapMarkersMapComponent : IMapComponent
                 if (newEntry is not null)
                 {
                     PluginLog.Warning($"Adding [{newEntry.PlaceName.Value?.Name ?? "Unknown Name"}] [IconID: {newEntry.Icon}");
-                    Settings.IconSettings.Add((uint)newEntry.Icon, new Setting<IconSelection>(new IconSelection((uint)newEntry.Icon, true)));
+                    Settings.IconSettingList.Add((uint)newEntry.Icon, new Setting<IconSelection>(new IconSelection((uint)newEntry.Icon, true)));
                     Service.Configuration.Save();
                 }
             }
@@ -98,7 +98,7 @@ public class MapMarkersMapComponent : IMapComponent
     {
         foreach (var marker in markers.TakeWhile(_ => !dataStale && Settings.Enable.Value))
         {
-            if (Settings.IconSettings.TryGetValue(marker.IconId, out var settings) && settings.Value.Enabled)
+            if (Settings.IconSettingList.TryGetValue(marker.IconId, out var settings) && settings.Value.Enabled)
             {
                 marker.Draw();
             }
