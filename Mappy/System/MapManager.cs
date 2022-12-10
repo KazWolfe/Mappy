@@ -102,8 +102,18 @@ public unsafe class MapManager : IDisposable
                + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
     }
 
-    public Vector2 GetTextureOffsetPosition(Vector2 coordinates) => coordinates + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
-
+    public Vector2 GetTextureOffsetPosition(Vector2 coordinates) =>
+        coordinates  * MapAgent->CurrentMapSizeFactorFloat
+        + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
+    
+    public Vector2 GetTexturePosition(Vector2 coordinates)
+    {
+        return (coordinates / MapRenderer.Viewport.Scale
+            - MapRenderer.Viewport.Size / 2.0f / MapRenderer.Viewport.Scale
+            + MapRenderer.Viewport.Center - new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f) 
+            / MapAgent->CurrentMapSizeFactorFloat;
+    }
+    
     public void LoadMap(uint mapId)
     {
         if (LoadedMapId == mapId) return;
