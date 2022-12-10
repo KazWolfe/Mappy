@@ -5,7 +5,6 @@ using Dalamud.Logging;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using Mappy.MapComponents;
 using Mappy.UserInterface.Windows;
@@ -15,16 +14,16 @@ namespace Mappy.System;
 
 public unsafe class GameIntegration : IDisposable
 {
-    private delegate void OpenMapByIdDelegate(AgentInterface* agent, uint mapID);
+    private delegate void OpenMapByIdDelegate(AgentMap* agent, uint mapID);
     private readonly Hook<OpenMapByIdDelegate>? openMapByIdHook;
 
-    private delegate void OpenMapDelegate(AgentInterface* agent, OpenMapInfo* data);
+    private delegate void OpenMapDelegate(AgentMap* agent, OpenMapInfo* data);
     private readonly Hook<OpenMapDelegate>? openMapHook;
 
-    private delegate void SetFlagMarkerDelegate(AgentInterface* agent, uint territoryId, uint mapId, float mapX, float mapY, uint iconId);
+    private delegate void SetFlagMarkerDelegate(AgentMap* agent, uint territoryId, uint mapId, float mapX, float mapY, uint iconId);
     private readonly Hook<SetFlagMarkerDelegate>? setFlagMarkerHook;
 
-    private delegate void SetGatheringMarkerDelegate(AgentInterface* agent, uint styleFlags, int mapX, int mapY, uint iconID, int radius, Utf8String* tooltip);
+    private delegate void SetGatheringMarkerDelegate(AgentMap* agent, uint styleFlags, int mapX, int mapY, uint iconID, int radius, Utf8String* tooltip);
     private readonly Hook<SetGatheringMarkerDelegate>? setGatheringMarkerHook;
     
     private delegate void ShowMapDelegate();
@@ -93,7 +92,7 @@ public unsafe class GameIntegration : IDisposable
         }
     }
     
-    private void OpenMapById(AgentInterface* agent, uint mapId)
+    private void OpenMapById(AgentMap* agent, uint mapId)
     {
         try
         {
@@ -106,7 +105,7 @@ public unsafe class GameIntegration : IDisposable
         }
     }
     
-    private void OpenMap(AgentInterface* agent, OpenMapInfo* mapInfo)
+    private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo)
     {
         try
         {
@@ -158,14 +157,15 @@ public unsafe class GameIntegration : IDisposable
         }
     }
 
-    private void SetFlagMarker(AgentInterface* agent, uint territoryId, uint mapId, float mapX, float mapY, uint iconId)
+    public void SetFlagMarker(AgentMap* agent, uint territoryId, uint mapId, float mapX, float mapY, uint iconId)
     {
+        
         try
         {
-            PluginLog.Debug("FlagTrigger");
+            PluginLog.Debug($"FlagTrigger: {mapX},{mapY}, IconID: {iconId}");
             markerCalled = true;
 
-            TemporaryMarkersMapComponent.TempMarker = new TemporaryMarker
+            var stagedMarker = new TemporaryMarker
             {
                 Type = MarkerType.Flag,
                 MapID = mapId,
@@ -195,7 +195,7 @@ public unsafe class GameIntegration : IDisposable
         }
     }
 
-    private void SetGatheringMarker(AgentInterface* agent, uint styleFlags, int mapX, int mapY, uint iconID, int radius, Utf8String* tooltip)
+    private void SetGatheringMarker(AgentMap* agent, uint styleFlags, int mapX, int mapY, uint iconID, int radius, Utf8String* tooltip)
     {
         try
         {
