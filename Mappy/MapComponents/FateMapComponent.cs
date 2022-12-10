@@ -31,7 +31,7 @@ public class FateMapComponent : IMapComponent
     
     public void Update(uint mapID)
     {
-        
+
     }
 
     public unsafe void Draw()
@@ -39,9 +39,7 @@ public class FateMapComponent : IMapComponent
         if (!Service.MapManager.PlayerInCurrentMap) return;
         if (!Settings.Enable.Value) return;
         
-        var fateManager = FateManager.Instance()->Fates;
-
-        foreach (var fate in fateManager.Span)
+        foreach (var fate in FateManager.Instance()->Fates.Span)
         {
             if (fate.Value is null) continue;
             DrawFate(*fate.Value);
