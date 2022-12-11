@@ -150,7 +150,7 @@ public unsafe class QuestMapComponent : IMapComponent
                 
         ImGui.BeginGroup();
         ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, color);
-        ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 35, 4);
+        ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 0, 4);
         ImGui.EndGroup();
     }
 

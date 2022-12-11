@@ -75,7 +75,7 @@ public class FateMapComponent : IMapComponent
                 var radius = fate.Radius * MapRenderer.Viewport.Scale;
                 
                 ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, color);
-                ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 35, 4);
+                ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 0, 4);
                 break;
         }
     }

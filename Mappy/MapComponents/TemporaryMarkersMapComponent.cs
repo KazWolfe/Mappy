@@ -127,7 +127,7 @@ public class TemporaryMarkersMapComponent : IMapComponent
         var color = ImGui.GetColorU32(Settings.GatheringColor.Value);
         
         ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, color);
-        ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 35, 4);
+        ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 0, 4);
     }
 
     private void ShowContextMenu(TemporaryMarker marker)
