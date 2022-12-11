@@ -5,7 +5,7 @@ using Mappy.Localization;
 using Mappy.MapComponents;
 using Mappy.UserInterface.Windows;
 
-namespace Mappy.UserInterface.Components;
+namespace Mappy.System;
 
 public enum ContextMenuType
 {
@@ -13,16 +13,19 @@ public enum ContextMenuType
     General,
     Flag,
     GatheringArea,
+    Quest,
 }
 
 public class MapContextMenu
 {
     private Vector2 clickPosition;
     private ContextMenuType menuType;
+    private object? additionalData;
 
-    public void Show(ContextMenuType type)
+    public void Show(ContextMenuType type, object? data = null)
     {
         menuType = type;
+        additionalData = data;
         
         clickPosition = Service.MapManager.GetTexturePosition(ImGui.GetMousePos() - MapWindow.MapContentsStart);
     }
@@ -49,6 +52,10 @@ public class MapContextMenu
             
             case ContextMenuType.GatheringArea:
                 DrawGatheringContext();
+                break;
+            
+            case ContextMenuType.Quest:
+                DrawQuestContext();
                 break;
         }
     }
@@ -100,6 +107,25 @@ public class MapContextMenu
             if (ImGui.Selectable(Strings.Map.RemoveGatheringArea))
             {
                 TemporaryMarkersMapComponent.RemoveGatheringArea();
+            }
+
+            ImGui.EndPopup();
+        }
+    }
+
+    private void DrawQuestContext()
+    {
+        if (additionalData is null) return;
+        
+        if (ImGui.BeginPopupContextWindow("###QuestContext"))
+        {
+            if (ImGui.Selectable(Strings.Map.HideQuest))
+            {
+                if (!Service.Configuration.QuestMarkers.HiddenQuests.Contains((uint) additionalData))
+                {
+                    Service.Configuration.QuestMarkers.HiddenQuests.Add((uint)additionalData);
+                    Service.Configuration.Save();
+                }
             }
 
             ImGui.EndPopup();

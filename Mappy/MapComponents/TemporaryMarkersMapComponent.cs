@@ -6,8 +6,7 @@ using Dalamud.Logging;
 using ImGuiNET;
 using Mappy.DataModels;
 using Mappy.Interfaces;
-using Mappy.UserInterface.Components;
-using Mappy.UserInterface.Windows;
+using Mappy.System;
 using Mappy.Utilities;
 
 namespace Mappy.MapComponents;
@@ -138,11 +137,11 @@ public class TemporaryMarkersMapComponent : IMapComponent
         switch (marker.Type)
         {
             case MarkerType.Flag:
-                MapWindow.ContextMenu.Show(ContextMenuType.Flag);
+                Service.ContextMenu.Show(ContextMenuType.Flag);
                 break;
             
             case MarkerType.Gathering:
-                MapWindow.ContextMenu.Show(ContextMenuType.GatheringArea);
+                Service.ContextMenu.Show(ContextMenuType.GatheringArea);
                 break;
 
             default:

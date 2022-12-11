@@ -38,4 +38,5 @@ internal class Service
 
     public static MapManager MapManager = null!;
     public static GameIntegration GameIntegration = null!;
+    public static MapContextMenu ContextMenu = null!;
 }

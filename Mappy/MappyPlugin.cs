@@ -23,6 +23,7 @@ public sealed class MappyPlugin : IDalamudPlugin
         // Load Non Critical Managers
         Service.Teleporter = new TeleportManager();
         Service.MapManager = new MapManager();
+        Service.ContextMenu = new MapContextMenu();
         
         // Load Critical Managers
         Service.CommandManager = new CommandManager();
