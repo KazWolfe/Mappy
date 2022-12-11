@@ -10,8 +10,11 @@ public class DebugWindow : Window
 
     public static void AddString(string message) => DebugStrings.Add(message);
     
-    public DebugWindow() : base("Mappy Debug Window")
+    public DebugWindow() : base("Mappy Debug Window", ImGuiWindowFlags.AlwaysAutoResize)
     {
+#if DEBUG
+        IsOpen = true;
+#endif
     }
 
     public override void Draw()
