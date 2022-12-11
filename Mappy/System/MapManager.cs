@@ -49,15 +49,16 @@ public unsafe class MapManager : IDisposable
 
     public List<IMapComponent> MapComponents { get; } = new()
     {
+        new FateMapComponent(),
         new MapMarkersMapComponent(),
         new GatheringPointMapComponent(),
-        new FateMapComponent(),
+        new QuestMapComponent(),
         new AllianceMemberMapComponent(),
         new PetMapComponent(),
         new PartyMemberMapComponent(),
         new WaymarkMapComponent(),
         new TemporaryMarkersMapComponent(),
-        
+
         new PlayerMapComponent(), // Render the player last
     };
     
@@ -101,9 +102,9 @@ public unsafe class MapManager : IDisposable
                - new Vector2(MapAgent->CurrentOffsetX, MapAgent->CurrentOffsetY) * MapAgent->CurrentMapSizeFactorFloat
                + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
     }
-
+    
     public Vector2 GetTextureOffsetPosition(Vector2 coordinates) =>
-        coordinates  * MapAgent->CurrentMapSizeFactorFloat
+        coordinates * ((Map?.SizeFactor ?? 100.0f) / 100.0f)
         + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
     
     public Vector2 GetTexturePosition(Vector2 coordinates)
@@ -111,7 +112,7 @@ public unsafe class MapManager : IDisposable
         return (coordinates / MapRenderer.Viewport.Scale
             - MapRenderer.Viewport.Size / 2.0f / MapRenderer.Viewport.Scale
             + MapRenderer.Viewport.Center - new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f) 
-            / MapAgent->CurrentMapSizeFactorFloat;
+            / ((Map?.SizeFactor ?? 100.0f) / 100.0f);
     }
     
     public void LoadMap(uint mapId)
