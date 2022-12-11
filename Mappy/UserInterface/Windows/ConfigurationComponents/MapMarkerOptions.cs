@@ -46,7 +46,7 @@ public class MapMarkerOptions : IModuleSettings
             .AddString(Strings.Map.Info)
             .AddDummy(8.0f)
             .BeginFlexGrid()
-            .MultiSelect(Settings.IconSettings.Values)
+            .MultiSelect(Settings.IconSettingList.Values)
             .EndFlexGrid()
             .Draw();
     }
