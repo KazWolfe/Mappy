@@ -34,6 +34,8 @@ public class PartyMemberMapComponent : IMapComponent
     {
         foreach (var player in Service.PartyList)
         {
+            if(player.ObjectId == Service.ClientState.LocalPlayer?.ObjectId) continue;
+            
             var playerPosition = Service.MapManager.GetObjectPosition(player.Position);
 
             if(Settings.ShowIcon.Value) MapRenderer.DrawIcon(60421, playerPosition, Settings.IconScale.Value);
