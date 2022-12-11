@@ -115,8 +115,6 @@ public unsafe class QuestMapComponent : IMapComponent
 
     private void DrawObjective(Level level, QuestExtended quest, CustomQuestSheet questData)
     {
-        DebugWindow.AddString($"Drawing: {level.RowId}, {quest.Base.QuestID}, {questData.Name.ToDalamudString().TextValue}");
-        
         DrawRing(level);
         DrawIcon(level, quest.CurrentSequenceNumber);
         if (ImGui.IsItemHovered())
