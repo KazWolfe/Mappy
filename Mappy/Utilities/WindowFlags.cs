@@ -9,7 +9,8 @@ public static class WindowFlags
         ImGuiWindowFlags.NoNav |
         ImGuiWindowFlags.NoBringToFrontOnFocus |
         ImGuiWindowFlags.NoScrollbar |
-        ImGuiWindowFlags.NoScrollWithMouse;
+        ImGuiWindowFlags.NoScrollWithMouse |
+        ImGuiWindowFlags.NoDocking;
 
     public const ImGuiWindowFlags NoDecorationFlags =
         ImGuiWindowFlags.NoDecoration |
