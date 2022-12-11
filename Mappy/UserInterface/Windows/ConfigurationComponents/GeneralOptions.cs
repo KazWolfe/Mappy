@@ -32,6 +32,7 @@ public class GeneralOptions : IModuleSettings
             .AddConfigCheckbox(Strings.Configuration.LockWindow, Service.Configuration.LockWindow)
             .AddConfigCheckbox(Strings.Configuration.HideWindowFrame, Service.Configuration.HideWindowFrame)
             .AddConfigCheckbox(Strings.Configuration.HideInDuties, Service.Configuration.HideInDuties)
+            .AddConfigCheckbox(Strings.Configuration.HideDuringCombat, Service.Configuration.HideInCombat)
             .AddConfigCheckbox(Strings.Configuration.AlwaysShowToolbar, Service.Configuration.AlwaysShowToolbar)
             .AddConfigCheckbox(Strings.Configuration.FadeWhenUnfocused, Service.Configuration.FadeWhenUnfocused)
             .AddDragFloat(Strings.Configuration.FadePercent, Service.Configuration.FadePercent, 0.0f, 1.0f, InfoBox.Instance.InnerWidth / 2.0f)
