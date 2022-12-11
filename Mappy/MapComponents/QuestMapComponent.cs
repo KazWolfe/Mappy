@@ -78,18 +78,22 @@ public unsafe class QuestMapComponent : IMapComponent
 
             foreach (var activeIndex in activeIndexes)
             {
-                if (luminaData.ToDoMainLocation[activeIndex] is {Value: { } level })
+                var targetRow = luminaData.ToDoMainLocation[activeIndex].Row;
+                if (targetRow != 0)
                 {
+                    var level = Service.Cache.LevelCache.GetRow(targetRow);
                     if (level.RowId != 0 && Service.MapManager.LoadedMapId == level.Map.Row)
                     {
                         DrawObjective(level, quest, luminaData);
                     }
                 }
-                
+
                 foreach (var index in Enumerable.Range(0, 7))
                 {
-                    if (luminaData.ToDoChildLocation[activeIndex, index] is {Value: { } subLevel})
+                    var targetSubRow = luminaData.ToDoChildLocation[activeIndex, index].Row;
+                    if (targetSubRow != 0)
                     {
+                        var subLevel = Service.Cache.LevelCache.GetRow(targetSubRow);
                         if (subLevel.RowId != 0 && Service.MapManager.LoadedMapId == subLevel.Map.Row)
                         {
                             DrawObjective(subLevel, quest, luminaData);
