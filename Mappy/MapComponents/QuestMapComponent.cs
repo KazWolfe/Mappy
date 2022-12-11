@@ -75,28 +75,21 @@ public unsafe class QuestMapComponent : IMapComponent
             var luminaData = Service.Cache.QuestCache.GetRow(quest.Base.QuestID + 65536u);
 
             var activeIndexes = GetActiveIndexes(luminaData, quest);
-
+            
             foreach (var activeIndex in activeIndexes)
             {
-                var targetRow = luminaData.ToDoMainLocation[activeIndex].Row;
-                if (targetRow != 0)
+                foreach (var index in Enumerable.Range(0, 8))
                 {
-                    var level = Service.Cache.LevelCache.GetRow(targetRow);
-                    if (level.RowId != 0 && Service.MapManager.LoadedMapId == level.Map.Row)
+                    if (!quest.TodoMask[index])
                     {
-                        DrawObjective(level, quest, luminaData);
-                    }
-                }
-
-                foreach (var index in Enumerable.Range(0, 7))
-                {
-                    var targetSubRow = luminaData.ToDoChildLocation[activeIndex, index].Row;
-                    if (targetSubRow != 0)
-                    {
-                        var subLevel = Service.Cache.LevelCache.GetRow(targetSubRow);
-                        if (subLevel.RowId != 0 && Service.MapManager.LoadedMapId == subLevel.Map.Row)
+                        var targetRow = luminaData.ToDoLocation[activeIndex, index].Row;
+                        if (targetRow != 0)
                         {
-                            DrawObjective(subLevel, quest, luminaData);
+                            var level = Service.Cache.LevelCache.GetRow(targetRow);
+                            if (level.RowId != 0 && Service.MapManager.LoadedMapId == level.Map.Row)
+                            {
+                                DrawObjective(level, quest, luminaData);
+                            }
                         }
                     }
                 }
@@ -145,7 +138,7 @@ public unsafe class QuestMapComponent : IMapComponent
         var position = Service.MapManager.GetTextureOffsetPosition(new Vector2(positionInfo.X, positionInfo.Z));
         var drawPosition = MapRenderer.GetImGuiWindowDrawPosition(position);
 
-        var radius = positionInfo.Radius * MapRenderer.Viewport.Scale / 10.0f;
+        var radius = positionInfo.Radius * MapRenderer.Viewport.Scale / 7.0f;
         var color = ImGui.GetColorU32(Settings.InProgressColor.Value);
                 
         ImGui.BeginGroup();
