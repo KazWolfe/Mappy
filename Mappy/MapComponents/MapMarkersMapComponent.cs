@@ -102,9 +102,12 @@ public class MapMarkersMapComponent : IMapComponent
     {
         foreach (var marker in markers.TakeWhile(_ => !dataStale && Settings.Enable.Value))
         {
-            if (Settings.IconSettingList.TryGetValue(marker.IconId, out var settings) && settings.Value.Enabled)
+            if (Settings.IconSettingList.TryGetValue(marker.IconId, out var settings))
             {
-                marker.Draw();
+                if (settings.Value.Enabled)
+                {
+                    marker.Draw();
+                }
             }
             else
             {
