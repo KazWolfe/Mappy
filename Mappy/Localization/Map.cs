@@ -36,6 +36,7 @@ public class MapStrings
     public PlayerStrings Player { get; } = new();
     public WaymarkStrings Waymarks { get; } = new();
     public TemporaryMarkerStrings TemporaryMarkers { get; } = new();
+    public QuestMarkerStrings Quests { get; } = new();
 }
 
 public class Generic
@@ -112,4 +113,21 @@ public class TemporaryMarkerStrings
     public string GatheringColor => Loc.Localize("TemporaryMarker_GatheringRingColor", "Gathering Ring Color");
     public string FlagScale => Loc.Localize("TemporaryMarker_FlagScale", "Flag Scale");
     public string GatheringAreaScale => Loc.Localize("TemporaryMarker_GatheringAreaScale", "Gathering Area Scale");
+}
+
+public class QuestMarkerStrings
+{
+    public string Label => Loc.Localize("QuestMarker_Label", "Quest Markers");
+    public string Tribal => Loc.Localize("QuestMarker_Tribal", "Show Tribal");
+    public string Festival => Loc.Localize("QuestMarker_Festival", "Show Festival");
+    public string GrandCompany => Loc.Localize("QuestMarker_GrandCompany", "Show Grand Company");
+    public string HideAccepted => Loc.Localize("QuestMarker_HideAccepted", "Hide Accepted");
+    public string HideUnaccepted => Loc.Localize("QuestMarker_HideUnaccepted", "Hide Unaccepted");
+    public string AcceptedScale => Loc.Localize("QuestMarker_AcceptedScale", "Accepted Scale");
+    public string UnacceptedScale => Loc.Localize("QuestMarker_UnacceptedScale", "Unaccepted Scale");
+    public string ObjectiveColor => Loc.Localize("QuestMarker_ObjectiveColor", "Circle Color");
+    public string AcceptedColor => Loc.Localize("QuestMarker_AcceptedColor", "Accepted Color");
+    public string UnacceptedColor => Loc.Localize("QuestMarker_UnacceptedColor", "Unaccepted Color");
+    public string ResetBlacklist => Loc.Localize("QuestMarker_ResetBlacklist", "Reset Blacklist");
+
 }

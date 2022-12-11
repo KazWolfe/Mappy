@@ -36,4 +36,5 @@ public class ConfigurationStrings
     public string ShowAndUnlock => Loc.Localize("Configuration_ShowAndUnlock", "Show window frame\nUnlock window position");
     public string HideAndLock => Loc.Localize("Configuration_HideAndLock", "Hide window frame\nLock window position");
     public string HideDuringCombat => Loc.Localize("Configuration_HideDuringCombat", "Hide During Combat");
+    public string Special => Loc.Localize("Configuration_Special", "Special");
 }

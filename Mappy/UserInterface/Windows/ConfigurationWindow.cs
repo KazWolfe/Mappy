@@ -16,6 +16,7 @@ public class ConfigurationWindow : Window
     private readonly List<IModuleSettings> selectables = new()
     {
         new GeneralOptions(),
+        new QuestMarkerOptions(),
         new PlayerOptions(),
         new MapMarkerOptions(),
         new PartyMemberOptions(),

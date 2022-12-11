@@ -10,7 +10,6 @@ using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
 using Mappy.Interfaces;
-using Mappy.UserInterface.Windows;
 using Mappy.Utilities;
 using csQuest = FFXIVClientStructs.FFXIV.Client.Game.QuestManager.QuestListArray.Quest;
 
@@ -19,6 +18,7 @@ namespace Mappy.MapComponents;
 public class QuestSettings
 {
     public List<uint> HiddenQuests = new();
+    public Setting<bool> Enable = new(true);
     public Setting<bool> ShowTribal = new(false);
     public Setting<bool> ShowFestival = new(false);
     public Setting<bool> ShowGrandCompany = new(false);
@@ -55,6 +55,8 @@ public unsafe class QuestMapComponent : IMapComponent
     
     public void Draw()
     {
+        if (!Settings.Enable.Value) return;
+        
         if(!Settings.HideUnaccepted.Value) DrawUnclaimedQuests();
         if(!Settings.HideAccepted.Value) DrawClaimedQuests();
 
