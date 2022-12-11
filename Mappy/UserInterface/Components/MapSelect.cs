@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Interface;
+using Dalamud.Logging;
 using ImGuiNET;
 using Mappy.Localization;
 using Mappy.Utilities;
@@ -67,6 +68,7 @@ public class MapSelectOverlay
         if (ImGui.InputText("###MapSearch", ref searchString, 60, ImGuiInputTextFlags.AutoSelectAll))
         {
             searchResults = MapSearch.Search(searchString, 10);
+            PluginLog.Debug("Refreshing Search Results");
         }
 
         ImGui.SetCursorPos(searchPosition - new Vector2(searchWidth / 2.0f, 0.0f) + ImGuiHelpers.ScaledVector2(0.0f, 30.0f));
