@@ -18,6 +18,10 @@ public class QuestMarkerOptions : IModuleSettings
     
     public void Draw()
     {
+        var lastTribal = Settings.ShowTribal.Value;
+        var lastFestival = Settings.ShowFestival.Value;
+        var lastGrandCompany = Settings.ShowGrandCompany.Value;
+        
         InfoBox.Instance
             .AddTitle(Strings.Configuration.FeatureToggles)
             .AddConfigCheckbox(Strings.Map.Generic.Enable, Settings.Enable)
@@ -64,6 +68,13 @@ public class QuestMarkerOptions : IModuleSettings
             .AddDummy(8.0f)
             .AddAction(DrawBlacklist)
             .Draw();
+
+        if (Settings.ShowTribal.Value != lastTribal 
+            || Settings.ShowFestival.Value != lastFestival 
+            || Settings.ShowGrandCompany.Value != lastGrandCompany)
+        {
+            QuestMapComponent.RefreshMarkers();
+        }
     }
 
     private void DrawBlacklist()
