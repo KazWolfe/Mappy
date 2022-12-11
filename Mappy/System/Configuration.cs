@@ -21,6 +21,7 @@ public class Configuration : IPluginConfiguration
     public Setting<bool> AlwaysShowToolbar = new(false);
     public Setting<bool> EnableIntegrations = new(true);
     public Setting<bool> HideBetweenAreas = new(false);
+    public Setting<bool> HideInCombat = new(false);
 
     public PlayerMapComponentSettings PlayerSettings = new();
     public AllianceMemberSettings AllianceSettings = new();

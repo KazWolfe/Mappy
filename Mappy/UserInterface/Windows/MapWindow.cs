@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using Mappy.UserInterface.Components;
@@ -43,7 +44,8 @@ public class MapWindow : Window, IDisposable
         if (Service.ClientState.IsPvP) IsOpen = false;
         if (!Service.ClientState.IsLoggedIn) IsOpen = false;
         if (Service.Configuration.HideInDuties.Value && Condition.IsBoundByDuty()) IsOpen = false;
-
+        if (Service.Configuration.HideInCombat.Value && Service.Condition[ConditionFlag.InCombat]) IsOpen = false;
+        
         if (Service.Configuration.HideBetweenAreas.Value)
         {
             if (Condition.BetweenAreas() && !betweenAreas)

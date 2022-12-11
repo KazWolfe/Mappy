@@ -35,4 +35,5 @@ public class ConfigurationStrings
     public string HideBetweenAreas => Loc.Localize("Configuration_HideBetweenAreas", "Hide Between Areas");
     public string ShowAndUnlock => Loc.Localize("Configuration_ShowAndUnlock", "Show window frame\nUnlock window position");
     public string HideAndLock => Loc.Localize("Configuration_HideAndLock", "Hide window frame\nLock window position");
+    public string HideDuringCombat => Loc.Localize("Configuration_HideDuringCombat", "Hide During Combat");
 }
