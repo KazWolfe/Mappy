@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Dalamud.Logging;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
@@ -30,6 +31,7 @@ public class MapMarkersMapComponent : IMapComponent
     private readonly List<MapMarkerData> mapMarkers = new();
 
     private bool dataStale;
+    private bool refreshInProgress;
     private uint newMapId;
 
     public MapMarkersMapComponent()
@@ -88,9 +90,11 @@ public class MapMarkersMapComponent : IMapComponent
             DrawMarkers(mapMarkers);
         }
 
-        if (dataStale)
+        if (dataStale && !refreshInProgress)
         {
-            LoadMarkers();
+            mapMarkers.Clear();
+            Task.Run(LoadMarkers);
+            refreshInProgress = true;
         }
     }
 
@@ -111,8 +115,6 @@ public class MapMarkersMapComponent : IMapComponent
 
     private void LoadMarkers()
     {
-        mapMarkers.Clear();
-
         var map = Service.Cache.MapCache.GetRow(newMapId);
         
         foreach (var row in Service.DataManager.GetExcelSheet<MapMarker>()!)
@@ -122,7 +124,8 @@ public class MapMarkersMapComponent : IMapComponent
                 mapMarkers.Add(new MapMarkerData(row));
             }
         }
-
+        
         dataStale = false;
+        refreshInProgress = false;
     }
 }
