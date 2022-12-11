@@ -44,6 +44,7 @@ public class QuestData
             61419 => QuestType.FeatureUnlock,
             61413 => QuestType.Repeatable,
             >= 61401 and <= 61403 => QuestType.FeatureUnlock,
+            61412 => QuestType.MainStory,
             _ => QuestType.Unknown
         };
 
