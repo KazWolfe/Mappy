@@ -1,5 +1,7 @@
 ﻿using System.Numerics;
 using Dalamud.Interface;
+using Dalamud.Utility;
+using ImGuiNET;
 using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Localization;
@@ -54,6 +56,41 @@ public class QuestMarkerOptions : IModuleSettings
                 Service.Configuration.QuestMarkers.HiddenQuests.Clear();
                 Service.Configuration.Save();
             }, new Vector2(InfoBox.Instance.InnerWidth, 23.0f * ImGuiHelpers.GlobalScale))
+            .AddDummy(4.0f)
+            .AddString(Strings.Map.Quests.RemoveFromBlacklist)
+            .AddDummy(8.0f)
+            .AddSeparator()
+            .AddDummy(8.0f)
+            .AddAction(DrawBlacklist)
             .Draw();
+    }
+
+    private void DrawBlacklist()
+    {
+        var size = new Vector2(InfoBox.Instance.InnerWidth, 150.0f);
+        
+        if(ImGui.BeginChild("###BlacklistFrame", size, true))
+        {
+            if (Service.Configuration.QuestMarkers.HiddenQuests.Count == 0)
+            {
+                ImGui.TextColored(Colors.Orange, Strings.Map.Quests.EmptyBlacklist);
+            }
+            else
+            {
+                foreach (var id in Service.Configuration.QuestMarkers.HiddenQuests)
+                {
+                    var questName = Service.Cache.QuestCache.GetRow(id + 65536);
+        
+                    ImGui.PushItemWidth(InfoBox.Instance.InnerWidth);
+                    if (ImGui.Selectable(questName.Name.ToDalamudString().TextValue))
+                    {
+                        Service.Configuration.QuestMarkers.HiddenQuests.Remove(id);
+                        Service.Configuration.Save();
+                        break;
+                    }
+                }
+            }
+        }
+        ImGui.EndChild();
     }
 }
