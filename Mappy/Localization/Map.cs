@@ -131,5 +131,6 @@ public class QuestMarkerStrings
     public string ResetBlacklist => Loc.Localize("QuestMarker_ResetBlacklist", "Reset Blacklist");
     public string RemoveFromBlacklist => Loc.Localize("QuestMarker_RemoveFromBlacklist", "Click quest to remove from blacklist");
     public string EmptyBlacklist => Loc.Localize("QuestMarker_NothingBlacklisted", "There are no quests in the blacklist\nRight click a quest icon to add to blacklist");
+    public string HideRepeatable => Loc.Localize("QuestMarker_HideRepeatable", "Hide Repeatable");
 
 }

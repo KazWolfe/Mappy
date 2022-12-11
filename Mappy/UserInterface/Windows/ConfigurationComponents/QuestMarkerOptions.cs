@@ -25,6 +25,7 @@ public class QuestMarkerOptions : IModuleSettings
             .AddConfigCheckbox(Strings.Map.Quests.Tribal, Settings.ShowTribal)
             .AddConfigCheckbox(Strings.Map.Quests.Festival, Settings.ShowFestival)
             .AddConfigCheckbox(Strings.Map.Quests.GrandCompany, Settings.ShowGrandCompany)
+            .AddConfigCheckbox(Strings.Map.Quests.HideRepeatable, Settings.HideRepeatable)
             .AddConfigCheckbox(Strings.Map.Quests.HideAccepted, Settings.HideAccepted)
             .AddConfigCheckbox(Strings.Map.Quests.HideUnaccepted, Settings.HideUnaccepted)
             .AddConfigCheckbox(Strings.Map.Generic.ShowTooltip, Settings.ShowTooltip)

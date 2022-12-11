@@ -22,6 +22,7 @@ public class QuestSettings
     public Setting<bool> ShowTribal = new(false);
     public Setting<bool> ShowFestival = new(false);
     public Setting<bool> ShowGrandCompany = new(false);
+    public Setting<bool> HideRepeatable = new(false);
     public Setting<bool> HideAccepted = new(false);
     public Setting<bool> HideUnaccepted = new(false);
     public Setting<bool> ShowTooltip = new(true);
@@ -38,7 +39,7 @@ public unsafe class QuestMapComponent : IMapComponent
     
     private readonly List<QuestData> unclaimedQuests = new();
     
-    private bool dataStale;
+    private static bool _dataStale;
     private bool refreshInProgress;
     private uint newMap;
     
@@ -50,7 +51,7 @@ public unsafe class QuestMapComponent : IMapComponent
     public void Update(uint mapID)
     {
         newMap = mapID;
-        dataStale = true;
+        _dataStale = true;
     }
     
     public void Draw()
@@ -60,13 +61,15 @@ public unsafe class QuestMapComponent : IMapComponent
         if(!Settings.HideUnaccepted.Value) DrawUnclaimedQuests();
         if(!Settings.HideAccepted.Value) DrawClaimedQuests();
 
-        if (dataStale && !refreshInProgress)
+        if (_dataStale && !refreshInProgress)
         {
             unclaimedQuests.Clear();
             Task.Run(LoadMarkers);
             refreshInProgress = true;
         }
     }
+
+    public static void RefreshMarkers() => _dataStale = true;
 
     private void DrawClaimedQuests()
     {
@@ -149,7 +152,7 @@ public unsafe class QuestMapComponent : IMapComponent
 
     private void DrawUnclaimedQuests()
     {
-        foreach (var quest in unclaimedQuests.TakeWhile(_ => !dataStale))
+        foreach (var quest in unclaimedQuests.TakeWhile(_ => !_dataStale))
         {
             quest.Draw();
         }
@@ -170,7 +173,7 @@ public unsafe class QuestMapComponent : IMapComponent
             unclaimedQuests.Add(new QuestData(quest));
         }
         
-        dataStale = false;
+        _dataStale = false;
         refreshInProgress = false;
     }
 

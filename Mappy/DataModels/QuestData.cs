@@ -57,6 +57,7 @@ public class QuestData
     public void Draw()
     {
         if (Settings.HiddenQuests.Contains(AdjustedQuestID)) return;
+        if (Settings.HideRepeatable.Value && Type == QuestType.Repeatable) return;
         
         DrawIcon();
         DrawTooltip();
