@@ -12,6 +12,7 @@ public class CompositeLuminaCache : IDisposable
     public LuminaCache<MapSymbol> MapSymbolCache = new(GetMapSymbol);
     public LuminaCache<GatheringPoint> GatheringPointCache = new();
     public LuminaCache<GatheringPointBase> GatheringPointBaseCache = new();
+    public LuminaCache<CustomQuestSheet> QuestCache = new();
 
     public IconManager IconCache = new();
     public MapTextureManager MapTextureCache = new();

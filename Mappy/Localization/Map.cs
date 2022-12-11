@@ -24,6 +24,7 @@ public class MapStrings
 
     public string RemoveFlag => Loc.Localize("Map_RemoveFlag", "Remove Flag");
     public string RemoveGatheringArea => Loc.Localize("Map_RemoveGatheringArea", "Remove Gathering Area");
+    public string HideQuest => Loc.Localize("Map_HideQuest", "Hide Quest");
 
     public Generic Generic { get; } = new();
     public FateStrings Fate { get; } = new();

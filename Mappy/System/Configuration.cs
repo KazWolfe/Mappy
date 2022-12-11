@@ -32,6 +32,7 @@ public class Configuration : IPluginConfiguration
     public PetSettings Pet = new();
     public WaymarkSettings Waymarks = new();
     public TemporaryMarkerSettings TemporaryMarkers = new();
+    public QuestSettings QuestMarkers = new();
 
     [NonSerialized]
     private DalamudPluginInterface? pluginInterface;

@@ -4,6 +4,7 @@ using System.Numerics;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using Mappy.System;
 using Mappy.UserInterface.Components;
 using Mappy.Utilities;
 using Condition = Mappy.Utilities.Condition;
@@ -19,7 +20,6 @@ public class MapWindow : Window, IDisposable
     private bool lastWindowState;
     
     private readonly MapToolbar toolbar = new();
-    public static MapContextMenu ContextMenu = new();
     public static Vector2 MapContentsStart;
     
     public MapWindow() : base("Mappy Map Window")
@@ -84,7 +84,7 @@ public class MapWindow : Window, IDisposable
             }
 
             toolbar.Draw(IsFocused);
-            ContextMenu.Draw();
+            Service.ContextMenu.Draw();
         }
         ImGui.EndChild();
     }
@@ -97,7 +97,7 @@ public class MapWindow : Window, IDisposable
             {
                 if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
                 {
-                    ContextMenu.Show(ContextMenuType.General);
+                    Service.ContextMenu.Show(ContextMenuType.General);
                 }
                 
                 if (ImGui.GetIO().MouseWheel > 0) // Mouse Wheel Up
