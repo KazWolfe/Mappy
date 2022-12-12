@@ -35,6 +35,8 @@ public unsafe class MapManager : IDisposable
         }
     }
 
+    public Vector2 MapTextureSize => new(MapTexture?.Width ?? 0, MapTexture?.Height ?? 0);
+    
     private TextureWrap? lastTexture;
     public List<Map> MapLayers { get; private set; } = new();
     public Map? Map;
@@ -100,18 +102,18 @@ public unsafe class MapManager : IDisposable
     {
         return position * MapAgent->CurrentMapSizeFactorFloat
                - new Vector2(MapAgent->CurrentOffsetX, MapAgent->CurrentOffsetY) * MapAgent->CurrentMapSizeFactorFloat
-               + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
+               + MapTextureSize / 2.0f;
     }
     
     public Vector2 GetTextureOffsetPosition(Vector2 coordinates) =>
         coordinates * ((Map?.SizeFactor ?? 100.0f) / 100.0f)
-        + new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f;
+        + MapTextureSize / 2.0f;
     
     public Vector2 GetTexturePosition(Vector2 coordinates)
     {
         return (coordinates / MapRenderer.Viewport.Scale
             - MapRenderer.Viewport.Size / 2.0f / MapRenderer.Viewport.Scale
-            + MapRenderer.Viewport.Center - new Vector2(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048) / 2.0f) 
+            + MapRenderer.Viewport.Center - MapTextureSize / 2.0f) 
             / ((Map?.SizeFactor ?? 100.0f) / 100.0f);
     }
     
@@ -143,7 +145,7 @@ public unsafe class MapManager : IDisposable
             }
             else
             {
-                var newCenter = new Vector2(MapTexture.Width, MapTexture.Height) / 2.0f;
+                var newCenter = MapTextureSize / 2.0f;
                 MapRenderer.SetViewportCenter(newCenter);
                 MapRenderer.SetViewportZoom(0.4f);
             }
