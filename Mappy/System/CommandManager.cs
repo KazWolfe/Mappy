@@ -14,7 +14,7 @@ internal class CommandManager : IDisposable
 
     private const string HelpCommand = "/mappy help";
 
-    private readonly List<IPluginCommand> commands = new()
+    public readonly List<IPluginCommand> Commands = new()
     {
         new ConfigurationWindowCommand(),
         new PrintHelpTextCommand(),
@@ -65,26 +65,26 @@ internal class CommandManager : IDisposable
         }
     }
 
-    private T? GetCommand<T>()
+    private IPluginCommand? GetCommand<T>()
     {
-        return commands.OfType<T>().FirstOrDefault();
+        return Commands.OfType<T>().FirstOrDefault() as IPluginCommand;
     }
     
     private void ProcessCommand(string subCommand, string? subCommandArguments)
     {
-        if (commands.Any(command => command.CommandArgument == subCommand))
+        var matchingCommands = Commands.Where(command => command.CommandArgument == subCommand).ToList();
+
+        if (matchingCommands.Any())
         {
-            foreach (var cmd in commands)
+            foreach (var cmd in matchingCommands)
             {
-                if (cmd.CommandArgument == subCommand)
-                {
-                    cmd.Execute(subCommandArguments);
-                }
+                cmd.Execute(subCommandArguments);
             }
         }
         else
         {
             IPluginCommand.PrintCommandError(subCommand, subCommandArguments);
+
         }
     }
 

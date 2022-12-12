@@ -1,25 +1,15 @@
-﻿using Mappy.Interfaces;
+﻿using System.Collections.Generic;
+using Mappy.Interfaces;
 using Mappy.Utilities;
 
-namespace Mappy.System.Commands
-{
-    internal class LocalizationCommand : IPluginCommand
-    {
-        public string CommandArgument => "loc";
+namespace Mappy.System.Commands;
 
-        public void Execute(string? additionalArguments)
-        {
-            switch (additionalArguments)
-            {
-                case "generate":
-                    Chat.Print("Command", "Generating Localization File");
-                    Service.Localization.ExportLocalization();
-                    break;
-                
-                default:
-                    Chat.Print("Command", "Invalid Localization Command");
-                    break;
-            }
-        }
-    }
+internal class LocalizationCommand : IPluginCommand
+{
+    public string CommandArgument => "loc";
+
+    public IEnumerable<ISubCommand> SubCommands { get; } = new List<ISubCommand>
+    {
+        new SubCommand("generate", () => { Chat.Print("Command", "Generating Localization File"); Service.Localization.ExportLocalization();})
+    };
 }
