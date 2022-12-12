@@ -28,4 +28,18 @@ internal static class Chat
 
         Service.Chat.PrintError(stringBuilder.BuiltString);
     }
+    
+    public static void PrintCommandError(string message)
+    {
+        var stringBuilder = new SeStringBuilder();
+        stringBuilder.AddUiForeground(45);
+        stringBuilder.AddText("[Mappy] ");
+        stringBuilder.AddUiForegroundOff();
+        stringBuilder.AddUiForeground(62);
+        stringBuilder.AddText($"[Command] ");
+        stringBuilder.AddUiForegroundOff();
+        stringBuilder.AddText(message);
+
+        Service.Chat.PrintError(stringBuilder.BuiltString);
+    }
 }
