@@ -106,7 +106,7 @@ public class Player : IModule
         private unsafe float GetCameraRotation()
         {
             // var viewMatrix = CameraManager.Instance()->CurrentCamera->ViewMatrix;
-            var viewMatrix = CameraManager.Instance()->CurrentCamera;
+            var cameraManager = CameraManager.Instance()->CurrentCamera;
 
             var yaw = MathF.Atan2(-1 * cameraManager->Vector_4.X, -1 * cameraManager->Vector_2.X);
             //var yaw = MathF.Atan2(-1 * viewMatrix[2,0], -1 * viewMatrix[0,0]);

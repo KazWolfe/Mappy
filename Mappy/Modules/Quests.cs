@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ public class Quests : IModule
     
         public QuestMapComponent()
         {
-            PluginLog.Debug($"QuestManager: {new nint(QuestManager.Instance()->Quest[0]):X8}");
+            PluginLog.Debug($"QuestManager: {new IntPtr(QuestManager.Instance()->Quest[0]):X8}");
         }
     
         public void Update(uint mapID)

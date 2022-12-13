@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
@@ -65,7 +66,7 @@ public class Treasures : IModule
 
         private unsafe bool IsTargetable(GameObject gameObject)
         {
-            if (gameObject.Address == nint.Zero) return false;
+            if (gameObject.Address == IntPtr.Zero) return false;
 
 
             if (Service.ClientState.LocalPlayer is { } player)
