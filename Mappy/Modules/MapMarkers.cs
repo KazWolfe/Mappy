@@ -4,7 +4,6 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Interface;
 using Dalamud.Logging;
-using FFXIVClientStructs.FFXIV.Client.Game.Housing;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
 using Mappy.Interfaces;
