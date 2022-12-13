@@ -6,7 +6,8 @@ using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
-using Mappy.MapComponents;
+using Mappy.DataModels;
+using Mappy.Modules;
 using Mappy.UserInterface.Windows;
 using Mappy.Utilities;
 
@@ -115,14 +116,14 @@ public unsafe class GameIntegration : IDisposable
 
             if (markerCalled)
             {
-                if (TemporaryMarkersMapComponent.TempMarker is { } stagedMarker)
+                if (TemporaryMarkers.TemporaryMarkersMapComponent.TempMarker is { } stagedMarker)
                 {
                     stagedMarker.MapID = mapInfo->MapId;
                     
                     MapRenderer.SetViewportCenter(stagedMarker.AdjustedPosition);
                     MapRenderer.SetViewportZoom(0.8f);
                 
-                    TemporaryMarkersMapComponent.AddMarker(stagedMarker);
+                    TemporaryMarkers.TemporaryMarkersMapComponent.AddMarker(stagedMarker);
                 }
 
                 if (Service.WindowManager.GetWindowOfType<MapWindow>(out var mapWindow))
@@ -186,7 +187,7 @@ public unsafe class GameIntegration : IDisposable
                 *flagSetByte = 0;
             }
                 
-            TemporaryMarkersMapComponent.AddMarker(stagedMarker);
+            TemporaryMarkers.TemporaryMarkersMapComponent.AddMarker(stagedMarker);
             setFlagMarkerHook!.Original(agent, territoryId, mapId, mapX, mapY, iconId);
         }
         catch (Exception e)
@@ -202,7 +203,7 @@ public unsafe class GameIntegration : IDisposable
             PluginLog.Debug("GatheringTrigger");
             markerCalled = true;
             
-            TemporaryMarkersMapComponent.TempMarker = new TemporaryMarker
+            TemporaryMarkers.TemporaryMarkersMapComponent.TempMarker = new TemporaryMarker
             {
                 Type = MarkerType.Gathering,
                 IconID = iconID,

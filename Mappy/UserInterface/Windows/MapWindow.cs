@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Numerics;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Interface.Windowing;
@@ -11,7 +10,7 @@ using Condition = Mappy.Utilities.Condition;
 
 namespace Mappy.UserInterface.Windows;
 
-public class MapWindow : Window, IDisposable
+public class MapWindow : Window
 {
     private Vector2 mouseDragStart;
     private bool dragStarted;
@@ -26,15 +25,11 @@ public class MapWindow : Window, IDisposable
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(445,200),
+            MinimumSize = new Vector2(470,200),
             MaximumSize = new Vector2(9999,9999)
         };
 
         IsOpen = Service.Configuration.KeepOpen.Value;
-    }
-
-    public void Dispose()
-    {
     }
 
     public override void PreOpenCheck()
@@ -168,7 +163,7 @@ public class MapWindow : Window, IDisposable
         return IsBoundedBy(ImGui.GetMousePos(), windowStart, windowStart + headerSize);
     }
     
-    private static bool IsBoundedBy(Vector2 cursor, Vector2 minBounds, Vector2 maxBounds)
+    public static bool IsBoundedBy(Vector2 cursor, Vector2 minBounds, Vector2 maxBounds)
     {
         if (cursor.X >= minBounds.X && cursor.Y >= minBounds.Y)
         {

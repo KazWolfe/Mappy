@@ -4,7 +4,7 @@ using Dalamud.Utility;
 using ImGuiNET;
 using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
-using Mappy.MapComponents;
+using Mappy.Modules;
 using Mappy.Utilities;
 using Action = System.Action;
 

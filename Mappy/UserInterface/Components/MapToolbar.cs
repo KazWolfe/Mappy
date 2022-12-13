@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Dalamud.Interface;
+using Dalamud.Utility;
 using ImGuiNET;
 using Mappy.Localization;
 using Mappy.System;
@@ -34,6 +35,8 @@ public class MapToolbar
                 DrawConfigurationButton();
                 ImGui.SameLine();
                 DrawLockUnlockWidget();
+                ImGui.SameLine();
+                DrawCursorPosition();
             }
             ImGui.EndChild();
             ImGui.PopStyleColor();
@@ -44,7 +47,7 @@ public class MapToolbar
 
     private void DrawMapLayersWidget()
     {
-        ImGui.PushItemWidth(250.0f * ImGuiHelpers.GlobalScale);
+        ImGui.PushItemWidth(200.0f * ImGuiHelpers.GlobalScale);
         ImGui.BeginDisabled(Service.MapManager.MapLayers.Count == 0);
         if (ImGui.BeginCombo("###LayerCombo", Service.MapManager.Map?.GetName() ?? "Unable To Get Map Data"))
         {
@@ -134,8 +137,8 @@ public class MapToolbar
         
         ImGui.PopID();
     }
-    
-    
+
+
     private void DrawLockUnlockWidget()
     {
         ImGui.PushID("LockUnlockWidget");
@@ -178,5 +181,30 @@ public class MapToolbar
         }
         
         ImGui.PopID();
+    }
+
+    private void DrawCursorPosition()
+    {
+        if (MapSelect.ShowMapSelectOverlay) return;
+        
+        var cursorScreenPosition = ImGui.GetMousePos();
+
+        if (MapWindow.IsBoundedBy(cursorScreenPosition, MapWindow.MapContentsStart, MapWindow.MapContentsStart + MapRenderer.Viewport.Size))
+        {
+            var cursorPosition = Service.MapManager.GetTexturePosition(ImGui.GetMousePos() - MapWindow.MapContentsStart);
+
+            if (Service.MapManager.Map is not null)
+            {
+                var mapCoordinates = MapUtil.WorldToMap(cursorPosition, Service.MapManager.Map);
+
+                var regionAvailable = ImGui.GetContentRegionMax();
+                var coordinateString = $"( {mapCoordinates.X:F1}, {mapCoordinates.Y:F1} )";
+                var stringSize = ImGui.CalcTextSize(coordinateString);
+
+                var currentPosition = ImGui.GetCursorPos();
+                ImGui.SetCursorPos(regionAvailable with {X = regionAvailable.X - stringSize.X, Y = currentPosition.Y});
+                ImGui.Text(coordinateString);
+            }
+        }
     }
 }

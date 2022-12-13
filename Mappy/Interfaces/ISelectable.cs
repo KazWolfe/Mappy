@@ -12,5 +12,5 @@ public interface IModuleSettings
         ImGui.Text(ComponentName.GetTranslatedString());
     }
     
-    void Draw();
+    void DrawSettings();
 }

@@ -21,7 +21,7 @@ public class ConfigurationFrame
         {
             if (selected != null)
             {
-                selected.Draw();
+                selected.DrawSettings();
             }
             else
             {

@@ -2,7 +2,7 @@
 using Dalamud.Configuration;
 using Dalamud.Plugin;
 using Mappy.DataModels;
-using Mappy.MapComponents;
+using Mappy.Modules;
 
 namespace Mappy.System;
 
@@ -33,7 +33,9 @@ public class Configuration : IPluginConfiguration
     public WaymarkSettings Waymarks = new();
     public TemporaryMarkerSettings TemporaryMarkers = new();
     public QuestSettings QuestMarkers = new();
-
+    public TreasureSettings Treasure = new();
+    public HousingSettings Housing = new();
+    
     [NonSerialized]
     private DalamudPluginInterface? pluginInterface;
     public void Initialize(DalamudPluginInterface inputPluginInterface) => pluginInterface = inputPluginInterface;

@@ -21,6 +21,7 @@ internal class CommandManager : IDisposable
         new DebugWindowCommand(),
         new MapManagerCommand(),
         new LocalizationCommand(),
+        new GotoCommand(),
     };
 
     public CommandManager()
@@ -97,7 +98,7 @@ internal class CommandManager : IDisposable
             return null;
         }
 
-        return stringArray[1];
+        return string.Join(" ", stringArray[1..]);
     }
 
     private static string? GetPrimaryCommand(string arguments)

@@ -16,6 +16,8 @@ public enum ComponentName
     General,
     TemporaryMarker,
     QuestMarker,
+    Housing,
+    Treasure,
 }
 
 public static class ComponentNameExtensions
@@ -35,6 +37,8 @@ public static class ComponentNameExtensions
             ComponentName.General => Strings.Configuration.Label,
             ComponentName.TemporaryMarker => Strings.Map.TemporaryMarkers.Label,
             ComponentName.QuestMarker => Strings.Map.Quests.Label,
+            ComponentName.Housing => Strings.Map.Housing.Label,
+            ComponentName.Treasure => Strings.Map.Treasure.Label,
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
         };
     }

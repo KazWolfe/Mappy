@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Logging;
@@ -26,7 +27,7 @@ public class MapSelectOverlay
         if (showOverlay) ImGui.PushStyleColor(ImGuiCol.Button, Colors.Red);
         if (ImGui.Button(FontAwesomeIcon.Map.ToIconString(), ImGuiHelpers.ScaledVector2(26.0f, 23.0f)))
         {
-            ShowMapSelectOverlay = true;
+            ShowMapSelectOverlay = !ShowMapSelectOverlay;
             shouldFocusMapSearch = true;
         }
         if (showOverlay) ImGui.PopStyleColor();
@@ -56,6 +57,8 @@ public class MapSelectOverlay
 
         var regionAvailable = ImGui.GetContentRegionAvail();
         var searchPosition = regionAvailable with {X = regionAvailable.X / 2.0f, Y = regionAvailable.Y / 4.0f};
+
+        searchPosition = searchPosition with { Y = MathF.Max(searchPosition.Y, 40.0f * ImGuiHelpers.GlobalScale + 5.0f * ImGuiHelpers.GlobalScale)};
         ImGui.SetCursorPos(searchPosition - new Vector2(searchWidth / 2.0f, 0.0f));
         ImGui.PushItemWidth(searchWidth);
         

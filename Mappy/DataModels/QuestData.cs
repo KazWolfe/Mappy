@@ -5,7 +5,7 @@ using Dalamud.Utility;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Localization;
-using Mappy.MapComponents;
+using Mappy.Modules;
 using Mappy.System;
 using Mappy.Utilities;
 
@@ -40,7 +40,7 @@ public class QuestData
         Type = journalEntry?.Icon switch
         {
             61411 => QuestType.Regular,
-            >= 062301 and <= 062420 => QuestType.FeatureUnlock,
+            >= 062301 and <= 062420 => QuestType.Regular,
             61419 => QuestType.FeatureUnlock,
             61413 => QuestType.Repeatable,
             >= 61401 and <= 61403 => QuestType.FeatureUnlock,

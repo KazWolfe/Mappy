@@ -37,6 +37,8 @@ public class MapStrings
     public WaymarkStrings Waymarks { get; } = new();
     public TemporaryMarkerStrings TemporaryMarkers { get; } = new();
     public QuestMarkerStrings Quests { get; } = new();
+    public HousingStrings Housing { get; } = new();
+    public TreasureStrings Treasure { get; } = new();
 }
 
 public class Generic
@@ -133,4 +135,14 @@ public class QuestMarkerStrings
     public string EmptyBlacklist => Loc.Localize("QuestMarker_NothingBlacklisted", "There are no quests in the blacklist\nRight click a quest icon to add to blacklist");
     public string HideRepeatable => Loc.Localize("QuestMarker_HideRepeatable", "Hide Repeatable");
 
+}
+
+public class HousingStrings
+{
+    public string Label => Loc.Localize("Housing_Label", "Housing Markers");
+}
+
+public class TreasureStrings
+{
+    public string Label => Loc.Localize("Treasure_Label", "Treasure Markers");
 }

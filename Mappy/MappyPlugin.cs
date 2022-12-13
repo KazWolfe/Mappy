@@ -21,6 +21,8 @@ public sealed class MappyPlugin : IDalamudPlugin
         Service.Cache = new CompositeLuminaCache();
 
         // Load Non Critical Managers
+        Service.ModuleManager = new ModuleManager();
+        
         Service.Teleporter = new TeleportManager();
         Service.MapManager = new MapManager();
         Service.ContextMenu = new MapContextMenu();
@@ -40,5 +42,6 @@ public sealed class MappyPlugin : IDalamudPlugin
         Service.MapManager.Dispose();
         Service.Cache.Dispose();
         Service.GameIntegration.Dispose();
+        Service.ModuleManager.Dispose();
     }
 }

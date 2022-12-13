@@ -2,7 +2,7 @@
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using Mappy.Localization;
-using Mappy.MapComponents;
+using Mappy.Modules;
 using Mappy.UserInterface.Windows;
 
 namespace Mappy.System;
@@ -86,7 +86,7 @@ public class MapContextMenu
         {
             if (ImGui.Selectable(Strings.Map.RemoveFlag))
             {
-                TemporaryMarkersMapComponent.RemoveFlag();
+                TemporaryMarkers.TemporaryMarkersMapComponent.RemoveFlag();
 
                 unsafe
                 {
@@ -106,7 +106,7 @@ public class MapContextMenu
         {
             if (ImGui.Selectable(Strings.Map.RemoveGatheringArea))
             {
-                TemporaryMarkersMapComponent.RemoveGatheringArea();
+                TemporaryMarkers.TemporaryMarkersMapComponent.RemoveGatheringArea();
             }
 
             ImGui.EndPopup();

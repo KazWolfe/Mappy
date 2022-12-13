@@ -58,11 +58,6 @@ internal class WindowManager : IDisposable
         Service.PluginInterface.UiBuilder.Draw -= DrawUI;
         Service.PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
 
-        foreach (var window in windows.OfType<IDisposable>())
-        {
-            window.Dispose();
-        }
-
         windowSystem.RemoveAllWindows();
     }
 }

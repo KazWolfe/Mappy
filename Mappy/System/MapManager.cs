@@ -10,7 +10,6 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Interfaces;
-using Mappy.MapComponents;
 using Mappy.Utilities;
 using csFramework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework;
 
@@ -49,23 +48,12 @@ public unsafe class MapManager : IDisposable
 
     private uint lastMapId;
 
-    public List<IMapComponent> MapComponents { get; } = new()
-    {
-        new FateMapComponent(),
-        new MapMarkersMapComponent(),
-        new GatheringPointMapComponent(),
-        new QuestMapComponent(),
-        new AllianceMemberMapComponent(),
-        new PetMapComponent(),
-        new PartyMemberMapComponent(),
-        new WaymarkMapComponent(),
-        new TemporaryMarkersMapComponent(),
-
-        new PlayerMapComponent(), // Render the player last
-    };
+    public List<IMapComponent> MapComponents { get; }
     
     public MapManager()
     {
+        MapComponents = Service.ModuleManager.GetMapComponents().ToList();
+        
         Service.Framework.Update += OnFrameworkUpdate;
     }
     
@@ -100,8 +88,8 @@ public unsafe class MapManager : IDisposable
 
     public Vector2 GetObjectPosition(Vector2 position)
     {
-        return position * MapAgent->CurrentMapSizeFactorFloat
-               - new Vector2(MapAgent->CurrentOffsetX, MapAgent->CurrentOffsetY) * MapAgent->CurrentMapSizeFactorFloat
+        return position * ((Map?.SizeFactor ?? 100.0f) / 100.0f)
+               + new Vector2(Map?.OffsetX ?? 0, Map?.OffsetY ?? 0) * ((Map?.SizeFactor ?? 100.0f) / 100.0f)
                + MapTextureSize / 2.0f;
     }
     
@@ -130,6 +118,7 @@ public unsafe class MapManager : IDisposable
         MapLayers = Service.DataManager.GetExcelSheet<Map>()!
             .Where(eachMap => eachMap.PlaceName.Row == Map.PlaceName.Row)
             .Where(eachMap => eachMap.MapIndex != 0)
+            .OrderBy(eachMap => eachMap.MapIndex)
             .ToList();
             
         MapComponents.ForEach(component => component.Update(mapId));
