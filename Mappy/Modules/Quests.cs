@@ -358,7 +358,7 @@ public class Quests : IModule
                         var questName = Service.Cache.QuestCache.GetRow(id + 65536);
         
                         ImGui.PushItemWidth(InfoBox.Instance.InnerWidth);
-                        if (ImGui.Selectable(questName.Name.ToDalamudString().TextValue))
+                        if (ImGui.Selectable($"{id:D5}: {questName.Name.ToDalamudString().TextValue}"))
                         {
                             Service.Configuration.QuestMarkers.HiddenQuests.Remove(id);
                             Service.Configuration.Save();
