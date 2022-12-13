@@ -1,5 +1,5 @@
 ﻿using System;
-using Strings = Mappy.Localization.Strings;
+using Mappy.Localization;
 
 namespace Mappy.DataModels;
 

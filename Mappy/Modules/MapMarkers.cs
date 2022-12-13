@@ -77,11 +77,6 @@ public class MapMarkers : IModule
                     }
                 }
             }
-
-            unsafe
-            {
-                PluginLog.Debug($"HousingManager: {new nint(HousingManager.Instance()):X8}");
-            }
         }
     
         public void Update(uint mapID)
