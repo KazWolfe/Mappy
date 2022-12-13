@@ -11,15 +11,25 @@ public class DebugWindowCommand : IPluginCommand
 
     public IEnumerable<ISubCommand> SubCommands { get; } = new List<ISubCommand>
     {
-        new SubCommand(null, () => Chat.PrintError("The debug menu cannot be opened while in a PvP area"), () => Service.ClientState.IsPvP),
-        new SubCommand(null, OpenDebugWindow, () => !Service.ClientState.IsPvP),
-    };
-
-    public static void OpenDebugWindow()
-    {
-        if ( Service.WindowManager.GetWindowOfType<DebugWindow>(out var debugWindow) )
+        new SubCommand
         {
-            debugWindow.IsOpen = !debugWindow.IsOpen;
-        }
-    }
+            CommandKeyword = null,
+            CommandAction =  () => Chat.PrintError("The debug menu cannot be opened while in a PvP area"),
+            CanExecute = () => Service.ClientState.IsPvP,
+            Hidden = true
+        },
+        new SubCommand
+        {
+            CommandKeyword = null,
+            CommandAction = () =>
+            {
+                if ( Service.WindowManager.GetWindowOfType<DebugWindow>(out var debugWindow) )
+                {
+                    debugWindow.IsOpen = !debugWindow.IsOpen;
+                }
+            },
+            CanExecute = () => !Service.ClientState.IsPvP,
+            Hidden = true
+        },
+    };
 }

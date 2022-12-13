@@ -10,6 +10,15 @@ internal class LocalizationCommand : IPluginCommand
 
     public IEnumerable<ISubCommand> SubCommands { get; } = new List<ISubCommand>
     {
-        new SubCommand("generate", () => { Chat.Print("Command", "Generating Localization File"); Service.Localization.ExportLocalization();})
+        new SubCommand
+        {
+            CommandKeyword = "generate",
+            CommandAction = () =>
+            {
+                Chat.Print("Command", "Generating Localization File"); 
+                Service.Localization.ExportLocalization();
+            },
+            Hidden = true,
+        }
     };
 }

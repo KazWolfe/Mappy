@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using Mappy.Interfaces;
+using Mappy.Localization;
 using Mappy.Utilities;
 
 namespace Mappy.System.Commands;
@@ -11,7 +12,11 @@ public class GotoCommand : IPluginCommand
 
     public IEnumerable<ISubCommand> SubCommands { get; } = new List<ISubCommand>
     {
-        Capacity = 0
+        new SubCommand
+        {
+            CommandKeyword = null,
+            GetHelpText = () => Strings.Command.Goto
+        }
     };
 
     public void Execute(string? additionalArguments)

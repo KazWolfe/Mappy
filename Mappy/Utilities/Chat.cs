@@ -17,6 +17,21 @@ internal static class Chat
 
         Service.Chat.Print(stringBuilder.BuiltString);
     }
+    
+    public static void PrintHelpText(string command, string? helpText = null)
+    {
+        var stringBuilder = new SeStringBuilder();
+        stringBuilder.AddUiForeground("[Mappy] ", 45);
+        stringBuilder.AddUiForeground("[Command] ", 62);
+        stringBuilder.AddText(command);
+
+        if (helpText is not null)
+        {
+            stringBuilder.AddUiForeground("- " + helpText, 32);
+        }
+
+        Service.Chat.Print(stringBuilder.BuiltString);
+    }
 
     public static void PrintError(string message)
     {

@@ -6,28 +6,26 @@ public interface ISubCommand
 {
     string? GetCommand();
     void Execute();
+    string? GetHelpText();
+    bool Hidden { get; }
 }
 
 public class SubCommand : ISubCommand
 {
-    private string? CommandKeyword { get; }
-    private Action CommandAction { get; }
-    private Func<bool>? CanExecute { get; }
-    
-    public SubCommand(string? commandKeyword, Action commandAction, Func<bool>? canExecute = null)
-    {
-        CommandKeyword = commandKeyword;
-        CommandAction = commandAction;
-        CanExecute = canExecute;
-    }
+    public string? CommandKeyword { get; set; }
+    public Action? CommandAction { get; set; }
+    public Func<bool>? CanExecute { get; set; }
+    public Func<string>? GetHelpText { get; set; }
+    public bool Hidden { get; init; }
 
     public string? GetCommand() => CommandKeyword;
+    string? ISubCommand.GetHelpText() => GetHelpText?.Invoke();
 
     public void Execute()
     {
         if (CanExecute?.Invoke() is null or true)
         {
-            CommandAction();
+            CommandAction?.Invoke();
         }
     }
 }
