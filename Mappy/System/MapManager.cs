@@ -95,14 +95,16 @@ public unsafe class MapManager : IDisposable
     
     public Vector2 GetTextureOffsetPosition(Vector2 coordinates) =>
         coordinates * ((Map?.SizeFactor ?? 100.0f) / 100.0f)
+        + new Vector2(Map?.OffsetX ?? 0, Map?.OffsetY ?? 0) * ((Map?.SizeFactor ?? 100.0f) / 100.0f)
         + MapTextureSize / 2.0f;
     
     public Vector2 GetTexturePosition(Vector2 coordinates)
     {
         return (coordinates / MapRenderer.Viewport.Scale
-            - MapRenderer.Viewport.Size / 2.0f / MapRenderer.Viewport.Scale
-            + MapRenderer.Viewport.Center - MapTextureSize / 2.0f) 
-            / ((Map?.SizeFactor ?? 100.0f) / 100.0f);
+                - MapRenderer.Viewport.Size / 2.0f / MapRenderer.Viewport.Scale
+                + MapRenderer.Viewport.Center - MapTextureSize / 2.0f)
+                / ((Map?.SizeFactor ?? 100.0f) / 100.0f)
+                - new Vector2(Map?.OffsetX ?? 0, Map?.OffsetY ?? 0);
     }
     
     public void LoadMap(uint mapId)
