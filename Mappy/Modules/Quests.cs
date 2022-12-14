@@ -263,12 +263,16 @@ public class Quests : IModule
             {
                 if (quest.QuestLock[0] is {Row: > 0} && QuestManager.IsQuestComplete(quest.QuestLock[0].Row)) return true;
                 if (quest.QuestLock[1] is {Row: > 0} && QuestManager.IsQuestComplete(quest.QuestLock[1].Row)) return true;
+
+                return false;
             }
             // 1 = must not have all completed
             else if (quest.QuestLockJoin == 1)
             {
                 if (quest.QuestLock[0] is {Row: > 0} && !QuestManager.IsQuestComplete(quest.QuestLock[0].Row)) return false;
                 if (quest.QuestLock[1] is {Row: > 0} && !QuestManager.IsQuestComplete(quest.QuestLock[1].Row)) return false;
+
+                return true;
             }
 
             return false;
