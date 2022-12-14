@@ -11,53 +11,48 @@ using Mappy.Utilities;
 
 namespace Mappy.DataModels;
 
-public enum QuestType
-{
-    Unknown,
-    Regular,
-    Repeatable,
-    FeatureUnlock,
-    MainStory
-}
-
 public class QuestData
 {
     private static QuestSettings Settings => Service.Configuration.QuestMarkers;
     
     private readonly Quest internalQuestData;
 
-    public QuestType Type { get; }
-    public uint AdjustedQuestID => internalQuestData.RowId - 65536;
-    public uint IconID => GetIconForType();
+    private uint AdjustedQuestID => internalQuestData.RowId - 65536;
+    
+    private readonly bool isRepeatable;
+    private readonly uint iconID;
+
+    private const uint FeatureUnlockIcon = 61419;
     
     public QuestData(Quest quest)
     {
         internalQuestData = quest;
-        
+
         var journalEntry = Service.DataManager.GetExcelSheet<CompleteJournal>()!.FirstOrDefault(entry =>
             entry.Unknown0 == AdjustedQuestID && entry.Name.RawString == quest.Name.RawString);
 
-        Type = journalEntry?.Icon switch
+        iconID = journalEntry?.Icon switch
         {
-            61411 => QuestType.Regular,
-            >= 062301 and <= 062420 => QuestType.Regular,
-            61419 => QuestType.FeatureUnlock,
-            61413 => QuestType.Repeatable,
-            >= 61401 and <= 61403 => QuestType.FeatureUnlock,
-            61412 => QuestType.MainStory,
-            _ => QuestType.Unknown
+            >= 062301 and <= 062420 => 61411, // Special Job Icons
+            >= 61401 and <= 61403 => 61411, // Grand Company Icons
+            0 => FeatureUnlockIcon, // Special Journal Entries, treat them as Feature Unlocks, since we can only get here from Quest datasheet
+            62522 => FeatureUnlockIcon,
+            _ => (uint)(journalEntry?.Icon ?? 0),
         };
 
-        if (Type == QuestType.Unknown)
+        isRepeatable = journalEntry?.Icon == 61413;
+
+        if (iconID == 0)
         {
-            PluginLog.Warning($"Unknown QuestIcon found: {journalEntry?.Icon}");
+            PluginLog.Warning($"JournalEntry Null: QuestID:{AdjustedQuestID}, QuestName:{quest.Name.ToDalamudString().TextValue}");
         }
     }
 
     public void Draw()
     {
+        if (iconID == 0) return;
         if (Settings.HiddenQuests.Contains(AdjustedQuestID)) return;
-        if (Settings.HideRepeatable.Value && Type == QuestType.Repeatable) return;
+        if (Settings.HideRepeatable.Value && isRepeatable) return;
         
         DrawIcon();
         DrawTooltip();
@@ -70,7 +65,7 @@ public class QuestData
         {
             var position = Service.MapManager.GetTextureOffsetPosition(new Vector2(levelInfo.X, levelInfo.Z));
             
-            MapRenderer.DrawIcon(IconID, position, Settings.UnacceptedScale.Value);
+            MapRenderer.DrawIcon(iconID, position, Settings.UnacceptedScale.Value);
         }
     }
 
@@ -80,8 +75,11 @@ public class QuestData
         if (!ImGui.IsItemHovered()) return;
         
         ImGui.BeginTooltip();
-        ImGui.TextColored(Settings.UnacceptedTooltipColor.Value,
-            $"{Strings.Map.Fate.Level} {internalQuestData.ClassJobLevel0} {internalQuestData.Name.ToDalamudString().TextValue}");
+        ImGui.TextColored(Settings.UnacceptedTooltipColor.Value, $"{Strings.Map.Fate.Level} {internalQuestData.ClassJobLevel0} {internalQuestData.Name.ToDalamudString().TextValue}");
+        if (Settings.DebugMode.Value)
+        {
+            ImGui.Text($"QuestID: {AdjustedQuestID}, IconID: {iconID}");
+        }
         
         ImGui.EndTooltip();
     }
@@ -91,17 +89,5 @@ public class QuestData
         if (!ImGui.IsItemClicked(ImGuiMouseButton.Right)) return;
         
         Service.ContextMenu.Show(ContextMenuType.Quest, AdjustedQuestID);
-    }
-
-    private uint GetIconForType()
-    {
-        return Type switch
-        {
-            QuestType.Regular => 61411,
-            QuestType.FeatureUnlock => 61419,
-            QuestType.MainStory => 61412,
-            QuestType.Repeatable => 61413,
-            _ => 61421
-        };
     }
 }
