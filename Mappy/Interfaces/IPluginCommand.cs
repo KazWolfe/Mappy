@@ -17,7 +17,10 @@ internal interface IPluginCommand
         {
             foreach (var subCommand in matchingSubCommands)
             {
-                subCommand.Execute();
+                if (subCommand.Execute())
+                {
+                    Chat.Print("Command", "Command Successful");
+                }
             }
         }
         else

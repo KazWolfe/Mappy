@@ -5,7 +5,7 @@ namespace Mappy.Interfaces;
 public interface ISubCommand
 {
     string? GetCommand();
-    void Execute();
+    bool Execute();
     string? GetHelpText();
     bool Hidden { get; }
 }
@@ -21,11 +21,17 @@ public class SubCommand : ISubCommand
     public string? GetCommand() => CommandKeyword;
     string? ISubCommand.GetHelpText() => GetHelpText?.Invoke();
 
-    public void Execute()
+    public bool Execute()
     {
         if (CanExecute?.Invoke() is null or true)
         {
-            CommandAction?.Invoke();
+            if (CommandAction is not null)
+            {
+                CommandAction.Invoke();
+                return true;
+            }
         }
+
+        return false;
     }
 }
