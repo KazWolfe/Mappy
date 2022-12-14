@@ -16,7 +16,7 @@ public class Configuration : IPluginConfiguration
     public Setting<bool> LockWindow = new(false);
     public Setting<bool> HideWindowFrame = new(false);
     public Setting<bool> FadeWhenUnfocused = new(true);
-    public Setting<bool> HideInDuties = new(true);
+    public Setting<bool> HideInDuties = new(false);
     public Setting<float> FadePercent = new(0.6f);
     public Setting<bool> AlwaysShowToolbar = new(false);
     public Setting<bool> EnableIntegrations = new(true);
