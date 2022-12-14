@@ -22,6 +22,7 @@ internal class CommandManager : IDisposable
         new MapManagerCommand(),
         new LocalizationCommand(),
         new GotoCommand(),
+        new QuestCommand(),
     };
 
     public CommandManager()

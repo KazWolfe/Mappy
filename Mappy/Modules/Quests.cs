@@ -33,6 +33,8 @@ public class QuestSettings
     public Setting<Vector4> InProgressColor = new(Colors.Red with {W = 0.20f});
     public Setting<Vector4> AcceptedTooltipColor = new(Colors.SoftGreen);
     public Setting<Vector4> UnacceptedTooltipColor = new(Colors.White);
+
+    public Setting<bool> DebugMode = new(false);
 }
 
 public class Quests : IModule
