@@ -169,8 +169,7 @@ public unsafe class MapManager : IDisposable
                 }
                 else
                 {
-                    var newCenter = MapTextureSize / 2.0f;
-                    MapRenderer.SetViewportCenter(newCenter);
+                    MapRenderer.SetViewportCenter(MapTextureSize / 2.0f);
                     MapRenderer.SetViewportZoom(0.4f);
                 }
             }
