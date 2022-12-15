@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -34,7 +35,7 @@ public unsafe class MapManager : IDisposable
         }
     }
 
-    public Vector2 MapTextureSize => new(MapTexture?.Width ?? 0, MapTexture?.Height ?? 0);
+    public Vector2 MapTextureSize => new(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048);
     
     private TextureWrap? lastTexture;
     public List<Map> MapLayers { get; private set; } = new();
@@ -47,6 +48,8 @@ public unsafe class MapManager : IDisposable
     public uint LoadedMapId { get; private set; }
 
     private uint lastMapId;
+        
+    private bool loadInProgress;
 
     public List<IMapComponent> MapComponents { get; }
     
@@ -107,15 +110,29 @@ public unsafe class MapManager : IDisposable
                 - new Vector2(Map?.OffsetX ?? 0, Map?.OffsetY ?? 0);
     }
     
-    public void LoadMap(uint mapId)
+    public void LoadMap(uint mapId, Vector2? newViewportPosition = null)
     {
-        if (LoadedMapId == mapId) return;
+        if (!loadInProgress)
+        {
+            loadInProgress = true;
+            Task.Run(() => InternalLoadMap(mapId, newViewportPosition));
+        }
+    }
+
+    private void InternalLoadMap(uint mapID, Vector2? newViewportPosition)
+    {
+        if (LoadedMapId == mapID)
+        {
+            loadInProgress = false;
+            SetViewport(newViewportPosition);
+            return;
+        }
         
-        PluginLog.Debug($"Loading Map: {mapId}");
+        PluginLog.Debug($"Loading Map: {mapID}");
         
-        LoadedMapId = mapId;
+        LoadedMapId = mapID;
         
-        Map = Service.Cache.MapCache.GetRow(mapId);
+        Map = Service.Cache.MapCache.GetRow(mapID);
 
         MapLayers = Service.DataManager.GetExcelSheet<Map>()!
             .Where(eachMap => eachMap.PlaceName.Row == Map.PlaceName.Row)
@@ -123,22 +140,39 @@ public unsafe class MapManager : IDisposable
             .OrderBy(eachMap => eachMap.MapIndex)
             .ToList();
             
-        MapComponents.ForEach(component => component.Update(mapId));
-                    
-        if (!PlayerInCurrentMap && MapTexture is not null)
+        MapComponents.ForEach(component => component.Update(mapID));
+
+        SetViewport(newViewportPosition);
+
+        loadInProgress = false;
+    }
+
+    private void SetViewport(Vector2? newViewportPosition)
+    {
+        if (newViewportPosition is not null)
         {
-            if (Service.Configuration.FollowPlayer.Value)
+            var position = GetTextureOffsetPosition(newViewportPosition.Value);
+
+            MapRenderer.SetViewportCenter(position);
+            MapRenderer.SetViewportZoom(0.8f);
+        }
+        else
+        {
+            if (!PlayerInCurrentMap && MapTexture is not null)
             {
-                if (Service.ClientState.LocalPlayer is { } player)
+                if (Service.Configuration.FollowPlayer.Value)
                 {
-                    MapRenderer.SetViewportCenter(Service.MapManager.GetObjectPosition(player));
+                    if (Service.ClientState.LocalPlayer is { } player)
+                    {
+                        MapRenderer.SetViewportCenter(Service.MapManager.GetObjectPosition(player));
+                    }
                 }
-            }
-            else
-            {
-                var newCenter = MapTextureSize / 2.0f;
-                MapRenderer.SetViewportCenter(newCenter);
-                MapRenderer.SetViewportZoom(0.4f);
+                else
+                {
+                    var newCenter = MapTextureSize / 2.0f;
+                    MapRenderer.SetViewportCenter(newCenter);
+                    MapRenderer.SetViewportZoom(0.4f);
+                }
             }
         }
     }
