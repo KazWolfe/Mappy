@@ -17,3 +17,5 @@ public class MapViewport
     public Vector2 ScaledTopLeft => Center * Scale - HalfSize;
     private Vector2 HalfSize => Size / 2.0f;
 }
+
+public record ViewportData(Vector2 Center, float Scale);

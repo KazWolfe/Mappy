@@ -10,6 +10,7 @@ using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
+using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Utilities;
 using csFramework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework;
@@ -19,6 +20,7 @@ namespace Mappy.System;
 public unsafe class MapManager : IDisposable
 {
     private AgentMap* MapAgent => csFramework.Instance()->GetUiModule()->GetAgentModule()->GetAgentMap();
+    private TextureWrap? lastTexture;
     public TextureWrap? MapTexture
     {
         get
@@ -36,20 +38,16 @@ public unsafe class MapManager : IDisposable
     }
 
     public Vector2 MapTextureSize => new(MapTexture?.Width ?? 2048, MapTexture?.Height ?? 2048);
-    
-    private TextureWrap? lastTexture;
     public List<Map> MapLayers { get; private set; } = new();
-    public Map? Map;
+    public Map? Map { get; private set; }
     public bool PlayerInCurrentMap => MapAgent->CurrentMapId == LoadedMapId;
     public uint PlayerLocationMapID => MapAgent->CurrentMapId;
-
     public bool LoadingNextMap { get; private set; }
-
     public uint LoadedMapId { get; private set; }
 
     private uint lastMapId;
-        
     private bool loadInProgress;
+    private readonly Dictionary<uint, ViewportData> viewportPosition = new();
 
     public List<IMapComponent> MapComponents { get; }
     
@@ -124,14 +122,16 @@ public unsafe class MapManager : IDisposable
         if (LoadedMapId == mapID)
         {
             loadInProgress = false;
-            SetViewport(newViewportPosition);
+            SetViewport(mapID, newViewportPosition);
             return;
         }
         
         PluginLog.Debug($"Loading Map: {mapID}");
+
+        viewportPosition[LoadedMapId] = new ViewportData(MapRenderer.Viewport.Center, MapRenderer.Viewport.Scale);
         
         LoadedMapId = mapID;
-        
+
         Map = Service.Cache.MapCache.GetRow(mapID);
 
         MapLayers = Service.DataManager.GetExcelSheet<Map>()!
@@ -141,17 +141,16 @@ public unsafe class MapManager : IDisposable
             .ToList();
             
         MapComponents.ForEach(component => component.Update(mapID));
-
-        SetViewport(newViewportPosition);
+        SetViewport(mapID, newViewportPosition);
 
         loadInProgress = false;
     }
 
-    private void SetViewport(Vector2? newViewportPosition)
+    private void SetViewport(uint mapID, Vector2? newViewportPosition)
     {
-        if (newViewportPosition is not null)
+        if (newViewportPosition is {} newPosition)
         {
-            var position = GetTextureOffsetPosition(newViewportPosition.Value);
+            var position = GetTextureOffsetPosition(newPosition);
 
             MapRenderer.SetViewportCenter(position);
             MapRenderer.SetViewportZoom(0.8f);
@@ -169,8 +168,16 @@ public unsafe class MapManager : IDisposable
                 }
                 else
                 {
-                    MapRenderer.SetViewportCenter(MapTextureSize / 2.0f);
-                    MapRenderer.SetViewportZoom(0.4f);
+                    if (viewportPosition.TryGetValue(mapID, out var value))
+                    {
+                        MapRenderer.SetViewportCenter(value.Center);
+                        MapRenderer.SetViewportZoom(value.Scale);
+                    }
+                    else
+                    {
+                        MapRenderer.SetViewportCenter(MapTextureSize / 2.0f);
+                        MapRenderer.SetViewportZoom(0.4f);
+                    }
                 }
             }
         }
