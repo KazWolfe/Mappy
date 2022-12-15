@@ -86,7 +86,7 @@ public unsafe class GameIntegration : IDisposable
         showHook?.Disable();
     }
 
-    public void TryEnable()
+    private void TryEnable()
     {
         if (Service.Configuration.EnableIntegrations.Value)
         {
@@ -98,7 +98,6 @@ public unsafe class GameIntegration : IDisposable
     {
         try
         {
-            PluginLog.Debug("OpenMapById");
             Service.MapManager.LoadMap(mapId);
         }
         catch (Exception e)
@@ -111,9 +110,6 @@ public unsafe class GameIntegration : IDisposable
     {
         try
         {
-            PluginLog.Debug("OpenMap");
-            
-            
             if (markerCalled)
             {
                 GoToMapMarker(mapInfo);
@@ -173,8 +169,6 @@ public unsafe class GameIntegration : IDisposable
     {
         try
         {
-            PluginLog.Debug("MapShowHook");
-            
             if (Service.WindowManager.GetWindowOfType<MapWindow>(out var mapWindow))
             {
                 mapWindow.IsOpen = !mapWindow.IsOpen;
@@ -191,7 +185,6 @@ public unsafe class GameIntegration : IDisposable
         
         try
         {
-            PluginLog.Debug($"FlagTrigger: {mapX},{mapY}, IconID: {iconId}");
             markerCalled = true;
 
             var stagedMarker = new TemporaryMarker
