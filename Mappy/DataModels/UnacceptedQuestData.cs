@@ -11,7 +11,7 @@ using Mappy.Utilities;
 
 namespace Mappy.DataModels;
 
-public class QuestData
+public class UnacceptedQuestData
 {
     private static QuestSettings Settings => Service.Configuration.QuestMarkers;
     
@@ -24,7 +24,7 @@ public class QuestData
 
     private const uint FeatureUnlockIcon = 61419;
     
-    public QuestData(Quest quest)
+    public UnacceptedQuestData(Quest quest)
     {
         internalQuestData = quest;
 
