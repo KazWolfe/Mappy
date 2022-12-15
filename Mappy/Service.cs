@@ -40,4 +40,5 @@ internal class Service
     public static GameIntegration GameIntegration = null!;
     public static MapContextMenu ContextMenu = null!;
     public static ModuleManager ModuleManager = null!;
+    public static QuestManager QuestManager = null!;
 }

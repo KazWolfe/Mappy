@@ -22,6 +22,7 @@ public sealed class MappyPlugin : IDalamudPlugin
 
         // Load Non Critical Managers
         Service.ModuleManager = new ModuleManager();
+        Service.QuestManager = new QuestManager();
         
         Service.Teleporter = new TeleportManager();
         Service.MapManager = new MapManager();
