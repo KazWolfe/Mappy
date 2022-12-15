@@ -33,12 +33,7 @@ public static class MapRenderer
             ImGui.Image(iconTexture.ImGuiHandle, iconSize);
         }
     }
-
-    public static void DrawIcon(TextureWrap? iconTexture, GameObject gameObject, float scale = 0.50f)
-    {
-        DrawIcon(iconTexture, Service.MapManager.GetObjectPosition(gameObject), scale);
-    }
-
+    
     public static void DrawIcon(uint iconId, Vector2 position, float scale = 0.50f)
     {
         DrawIcon(Service.Cache.IconCache.GetIconTexture(iconId), position, scale);
