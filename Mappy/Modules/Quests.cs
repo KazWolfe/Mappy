@@ -44,7 +44,7 @@ public class Quests : IModule
     public IModuleSettings Options { get; } = new QuestMarkerOptions();
     private unsafe class QuestMapComponent : IMapComponent
     {
-        private readonly List<QuestData> unclaimedQuests = new();
+        private readonly List<UnacceptedQuestData> unclaimedQuests = new();
     
         private static bool _dataStale;
         private bool refreshInProgress;
@@ -78,54 +78,34 @@ public class Quests : IModule
 
         public static void RefreshMarkers() => _dataStale = true;
 
+        private void DrawUnclaimedQuests()
+        {
+            foreach (var quest in unclaimedQuests.TakeWhile(_ => !_dataStale))
+            {
+                quest.Draw();
+            }
+        }
+
         private void DrawClaimedQuests()
         {
-            foreach (var quest in GetAcceptedQuests())
+            foreach (var quest in Service.QuestManager.GetAcceptedQuests())
             {
-                var luminaData = Service.Cache.QuestCache.GetRow(quest.Base.QuestID + 65536u);
-
-                var activeIndexes = GetActiveIndexes(luminaData, quest);
-            
-                foreach (var activeIndex in activeIndexes)
+                foreach (var level in Service.QuestManager.GetActiveLevelsForQuest(quest))
                 {
-                    foreach (var index in Enumerable.Range(0, 8))
+                    if (level.Map.Row == Service.MapManager.LoadedMapId && level.Map.Row != 0)
                     {
-                        if (!quest.TodoMask[index])
-                        {
-                            var targetRow = luminaData.ToDoLocation[activeIndex, index].Row;
-                            if (targetRow != 0)
-                            {
-                                var level = Service.Cache.LevelCache.GetRow(targetRow);
-                                if (level.RowId != 0 && Service.MapManager.LoadedMapId == level.Map.Row)
-                                {
-                                    DrawObjective(level, quest, luminaData);
-                                }
-                            }
-                        }
+                        DrawObjective(level, quest);
                     }
                 }
             }
         }
 
-        private static List<int> GetActiveIndexes(CustomQuestSheet luminaData, QuestExtended quest)
+        private void DrawObjective(Level level, QuestExtended quest)
         {
-            var activeIndexes = new List<int>();
-
-            foreach (var index in Enumerable.Range(0, 24))
-            {
-                if (luminaData.ToDoCompleteSeq[index] == quest.CurrentSequenceNumber)
-                {
-                    activeIndexes.Add(index);
-                }
-            }
-
-            return activeIndexes;
-        }
-
-        private void DrawObjective(Level level, QuestExtended quest, CustomQuestSheet questData)
-        {
+            var questData = Service.Cache.QuestCache.GetRow(quest.QuestID + 65536u);
+            
             DrawRing(level);
-            DrawIcon(level, quest.CurrentSequenceNumber);
+            DrawIcon(level, quest);
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
@@ -133,14 +113,12 @@ public class Quests : IModule
                 ImGui.EndTooltip();
             }
         }
-    
-        private void DrawIcon(Level level, byte currentSequenceNumber)
+
+        private void DrawIcon(Level level, QuestExtended quest)
         {
             var position = Service.MapManager.GetTextureOffsetPosition(new Vector2(level.X, level.Z));
-
-            var icon = currentSequenceNumber == 0xFF ? 071025u : 071023u;
         
-            MapRenderer.DrawIcon(icon, position, Settings.AcceptedScale.Value);
+            MapRenderer.DrawIcon(quest.IconID, position, Settings.AcceptedScale.Value);
         }
 
         private void DrawRing(Level positionInfo)
@@ -157,17 +135,9 @@ public class Quests : IModule
             ImGui.EndGroup();
         }
 
-        private void DrawUnclaimedQuests()
-        {
-            foreach (var quest in unclaimedQuests.TakeWhile(_ => !_dataStale))
-            {
-                quest.Draw();
-            }
-        }
-    
         private void LoadMarkers()
         {
-            var acceptedQuests = GetAcceptedQuests().Select(accepted => accepted.Base.QuestID);
+            var acceptedQuests = Service.QuestManager.GetAcceptedQuests().Select(quest => quest.QuestID);
 
             var unclaimedLuminaQuests = Service.DataManager.GetExcelSheet<Quest>()!
                 .Where(quest => quest.IssuerLocation.Value?.Map.Row == newMap)
@@ -177,32 +147,13 @@ public class Quests : IModule
         
             foreach (var quest in unclaimedLuminaQuests)
             {
-                unclaimedQuests.Add(new QuestData(quest));
+                unclaimedQuests.Add(new UnacceptedQuestData(quest));
             }
         
             _dataStale = false;
             refreshInProgress = false;
         }
-
-        private IEnumerable<QuestExtended> GetAcceptedQuests()
-        {
-            List<QuestExtended> questList = new();
         
-            var questArray = QuestManager.Instance()->Quest;
-
-            foreach (var index in Enumerable.Range(0, 30))
-            {
-                if (*questArray[index] is {IsHidden: false, QuestID: > 0} )
-                {
-                    var questPointer = questArray[index];
-                
-                    questList.Add(*(QuestExtended*)questPointer);
-                }
-            }
-
-            return questList;
-        }
-
         private bool PreReqsComplete(Quest quest)
         {
             if (!IsPreQuestsComplete(quest)) return false;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Hooking;
 using Dalamud.Logging;
@@ -112,27 +113,19 @@ public unsafe class GameIntegration : IDisposable
         {
             PluginLog.Debug("OpenMap");
             
-            Service.MapManager.LoadMap(mapInfo->MapId);
-
+            
             if (markerCalled)
             {
-                if (TemporaryMarkers.TemporaryMarkersMapComponent.TempMarker is { } stagedMarker)
-                {
-                    stagedMarker.MapID = mapInfo->MapId;
-                    
-                    MapRenderer.SetViewportCenter(stagedMarker.AdjustedPosition);
-                    MapRenderer.SetViewportZoom(0.8f);
-                
-                    TemporaryMarkers.TemporaryMarkersMapComponent.AddMarker(stagedMarker);
-                }
-
-                if (Service.WindowManager.GetWindowOfType<MapWindow>(out var mapWindow))
-                {
-                    mapWindow.IsOpen = true;
-                    ImGui.SetWindowFocus("Mappy Map Window");
-                }
-                
+                GoToMapMarker(mapInfo);
                 markerCalled = false;
+            }
+            else if(mapInfo->TitleString.ToString() != string.Empty)
+            {
+                GoToQuestMarker(mapInfo);
+            }
+            else
+            {
+                Service.MapManager.LoadMap(mapInfo->MapId);
             }
         }
         catch (Exception e)
@@ -140,7 +133,42 @@ public unsafe class GameIntegration : IDisposable
             PluginLog.Error(e, "Exception during OpenMapByMapId");
         }
     }
-    
+
+    private void GoToMapMarker(OpenMapInfo* mapInfo)
+    {
+        if (TemporaryMarkers.TemporaryMarkersMapComponent.TempMarker is { } stagedMarker)
+        {
+            stagedMarker.MapID = mapInfo->MapId;
+
+            Service.MapManager.LoadMap(mapInfo->MapId, stagedMarker.AdjustedPosition);
+            TemporaryMarkers.TemporaryMarkersMapComponent.AddMarker(stagedMarker);
+        }
+
+        if (Service.WindowManager.GetWindowOfType<MapWindow>(out var mapWindow))
+        {
+            mapWindow.IsOpen = true;
+            ImGui.SetWindowFocus("Mappy Map Window");
+        }
+    }
+
+    private void GoToQuestMarker(OpenMapInfo* mapInfo)
+    {
+        var targetLevels = Service.QuestManager.GetActiveLevelsForQuest(mapInfo->TitleString.ToString(), mapInfo->MapId);
+
+        var focusLevel = targetLevels?.Where(level => level.Map.Row == mapInfo->MapId && level.Map.Row != 0).FirstOrDefault();
+
+        if (focusLevel != null)
+        {
+            Service.MapManager.LoadMap(mapInfo->MapId, new Vector2(focusLevel.X, focusLevel.Z));
+        }
+        
+        if (Service.WindowManager.GetWindowOfType<MapWindow>(out var mapWindow))
+        {
+            mapWindow.IsOpen = true;
+            ImGui.SetWindowFocus("Mappy Map Window");
+        }
+    }
+
     private void OnShowHook()
     {
         try
