@@ -85,6 +85,9 @@ public class MapMarkerData
         };
     }
     
+    private void MapLinkAction() => Service.MapManager.LoadMap(DataMap.RowId);
+    private void AetheryteAction() => Service.Teleporter.Teleport(DataAetheryte);
+    
     private string? GetDisplayString()
     {
         return (MapMarkerType?) DataType switch
@@ -118,15 +121,5 @@ public class MapMarkerData
 
         var mapSymbol = Service.Cache.MapSymbolCache.GetRow(data.Icon);
         return mapSymbol.PlaceName.Value?.Name.ToDalamudString().TextValue;
-    }
-
-    private void MapLinkAction()
-    {
-        Service.MapManager.LoadMap(DataMap.RowId);
-    }
-
-    private void AetheryteAction()
-    {
-        Service.Teleporter.Teleport(DataAetheryte);
     }
 }
