@@ -160,4 +160,21 @@ public class MapWindow : Window
 
         return false;
     }
+
+    public static void FocusWindow(bool toggle = false)
+    {
+        if (Service.WindowManager.GetWindowOfType<MapWindow>(out var mapWindow))
+        {
+            if (toggle)
+            {
+                mapWindow.IsOpen = !mapWindow.IsOpen;
+            }
+            else
+            {
+                mapWindow.IsOpen = true;
+            }
+            
+            ImGui.SetWindowFocus("Mappy Map Window");
+        }
+    }
 }
