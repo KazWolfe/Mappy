@@ -15,11 +15,9 @@ public class MapWindow : Window
     private Vector2 mouseDragStart;
     private bool dragStarted;
     private Vector2 lastWindowSize = Vector2.Zero;
-    private bool betweenAreas;
-    private bool lastWindowState;
-    
     private readonly MapToolbar toolbar = new();
-    public static Vector2 MapContentsStart;
+    
+    public static Vector2 MapContentsStart { get; private set; }
     
     public MapWindow() : base("Mappy Map Window")
     {
@@ -35,32 +33,19 @@ public class MapWindow : Window
     public override void PreOpenCheck()
     {
         if (Service.Configuration.KeepOpen.Value) IsOpen = true;
-        
         if (Service.ClientState.IsPvP) IsOpen = false;
         if (!Service.ClientState.IsLoggedIn) IsOpen = false;
-        if (Service.Configuration.HideInDuties.Value && Condition.IsBoundByDuty()) IsOpen = false;
-        if (Service.Configuration.HideInCombat.Value && Service.Condition[ConditionFlag.InCombat]) IsOpen = false;
-        
-        if (Service.Configuration.HideBetweenAreas.Value)
-        {
-            if (Condition.BetweenAreas() && !betweenAreas)
-            {
-                betweenAreas = true;
-                lastWindowState = IsOpen;
-                IsOpen = false;
-            }
-            else if (Condition.BetweenAreas())
-            {
-                IsOpen = false;
-            }
-            else if (!Condition.BetweenAreas() && betweenAreas)
-            {
-                betweenAreas = false;
-                IsOpen = lastWindowState;
-            }
-        }
     }
-    
+
+    public override bool DrawConditions()
+    {
+        if (Service.Configuration.HideInDuties.Value && Condition.IsBoundByDuty()) return false;
+        if (Service.Configuration.HideInCombat.Value && Service.Condition[ConditionFlag.InCombat]) return false;
+        if (Service.Configuration.HideBetweenAreas.Value && Condition.BetweenAreas()) return false;
+
+        return true;
+    }
+
     public override void Draw()
     {
         SetFlags();
