@@ -30,8 +30,7 @@ public class IconManager : IDisposable
             try
             {
                 var path = IconFilePath.Format(iconId / 1000, iconId);
-                
-                var tex = Service.DataManager.GetImGuiTexture(path);
+                var tex = Service.Penumbra.GetTexture(path);
 
                 if (tex is not null && tex.ImGuiHandle != IntPtr.Zero) 
                 {
@@ -58,4 +57,4 @@ public class IconManager : IDisposable
 
         return iconTextures[iconId];
     }
-}
+    }

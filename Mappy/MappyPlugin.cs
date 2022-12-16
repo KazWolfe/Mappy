@@ -16,6 +16,7 @@ public sealed class MappyPlugin : IDalamudPlugin
 
         // Load Localization First
         Service.Localization = new LocalizationManager();
+        Service.Penumbra = new PenumbraIntegration();
         
         // Load Caches Next
         Service.Cache = new CompositeLuminaCache();

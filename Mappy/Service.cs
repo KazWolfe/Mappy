@@ -35,7 +35,8 @@ internal class Service
     public static System.CommandManager CommandManager = null!;
     public static TeleportManager Teleporter = null!;
     public static LocalizationManager Localization = null!;
-
+    public static PenumbraIntegration Penumbra = null!;
+    
     public static MapManager MapManager = null!;
     public static GameIntegration GameIntegration = null!;
     public static MapContextMenu ContextMenu = null!;

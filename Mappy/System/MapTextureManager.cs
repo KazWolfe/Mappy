@@ -10,7 +10,7 @@ namespace Mappy.System;
 public class MapTextureManager : IDisposable
 {
     private readonly Dictionary<uint, TextureWrap?> mapTextures = new();
-
+    
     public void Dispose() 
     {
         foreach (var texture in mapTextures.Values) 
@@ -29,8 +29,7 @@ public class MapTextureManager : IDisposable
             {
                 var map = Service.Cache.MapCache.GetRow(mapId);
                 var path = GetPathFromMap(map);
-                
-                var tex = Service.DataManager.GetImGuiTexture(path);
+                var tex = Service.Penumbra.GetTexture(path);
                 
                 if (tex is not null && tex.ImGuiHandle != IntPtr.Zero) 
                 {
