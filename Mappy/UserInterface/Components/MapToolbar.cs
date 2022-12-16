@@ -57,7 +57,7 @@ public class MapToolbar
                     
                 if(subAreaName == string.Empty) continue;
 
-                if (ImGui.Selectable(subAreaName))
+                if (ImGui.Selectable(subAreaName, layer.RowId == Service.MapManager.LoadedMapId))
                 {
                     Service.MapManager.LoadMap(layer.RowId);
                 }
