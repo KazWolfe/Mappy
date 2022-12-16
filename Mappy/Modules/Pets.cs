@@ -28,12 +28,6 @@ public class Pets : IModule
     public IModuleSettings Options { get; } = new PetOptions();
     private class PetMapComponent : IMapComponent
     {
-    
-        public void Update(uint mapID)
-        {
-        
-        }
-
         public void Draw()
         {
             if (!Settings.Enable.Value) return;

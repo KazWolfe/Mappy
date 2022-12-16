@@ -24,11 +24,6 @@ public class PartyMembers : IModule
     public IModuleSettings Options { get; } = new PartyMemberOptions();
     private class PartyMemberMapComponent : IMapComponent
     {
-    
-        public void Update(uint mapID)
-        {
-        }
-
         public void Draw()
         {
             if (!Settings.Enable.Value) return;

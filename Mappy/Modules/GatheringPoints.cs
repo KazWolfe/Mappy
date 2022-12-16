@@ -30,11 +30,6 @@ public class GatheringPoints : IModule
 
     private class GatheringPointMapComponent : IMapComponent
     {
-        public void Update(uint mapID)
-        {
-        
-        }
-
         public void Draw()
         {
             if (!Settings.Enable.Value) return;

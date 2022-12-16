@@ -31,11 +31,6 @@ public class Treasures : IModule
     public IModuleSettings Options { get; } = new TreasureOptions();
     private class TreasureMapComponent : IMapComponent
     {
-        public void Update(uint mapID)
-        {
-        
-        }
-
         public void Draw()
         {
             if (!Settings.Enable.Value) return;

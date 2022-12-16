@@ -33,12 +33,7 @@ public class TemporaryMarkers : IModule
         private static readonly List<TemporaryMarker> StaleMarkers = new();
         public static TemporaryMarker? TempMarker;
         private static bool _dataStale;
-    
-        public void Update(uint mapID)
-        {
         
-        }
-
         public void Draw()
         {
             foreach (var marker in TemporaryMarkers.TakeWhile(_ => !_dataStale))

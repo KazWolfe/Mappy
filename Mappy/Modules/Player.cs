@@ -33,10 +33,6 @@ public class Player : IModule
     public IModuleSettings Options { get; } = new PlayerOptions();
     private class PlayerMapComponent : IMapComponent
     {
-        public void Update(uint mapID)
-        {
-        }
-
         public void Draw()
         {
             if (!Settings.Enable.Value) return;

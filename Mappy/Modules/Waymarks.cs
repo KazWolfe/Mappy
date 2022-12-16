@@ -25,19 +25,13 @@ public class Waymarks : IModule
     public IModuleSettings Options { get; } = new WaymarkOptions();
     private class WaymarkMapComponent : IMapComponent
     {
-
         private readonly List<FieldMarker> fieldMarkers;
     
         public WaymarkMapComponent()
         {
             fieldMarkers = Service.DataManager.GetExcelSheet<FieldMarker>()!.Where(row => row.RowId is >= 1u and <= 8u).ToList();
         }
-
-        public void Update(uint mapID)
-        {
         
-        }
-
         public unsafe void Draw()
         {
             if (!Settings.Enable.Value) return;

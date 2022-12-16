@@ -41,11 +41,6 @@ public class Fates : IModule
     
     private class FateMapComponent : IMapComponent
     {
-        public void Update(uint mapID)
-        {
-
-        }
-
         public unsafe void Draw()
         {
             if (!Service.MapManager.PlayerInCurrentMap) return;
