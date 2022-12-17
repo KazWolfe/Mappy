@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using Dalamud.Interface;
 using ImGuiNET;
+using Mappy.DataModels;
 using Mappy.Interfaces;
 using Mappy.Utilities;
 
@@ -16,6 +18,8 @@ internal class SelectionFrame : IDrawable
     private float Weight { get; }
     private readonly string pluginVersion;
 
+    private string searchString = "Search ...";
+    
     public SelectionFrame(IEnumerable<IModuleSettings> selectables, float weight = 0.30f, IDrawable? extraDrawable = null)
     {
         Selectables = new List<IModuleSettings>(selectables);
@@ -30,8 +34,17 @@ internal class SelectionFrame : IDrawable
         var regionAvailable = ImGui.GetContentRegionAvail();
         var bottomPadding = (extraDrawable != null ? 50.0f : 25.0f) * ImGuiHelpers.GlobalScale;
 
+        
         if (ImGui.BeginChild("###SelectionFrame", new Vector2(regionAvailable.X * Weight, 0), false))
         {
+            ImGui.PushItemWidth(regionAvailable.X * Weight);
+            
+            ImGui.InputText("###SelectionSearch", ref searchString, 35, ImGuiInputTextFlags.AutoSelectAll);
+            if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+            {
+                searchString = "Search ...";
+            }
+            
             var frameBgColor = ImGui.GetStyle().Colors[(int)ImGuiCol.FrameBg];
             ImGui.PushStyleColor(ImGuiCol.FrameBg, frameBgColor with { W = 0.05f });
 
@@ -40,7 +53,7 @@ internal class SelectionFrame : IDrawable
             {
                 ImGui.PopStyleColor();
 
-                foreach (var item in Selectables)
+                foreach (var item in Selectables.Where(CompareSearch))
                 {
                     ImGui.PushID(item.ComponentName.ToString());
 
@@ -74,9 +87,8 @@ internal class SelectionFrame : IDrawable
 
             DrawVersionText();
         }
-
         ImGui.EndChild();
-
+        
         ImGui.SameLine();
     }
 
@@ -100,5 +112,13 @@ internal class SelectionFrame : IDrawable
 
         ImGui.SetCursorPos(cursorStart);
         ImGui.TextColored(Colors.Grey, pluginVersion);
+    }
+
+    private bool CompareSearch(IModuleSettings module)
+    {
+        var searchNormalized = searchString.ToLower();
+        var moduleNormalize = module.ComponentName.GetTranslatedString().ToLower();
+
+        return searchNormalized == "search ..." || moduleNormalize.Contains(searchNormalized);
     }
 }
