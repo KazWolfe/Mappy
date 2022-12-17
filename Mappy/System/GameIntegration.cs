@@ -177,7 +177,7 @@ public unsafe class GameIntegration : IDisposable
     {
         Safety.ExecuteSafe(() =>
         {
-            PluginLog.Debug("GatheringTrigger");
+            PluginLog.Debug("SetGatheringMarker");
 
             GatheringAreaMarker.SetGatheringArea(new TempMarker
             {
