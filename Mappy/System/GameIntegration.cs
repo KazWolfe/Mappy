@@ -51,11 +51,7 @@ public unsafe class GameIntegration : IDisposable
 
         if (Service.Configuration.EnableIntegrations.Value)
         {
-            openMapByIdHook?.Enable();
-            openMapHook?.Enable();
-            setFlagMarkerHook?.Enable();
-            setGatheringMarkerHook?.Enable();
-            showHook?.Enable();
+            Enable();
         }
 
         Service.ClientState.EnterPvP += Disable;
