@@ -1,4 +1,5 @@
-﻿using Dalamud.Logging;
+﻿using System;
+using Dalamud.Logging;
 using Dalamud.Plugin.Ipc;
 using ImGuiScene;
 using Lumina.Data.Files;
@@ -7,43 +8,39 @@ namespace Mappy.System;
 
 public class PenumbraIntegration
 {
-    private readonly ICallGateSubscriber<string, string>? penumbraResolveDefaultSubscriber;
-    private readonly ICallGateSubscriber<bool>? penumbraGetEnabledState;
+    private readonly ICallGateSubscriber<string, string> penumbraResolveDefaultSubscriber;
+    private readonly ICallGateSubscriber<bool> penumbraGetEnabledState;
 
     public PenumbraIntegration()
     {
         penumbraResolveDefaultSubscriber = Service.PluginInterface.GetIpcSubscriber<string, string>("Penumbra.ResolveDefaultPath");
         penumbraGetEnabledState = Service.PluginInterface.GetIpcSubscriber<bool>("Penumbra.GetEnabledState");
-
-        if (!penumbraGetEnabledState?.InvokeFunc() ?? true)
-        {
-            PluginLog.Debug("Penumbra is not enabled on startup");
-        }
-        else
-        {
-            PluginLog.Debug("Penumbra IPC active");
-        }
     }
 
     public TextureWrap? GetTexture(string path)
     {
-        if (penumbraGetEnabledState?.InvokeFunc() ?? false)
+        try
         {
-            var resolvedPath = ResolvePenumbraPath(path);
-            PluginLog.Verbose($"Loading Texture from Penumbra: {path} -> {resolvedPath}");
-            return GetTextureForPath(resolvedPath); 
+            if (penumbraGetEnabledState.InvokeFunc())
+            {
+                var resolvedPath = ResolvePenumbraPath(path);
+                PluginLog.Verbose($"Loading Texture from Penumbra: {path} -> {resolvedPath}");
+                return GetTextureForPath(resolvedPath);
+            }
         }
-        else
+        catch (Exception)
         {
-            return Service.DataManager.GetImGuiTexture(path);
+            // ignored
         }
+        
+        return Service.DataManager.GetImGuiTexture(path);
     }
     
     private string ResolvePenumbraPath(string filePath)
     {
         try
         {
-            return penumbraResolveDefaultSubscriber?.InvokeFunc(filePath) ?? filePath;
+            return penumbraResolveDefaultSubscriber.InvokeFunc(filePath);
         }
         catch
         {
