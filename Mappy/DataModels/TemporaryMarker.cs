@@ -9,14 +9,14 @@ public enum MarkerType
     Gathering
 }
 
-public class TemporaryMarker
+public class TempMarker
 {
-    public MarkerType Type { get; set; } = MarkerType.Unknown;
-    public uint MapID { get; set; } = 0;
-    public uint IconID { get; set; } = 0;
-    public Vector2 Position { get; set; } = Vector2.Zero;
-    public float Radius { get; set; } = 0.0f;
-    public string TooltipText { get; set; } = string.Empty;
+    public MarkerType Type { get; init; } = MarkerType.Unknown;
+    public uint MapID { get; init; }
+    public uint IconID { get; init; }
+    public Vector2 Position { get; init; } = Vector2.Zero;
+    public float Radius { get; init; }
+    public string TooltipText { get; init; } = string.Empty;
 
     public Vector2 AdjustedPosition => Service.MapManager.GetTextureOffsetPosition(Position);
 }

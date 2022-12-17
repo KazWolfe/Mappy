@@ -31,11 +31,12 @@ public class Configuration : IPluginConfiguration
     public PartyMemberSettings PartyMembers = new();
     public PetSettings Pet = new();
     public WaymarkSettings Waymarks = new();
-    public TemporaryMarkerSettings TemporaryMarkers = new();
     public QuestSettings QuestMarkers = new();
     public TreasureSettings Treasure = new();
     public HousingSettings Housing = new();
-    
+    public FlagMarkerSettings Flag = new();
+    public GatheringAreaSettings GatheringArea = new();
+
     [NonSerialized]
     private DalamudPluginInterface? pluginInterface;
     public void Initialize(DalamudPluginInterface inputPluginInterface) => pluginInterface = inputPluginInterface;

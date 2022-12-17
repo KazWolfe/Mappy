@@ -15,6 +15,8 @@ public enum ComponentName
     Waymark,
     General,
     TemporaryMarker,
+    FlagMarker,
+    GatheringArea,
     QuestMarker,
     Housing,
     Treasure,
@@ -39,6 +41,8 @@ public static class ComponentNameExtensions
             ComponentName.QuestMarker => Strings.Map.Quests.Label,
             ComponentName.Housing => Strings.Map.Housing.Label,
             ComponentName.Treasure => Strings.Map.Treasure.Label,
+            ComponentName.FlagMarker => Strings.Map.Flag.Label,
+            ComponentName.GatheringArea => Strings.Map.GatheringArea.Label,
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
         };
     }

@@ -26,19 +26,21 @@ public class MapStrings
     public string RemoveGatheringArea => Loc.Localize("Map_RemoveGatheringArea", "Remove Gathering Area");
     public string HideQuest => Loc.Localize("Map_HideQuest", "Hide Quest");
 
-    public Generic Generic { get; } = new();
-    public FateStrings Fate { get; } = new();
-    public GatheringStrings Gathering { get; } = new();
-    public MarkerStrings Markers { get; } = new();
-    public PartyMemberStrings PartyMembers { get; } = new();
-    public PetStrings Pets { get; } = new();
-    public AllianceMemberStrings AllianceMembers { get; } = new();
-    public PlayerStrings Player { get; } = new();
-    public WaymarkStrings Waymarks { get; } = new();
-    public TemporaryMarkerStrings TemporaryMarkers { get; } = new();
-    public QuestMarkerStrings Quests { get; } = new();
-    public HousingStrings Housing { get; } = new();
-    public TreasureStrings Treasure { get; } = new();
+    public Generic Generic = new();
+    public FateStrings Fate = new();
+    public GatheringStrings Gathering = new();
+    public MarkerStrings Markers = new();
+    public PartyMemberStrings PartyMembers = new();
+    public PetStrings Pets = new();
+    public AllianceMemberStrings AllianceMembers = new();
+    public PlayerStrings Player = new();
+    public WaymarkStrings Waymarks = new();
+    public TemporaryMarkerStrings TemporaryMarkers = new();
+    public QuestMarkerStrings Quests = new();
+    public HousingStrings Housing = new();
+    public TreasureStrings Treasure = new();
+    public FlagStrings Flag = new();
+    public GatheringAreaStrings GatheringArea = new();
 }
 
 public class Generic
@@ -145,4 +147,14 @@ public class HousingStrings
 public class TreasureStrings
 {
     public string Label => Loc.Localize("Treasure_Label", "Treasure Markers");
+}
+
+public class FlagStrings
+{
+    public string Label => Loc.Localize("Flag_Label", "Flag Marker");
+}
+
+public class GatheringAreaStrings
+{
+    public string Label => Loc.Localize("GatheringArea_Labeel", "Gathering Area Marker");
 }

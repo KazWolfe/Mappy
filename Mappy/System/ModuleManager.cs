@@ -20,7 +20,8 @@ public class ModuleManager : IDisposable
         new Pets(),
         new PartyMembers(),
         new Waymarks(),
-        new TemporaryMarkers(),
+        new GatheringAreaMarker(),
+        new FlagMarker(),
         
         new Player() // Always Keep Player Last
     };

@@ -73,6 +73,7 @@ public class MapContextMenu
                         var agent = AgentMap.Instance();
                         
                         Service.GameIntegration.SetFlagMarker(agent, territory.RowId, map.RowId, clickPosition.X, clickPosition.Y, 60561);
+                        Service.GameIntegration.InsertFlagInChat();
                     }
                 }
             }
@@ -86,14 +87,7 @@ public class MapContextMenu
         {
             if (ImGui.Selectable(Strings.Map.RemoveFlag))
             {
-                TemporaryMarkers.TemporaryMarkersMapComponent.RemoveFlag();
-
-                unsafe
-                {
-                    // Flag Set Byte, we want to clear this so that we can set a new flag
-                    var byteAddress = (byte*) AgentMap.Instance() + 0x59B3;
-                    *byteAddress = 0;
-                }
+                FlagMarker.ClearFlag();
             }
 
             ImGui.EndPopup();
@@ -106,7 +100,7 @@ public class MapContextMenu
         {
             if (ImGui.Selectable(Strings.Map.RemoveGatheringArea))
             {
-                TemporaryMarkers.TemporaryMarkersMapComponent.RemoveGatheringArea();
+                GatheringAreaMarker.ClearGatheringArea();
             }
 
             ImGui.EndPopup();

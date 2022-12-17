@@ -4,9 +4,10 @@ using System.Numerics;
 using Dalamud.Hooking;
 using Dalamud.Logging;
 using Dalamud.Utility.Signatures;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using ImGuiNET;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using Mappy.DataModels;
 using Mappy.Modules;
 using Mappy.UserInterface.Windows;
@@ -32,7 +33,12 @@ public unsafe class GameIntegration : IDisposable
     [Signature("E8 ?? ?? ?? ?? 40 B6 01 C7 44 24 ?? ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8B CF E8 ?? ?? ?? ?? 84 C0 74 15", DetourName = nameof(OnShowHook))]
     private readonly Hook<ShowMapDelegate>? showHook = null;
 
-    private bool markerCalled;
+    private delegate byte InsertTextCommand(AgentInterface* agent, uint paramID, byte a3 = 0);
+    [Signature("E8 ?? ?? ?? ?? 40 88 6E 08 EB 04")]
+    private readonly InsertTextCommand? insertFlagTextCommand = null;
+
+    private AgentInterface* ChatAgent => Framework.Instance()->UIModule->GetAgentModule()->GetAgentByInternalId(AgentId.ChatLog);
+    private AgentInterface* GatheringNoteAgent => Framework.Instance()->UIModule->GetAgentModule()->GetAgentByInternalId(AgentId.GatheringNote);
     
     public GameIntegration()
     {
@@ -96,147 +102,112 @@ public unsafe class GameIntegration : IDisposable
     
     private void OpenMapById(AgentMap* agent, uint mapId)
     {
-        try
+        Safety.ExecuteSafe(() =>
         {
             Service.MapManager.LoadMap(mapId);
-        }
-        catch (Exception e)
-        {
-            PluginLog.Error(e, "Exception during OpenMapByMapId");
-        }
+        }, "Exception during OpenMapByMapId");
     }
     
     private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo)
     {
-        try
+        Safety.ExecuteSafe(() =>
         {
-            if (markerCalled)
+            PluginLog.Debug("OpenMap");
+            
+            MapWindow.FocusWindow();
+
+            switch (mapInfo->Type)
             {
-                GoToMapMarker(mapInfo);
-                markerCalled = false;
+                case MapType.FlagMarker when FlagMarker.GetFlag() is {} flag:
+                    Service.MapManager.LoadMap(mapInfo->MapId, flag.Position);
+                    break;
+                
+                case MapType.QuestLog when GetQuestLocation(mapInfo) is {} questLocation:
+                    Service.MapManager.LoadMap(mapInfo->MapId, questLocation);
+                    break;
+                
+                case MapType.GatheringLog when GatheringAreaMarker.GetGatheringArea() is {} area:
+                    Service.MapManager.LoadMap(mapInfo->MapId, area.Position);
+                    break;
+                
+                default:
+                    Service.MapManager.LoadMap(mapInfo->MapId);
+                    break;
             }
-            else if(mapInfo->TitleString.ToString() != string.Empty)
-            {
-                GoToQuestMarker(mapInfo);
-            }
-            else
-            {
-                Service.MapManager.LoadMap(mapInfo->MapId);
-            }
-        }
-        catch (Exception e)
-        {
-            PluginLog.Error(e, "Exception during OpenMapByMapId");
-        }
+
+        }, "Exception during OpenMap");
     }
-
-    private void GoToMapMarker(OpenMapInfo* mapInfo)
-    {
-        if (TemporaryMarkers.TemporaryMarkersMapComponent.TempMarker is { } stagedMarker)
-        {
-            stagedMarker.MapID = mapInfo->MapId;
-
-            Service.MapManager.LoadMap(mapInfo->MapId, stagedMarker.AdjustedPosition);
-            TemporaryMarkers.TemporaryMarkersMapComponent.AddMarker(stagedMarker);
-        }
-
-        if (Service.WindowManager.GetWindowOfType<MapWindow>(out var mapWindow))
-        {
-            mapWindow.IsOpen = true;
-            ImGui.SetWindowFocus("Mappy Map Window");
-        }
-    }
-
-    private void GoToQuestMarker(OpenMapInfo* mapInfo)
+    
+    private Vector2? GetQuestLocation(OpenMapInfo* mapInfo)
     {
         var targetLevels = Service.QuestManager.GetActiveLevelsForQuest(mapInfo->TitleString.ToString(), mapInfo->MapId);
-
         var focusLevel = targetLevels?.Where(level => level.Map.Row == mapInfo->MapId && level.Map.Row != 0).FirstOrDefault();
 
-        if (focusLevel != null)
+        if (focusLevel is not null)
         {
-            Service.MapManager.LoadMap(mapInfo->MapId, new Vector2(focusLevel.X, focusLevel.Z));
+            return new Vector2(focusLevel.X, focusLevel.Z);
         }
-        
-        if (Service.WindowManager.GetWindowOfType<MapWindow>(out var mapWindow))
-        {
-            mapWindow.IsOpen = true;
-            ImGui.SetWindowFocus("Mappy Map Window");
-        }
-    }
 
-    private void OnShowHook()
+        return null;
+    }
+    
+    private static void OnShowHook()
     {
-        try
+        Safety.ExecuteSafe(() =>
         {
-            if (Service.WindowManager.GetWindowOfType<MapWindow>(out var mapWindow))
-            {
-                mapWindow.IsOpen = !mapWindow.IsOpen;
-            }
-        }
-        catch (Exception e)
-        {
-            PluginLog.Error(e, "Exception During Map Show");
-        }
+            MapWindow.FocusWindow(true);
+        }, "Exception during OnShowHook");
     }
 
     public void SetFlagMarker(AgentMap* agent, uint territoryId, uint mapId, float mapX, float mapY, uint iconId)
     {
-        
-        try
+        Safety.ExecuteSafe(() =>
         {
-            markerCalled = true;
-
-            var stagedMarker = new TemporaryMarker
+            PluginLog.Debug($"SetFlagMarker");
+            
+            FlagMarker.SetFlag(new TempMarker
             {
                 Type = MarkerType.Flag,
                 MapID = mapId,
                 IconID = iconId,
-                Position = new Vector2(mapX, mapY),
-            };
+                Position = new Vector2(mapX, mapY)
+            });
 
-            if (Service.MapManager.LoadedMapId != mapId)
-            {
-                MapRenderer.SetViewportCenter(stagedMarker.AdjustedPosition);
-                MapRenderer.SetViewportZoom(0.8f);
-            }
-            
-            var flagSetByte = (byte*) AgentMap.Instance() + 0x59B3;
-
-            if (*flagSetByte > 0)
-            {
-                *flagSetByte = 0;
-            }
-                
-            TemporaryMarkers.TemporaryMarkersMapComponent.AddMarker(stagedMarker);
             setFlagMarkerHook!.Original(agent, territoryId, mapId, mapX, mapY, iconId);
-        }
-        catch (Exception e)
-        {
-            PluginLog.Error(e, "Exception Set Flag Marker");
-        }
+        }, "Exception during SetFlagMarker");
     }
 
     private void SetGatheringMarker(AgentMap* agent, uint styleFlags, int mapX, int mapY, uint iconID, int radius, Utf8String* tooltip)
     {
-        try
+        Safety.ExecuteSafe(() =>
         {
             PluginLog.Debug("GatheringTrigger");
-            markerCalled = true;
-            
-            TemporaryMarkers.TemporaryMarkersMapComponent.TempMarker = new TemporaryMarker
+
+            GatheringAreaMarker.SetGatheringArea(new TempMarker
             {
                 Type = MarkerType.Gathering,
+                MapID = GetGatheringAreaMapInfo()->MapId,
                 IconID = iconID,
                 Radius = radius,
                 Position = new Vector2(mapX, mapY),
                 TooltipText = tooltip->ToString(),
-            };
+            });
             
-        }
-        catch (Exception e)
-        {
-            PluginLog.Error(e, "Exception During Set Gathering Marker");
-        }
+        }, "Exception during SetGatheringMarker");
+    }
+
+    public void InsertFlagInChat() => insertFlagTextCommand?.Invoke(ChatAgent, 1048u);
+
+    private OpenMapInfo* GetGatheringAreaMapInfo()
+    {
+        // GatheringNoteAgent+184 is a pointer to where the OpenMapInfo block is roughly located
+        var agentPointer = new IntPtr(GatheringNoteAgent);
+        var agentOffsetPointer = agentPointer + 184;
+
+        // OpenMapInfo is allocated 16bytes from this address
+        var dataBlockPointer = new IntPtr(*(long*) agentOffsetPointer);
+        var dataBlock = dataBlockPointer + 16;
+        
+        return (OpenMapInfo*) dataBlock;
     }
 }
