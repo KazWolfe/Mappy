@@ -82,7 +82,7 @@ public class FlagMarker : IModule
         
             InfoBox.Instance
                 .AddTitle(Strings.Configuration.Adjustments)
-                .AddDragFloat(Strings.Map.TemporaryMarkers.GatheringAreaScale, Settings.IconScale, 0.1f, 5.0f, InfoBox.Instance.InnerWidth / 2.0f)
+                .AddDragFloat(Strings.Map.TemporaryMarkers.FlagScale, Settings.IconScale, 0.1f, 5.0f, InfoBox.Instance.InnerWidth / 2.0f)
                 .AddButton(Strings.Configuration.Reset, () =>
                 {
                     Settings.IconScale.Value = 0.50f;
