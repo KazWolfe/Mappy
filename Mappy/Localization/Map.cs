@@ -76,9 +76,6 @@ public class MarkerStrings
 {
     public string Label => Loc.Localize("Marker_Label", "Map Markers");
     public string AetherytesOnTop => Loc.Localize("Marker_AetherytesOnTop", "Draw Aetherytes On Top");
-    public string AetherytesOnTopHelp => Loc.Localize("Marker_AetherytesOnTopHelp",
-        "This setting only displays aetherytes top of other markers controlled by this module.\n" +
-        "This setting will not draw aetherytes over other modules.");
 }
 
 public class PartyMemberStrings

@@ -149,7 +149,7 @@ public class MapMarkers : IModule
             InfoBox.Instance
                 .AddTitle(Strings.Configuration.FeatureToggles)
                 .AddConfigCheckbox(Strings.Map.Generic.Enable, Settings.Enable)
-                .AddConfigCheckbox(Strings.Map.Markers.AetherytesOnTop, Settings.AetherytesOnTop, Strings.Map.Markers.AetherytesOnTopHelp)
+                .AddConfigCheckbox(Strings.Map.Markers.AetherytesOnTop, Settings.AetherytesOnTop)
                 .Draw();
         
             InfoBox.Instance
