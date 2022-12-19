@@ -5,6 +5,7 @@ namespace Mappy.DataModels;
 
 public enum ComponentName
 {
+    Unknown,
     Fate,
     GatheringPoint,
     MapMarker,
@@ -28,6 +29,7 @@ public static class ComponentNameExtensions
     {
         return value switch
         {
+            ComponentName.Unknown => "Unknown Component Name",
             ComponentName.Fate => Strings.Map.Fate.Label,
             ComponentName.GatheringPoint => Strings.Map.Gathering.Label,
             ComponentName.MapMarker => Strings.Map.Markers.Label,

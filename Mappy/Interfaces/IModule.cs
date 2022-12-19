@@ -1,4 +1,5 @@
-﻿namespace Mappy.Interfaces;
+﻿
+namespace Mappy.Interfaces;
 
 public interface IModule
 {

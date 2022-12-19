@@ -32,56 +32,12 @@ internal class SelectionFrame : IDrawable
     public void Draw()
     {
         var regionAvailable = ImGui.GetContentRegionAvail();
-        var bottomPadding = (extraDrawable != null ? 50.0f : 25.0f) * ImGuiHelpers.GlobalScale;
-
         
         if (ImGui.BeginChild("###SelectionFrame", new Vector2(regionAvailable.X * Weight, 0), false))
         {
-            ImGui.PushItemWidth(regionAvailable.X * Weight);
-            
-            ImGui.InputText("###SelectionSearch", ref searchString, 35, ImGuiInputTextFlags.AutoSelectAll);
-            if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-            {
-                searchString = "Search ...";
-            }
-            
-            var frameBgColor = ImGui.GetStyle().Colors[(int)ImGuiCol.FrameBg];
-            ImGui.PushStyleColor(ImGuiCol.FrameBg, frameBgColor with { W = 0.05f });
+            DrawSearchBox();
 
-            ImGui.PushStyleVar(ImGuiStyleVar.ScrollbarSize, 0.0f);
-            if (ImGui.BeginListBox("", new Vector2(-1, -bottomPadding)))
-            {
-                ImGui.PopStyleColor();
-
-                foreach (var item in Selectables.Where(CompareSearch))
-                {
-                    ImGui.PushID(item.ComponentName.ToString());
-
-                    var headerHoveredColor = ImGui.GetStyle().Colors[(int)ImGuiCol.HeaderHovered];
-                    var textSelectedColor = ImGui.GetStyle().Colors[(int)ImGuiCol.Header];
-                    ImGui.PushStyleColor(ImGuiCol.HeaderHovered, headerHoveredColor with { W = 0.1f });
-                    ImGui.PushStyleColor(ImGuiCol.Header, textSelectedColor with { W = 0.1f });
-
-                    if (ImGui.Selectable("", Selected == item))
-                    {
-                        Selected = Selected == item ? null : item;
-                    }
-
-                    ImGui.PopStyleColor();
-                    ImGui.PopStyleColor();
-
-                    ImGui.SameLine(3.0f);
-
-                    item.DrawLabel();
-
-                    ImGui.Spacing();
-
-                    ImGui.PopID();
-                }
-
-                ImGui.EndListBox();
-            }
-            ImGui.PopStyleVar();
+            DrawAllSelectableItems();
 
             extraDrawable?.Draw();
 
@@ -90,6 +46,68 @@ internal class SelectionFrame : IDrawable
         ImGui.EndChild();
         
         ImGui.SameLine();
+    }
+
+    private void DrawAllSelectableItems()
+    {
+        var bottomPadding = (extraDrawable != null ? 50.0f : 25.0f) * ImGuiHelpers.GlobalScale;
+        
+        var frameBgColor = ImGui.GetStyle().Colors[(int)ImGuiCol.FrameBg];
+        ImGui.PushStyleColor(ImGuiCol.FrameBg, frameBgColor with { W = 0.05f });ImGui.PushStyleVar(ImGuiStyleVar.ScrollbarSize, 0.0f);
+        
+        if (ImGui.BeginListBox("", new Vector2(-1, -bottomPadding)))
+        {
+            ImGui.PopStyleColor();
+
+            foreach (var item in Selectables.Where(CompareSearch))
+            {
+                if (item.ShowInConfiguration() == false) continue;
+
+                DrawSelectableItem(item);
+            }
+
+            ImGui.EndListBox();
+        }
+
+        ImGui.PopStyleVar();
+    }
+
+    private void DrawSelectableItem(IModuleSettings item)
+    {
+        ImGui.PushID(item.ComponentName.ToString());
+
+        var headerHoveredColor = ImGui.GetStyle().Colors[(int) ImGuiCol.HeaderHovered];
+        var textSelectedColor = ImGui.GetStyle().Colors[(int) ImGuiCol.Header];
+        ImGui.PushStyleColor(ImGuiCol.HeaderHovered, headerHoveredColor with {W = 0.1f});
+        ImGui.PushStyleColor(ImGuiCol.Header, textSelectedColor with {W = 0.1f});
+
+        if (ImGui.Selectable("", Selected == item))
+        {
+            Selected = Selected == item ? null : item;
+        }
+
+        ImGui.PopStyleColor();
+        ImGui.PopStyleColor();
+
+        ImGui.SameLine(3.0f);
+
+        item.DrawLabel();
+
+        ImGui.Spacing();
+
+        ImGui.PopID();
+    }
+
+    private void DrawSearchBox()
+    {
+        var regionAvailable = ImGui.GetContentRegionAvail();
+        
+        ImGui.PushItemWidth(regionAvailable.X * Weight);
+        ImGui.InputText("###SelectionSearch", ref searchString, 35, ImGuiInputTextFlags.AutoSelectAll);
+        if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+        {
+            searchString = "Search ...";
+        }
     }
 
     private string GetVersionText()

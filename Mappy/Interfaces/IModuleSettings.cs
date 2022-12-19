@@ -6,6 +6,7 @@ namespace Mappy.Interfaces;
 public interface IModuleSettings
 {
     ComponentName ComponentName { get; }
+    public bool ShowInConfiguration() => true;
 
     void DrawLabel()
     {

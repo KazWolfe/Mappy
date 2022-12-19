@@ -4,6 +4,7 @@ using Dalamud.Utility;
 using ImGuiNET;
 using ImGuiScene;
 using Lumina.Excel.GeneratedSheets;
+using Mappy.Interfaces;
 using Mappy.Modules;
 using Mappy.Utilities;
 using Action = System.Action;
@@ -19,7 +20,7 @@ public enum MapMarkerType
     Aethernet
 }
 
-public class MapMarkerData
+public class MapMarkerData : IMapMarker
 {
     private static MapMarkersSettings Settings => Service.Configuration.MapMarkers;
     

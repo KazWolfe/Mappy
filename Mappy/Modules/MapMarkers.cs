@@ -89,7 +89,9 @@ public class MapMarkers : IModule
             if (Settings.AetherytesOnTop.Value)
             {
                 DrawMarkers(mapMarkers.Where(marker => marker.IconId != 60453));
-                DrawMarkers(mapMarkers.Where(marker => marker.IconId == 60453));
+
+                var aetherytes = mapMarkers.Where(marker => marker.IconId == 60453);
+                FocusLayer.AddMarkers(aetherytes);
             }
             else
             {

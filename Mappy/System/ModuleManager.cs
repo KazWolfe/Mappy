@@ -22,6 +22,7 @@ public class ModuleManager : IDisposable
         new Waymarks(),
         new GatheringAreaMarker(),
         new FlagMarker(),
+        new FocusLayer(),
         
         new Player() // Always Keep Player Last
     };
