@@ -150,35 +150,36 @@ public unsafe class MapManager : IDisposable
     {
         if (newViewportPosition is {} newPosition)
         {
-            var position = GetTextureOffsetPosition(newPosition);
-
-            MapRenderer.SetViewportCenter(position);
+            Service.Configuration.FollowPlayer.Value = false;
+            MapRenderer.SetViewportCenter(GetTextureOffsetPosition(newPosition));
             MapRenderer.SetViewportZoom(0.8f);
         }
         else
         {
-            if (!PlayerInCurrentMap && MapTexture is not null)
+            var followPlayer = Service.Configuration.FollowPlayer.Value;
+            var localPlayer = Service.ClientState.LocalPlayer;
+            viewportPosition.TryGetValue(mapID, out var viewportData);
+            
+            switch (PlayerInCurrentMap)
             {
-                if (Service.Configuration.FollowPlayer.Value)
-                {
-                    if (Service.ClientState.LocalPlayer is { } player)
-                    {
-                        MapRenderer.SetViewportCenter(Service.MapManager.GetObjectPosition(player));
-                    }
-                }
-                else
-                {
-                    if (viewportPosition.TryGetValue(mapID, out var value))
-                    {
-                        MapRenderer.SetViewportCenter(value.Center);
-                        MapRenderer.SetViewportZoom(value.Scale);
-                    }
-                    else
-                    {
-                        MapRenderer.SetViewportCenter(MapTextureSize / 2.0f);
-                        MapRenderer.SetViewportZoom(0.4f);
-                    }
-                }
+                case false when followPlayer && localPlayer is not null:
+                    MapRenderer.SetViewportCenter(Service.MapManager.GetObjectPosition(localPlayer));
+                    MapRenderer.SetViewportZoom(0.4f);
+                    break;
+                    
+                case false when !followPlayer && viewportData is not null:
+                    MapRenderer.SetViewportCenter(viewportData.Center);
+                    MapRenderer.SetViewportZoom(viewportData.Scale);
+                    break;
+                
+                case true:
+                    CenterOnPlayer();
+                    break;
+                
+                default:
+                    MapRenderer.SetViewportCenter(MapTextureSize / 2.0f);
+                    MapRenderer.SetViewportZoom(0.4f);
+                    break;
             }
         }
     }
