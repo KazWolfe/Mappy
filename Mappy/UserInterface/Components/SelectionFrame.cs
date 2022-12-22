@@ -101,8 +101,7 @@ internal class SelectionFrame : IDrawable
     private void DrawSearchBox()
     {
         var regionAvailable = ImGui.GetContentRegionAvail();
-        
-        ImGui.PushItemWidth(regionAvailable.X * Weight);
+        ImGui.PushItemWidth(regionAvailable.X);
         ImGui.InputText("###SelectionSearch", ref searchString, 35, ImGuiInputTextFlags.AutoSelectAll);
         if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
         {
