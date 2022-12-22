@@ -156,24 +156,25 @@ public unsafe class MapManager : IDisposable
         }
         else
         {
-            var followPlayer = Service.Configuration.FollowPlayer.Value;
-            var localPlayer = Service.ClientState.LocalPlayer;
             viewportPosition.TryGetValue(mapID, out var viewportData);
             
             switch (PlayerInCurrentMap)
             {
+                // Player isn't in current map, and we haven't been here before, center viewport
+                default: 
+                    MapRenderer.SetViewportCenter(MapTextureSize / 2.0f);
+                    MapRenderer.SetViewportZoom(0.4f);
+                    break;
+                
+                // Player isn't in current map, and we have been here before, load saved viewport
                 case false when viewportData is not null:
                     MapRenderer.SetViewportCenter(viewportData.Center);
                     MapRenderer.SetViewportZoom(viewportData.Scale);
                     break;
                 
+                // Player is in current map, go to player
                 case true:
                     CenterOnPlayer();
-                    break;
-                
-                default:
-                    MapRenderer.SetViewportCenter(MapTextureSize / 2.0f);
-                    MapRenderer.SetViewportZoom(0.4f);
                     break;
             }
         }
