@@ -2,7 +2,7 @@
   "Author": "MidoriKami",
   "Name": "Mappy",
   "Punchline": "A more versatile ingame map",
-  "Description": "Want a map you can move to another screen? Integrate with other plugins? Heeeere's Mappy!",
+  "Description": "[Incomplete Plugin] Mappy's intended feature set is mostly implemented, some features do not work as intended, most work well.\nNo support will be provided for issues.",
   "Tags": [
     "utility"
   ],
@@ -11,7 +11,7 @@
 	"UI"
   ],
   "InternalName": "mappy",
-  "AssemblyVersion": "0.0.0.1",
   "RepoUrl": "https://github.com/MidoriKami/Mappy",
-  "ApplicableVersion": "any"
+  "ApplicableVersion": "any",
+  "AcceptsFeedback": false
 }
