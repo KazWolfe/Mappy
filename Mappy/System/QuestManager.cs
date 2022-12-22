@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Logging;
 using Dalamud.Utility;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.DataModels;
@@ -11,13 +10,6 @@ namespace Mappy.System;
 public class QuestManager
 {
     private readonly QuestList questList = new();
-
-    public QuestManager()
-    {
-        var accepted = GetAcceptedQuests();
-        
-        PluginLog.Debug($"Accepted: {accepted.Count()}");
-    }
     
     public IEnumerable<Level>? GetActiveLevelsForQuest(string questName, uint mapID)
     {
