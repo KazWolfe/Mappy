@@ -119,7 +119,7 @@ public unsafe class MapManager : IDisposable
 
     private void InternalLoadMap(uint mapID, Vector2? newViewportPosition)
     {
-        if (LoadedMapId == mapID)
+        if (LoadedMapId == mapID || mapID == uint.MaxValue)
         {
             loadInProgress = false;
             SetViewport(mapID, newViewportPosition);
@@ -162,12 +162,7 @@ public unsafe class MapManager : IDisposable
             
             switch (PlayerInCurrentMap)
             {
-                case false when followPlayer && localPlayer is not null:
-                    MapRenderer.SetViewportCenter(Service.MapManager.GetObjectPosition(localPlayer));
-                    MapRenderer.SetViewportZoom(0.4f);
-                    break;
-                    
-                case false when !followPlayer && viewportData is not null:
+                case false when viewportData is not null:
                     MapRenderer.SetViewportCenter(viewportData.Center);
                     MapRenderer.SetViewportZoom(viewportData.Scale);
                     break;
