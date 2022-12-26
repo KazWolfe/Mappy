@@ -1,4 +1,4 @@
-﻿namespace Mappy.DataModels;
+﻿namespace Mappy.Config;
 
 public record Setting<T>(T Value)
 {
