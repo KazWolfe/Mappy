@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Interface.Windowing;
+using KamiLib;
 using Mappy.UI;
-using Mappy.Util;
 
 namespace Mappy.System;
 

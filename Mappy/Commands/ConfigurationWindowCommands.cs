@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Mappy.Interfaces;
+using KamiLib;
+using KamiLib.Interfaces;
 using Mappy.UI;
-using Mappy.Util;
 
 namespace Mappy.Commands;
 

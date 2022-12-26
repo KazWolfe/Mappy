@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using Mappy.Util;
+using KamiLib;
 
 namespace Mappy.System;
 
