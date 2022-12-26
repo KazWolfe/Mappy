@@ -1,58 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Dalamud.Interface.Windowing;
-using Mappy.UserInterface.Windows;
-using Mappy.Utilities;
+using Mappy.UI;
+using Mappy.Util;
 
 namespace Mappy.System;
 
-internal class WindowManager : IDisposable
+public class WindowManager : IDisposable
 {
-    private readonly WindowSystem windowSystem = new("DailyDuty");
+    private readonly WindowSystem windowSystem = new("Mappy");
 
-    private readonly List<Window> windows = new()
-    {
-        new ConfigurationWindow(),
-        new MapWindow(),
-        new DebugWindow(),
-        new AboutWindow(),
-    };
+    private readonly List<Window> windows;
 
     public WindowManager()
     {
-        foreach (var window in windows)
+        windows = new List<Window>
         {
-            windowSystem.AddWindow(window);
-        }
+            new ConfigWindow(),
+        };
+        
+        windows.ForEach(window => windowSystem.AddWindow(window));
         
         Service.PluginInterface.UiBuilder.Draw += DrawUI;
         Service.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
     }
-
-    private void DrawUI() => windowSystem.Draw();
-
-    private void DrawConfigUI()
-    {
-        if (Service.ClientState.IsPvP)
-        {
-            Chat.PrintError("The configuration menu cannot be opened while in a PvP area");
-        }
-
-        if (GetWindowOfType<ConfigurationWindow>(out var window))
-        {
-            window.IsOpen = true;
-        }
-    }
-
-    public bool GetWindowOfType<T>([NotNullWhen(true)] out T? window)
-    {
-        window = windows.OfType<T>().FirstOrDefault();
-
-        return window != null;
-    }
-
+    
     public void Dispose()
     {
         Service.PluginInterface.UiBuilder.Draw -= DrawUI;
@@ -60,4 +33,22 @@ internal class WindowManager : IDisposable
 
         windowSystem.RemoveAllWindows();
     }
+
+    public T? GetWindowOfType<T>() => windows.OfType<T>().FirstOrDefault();
+
+    private void DrawUI() => windowSystem.Draw();
+    
+    private void DrawConfigUI()
+    {
+        if (Service.ClientState.IsPvP)
+        {
+            Chat.PrintError("The configuration menu cannot be opened while in a PvP area");
+        }
+
+        if (GetWindowOfType<ConfigWindow>() is { } window)
+        {
+            window.IsOpen = true;
+        }
+    }
+
 }
