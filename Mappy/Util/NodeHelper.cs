@@ -3,7 +3,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace Mappy.Util;
 
-internal unsafe class BaseNode
+public unsafe class BaseNode
 {
     private readonly AtkUnitBase* node;
 
@@ -54,7 +54,7 @@ internal unsafe class BaseNode
     }
 }
 
-internal unsafe class ComponentNode
+public unsafe class ComponentNode
 {
     private readonly AtkComponentNode* node;
     private readonly AtkComponentBase* componentBase;
@@ -86,7 +86,7 @@ internal unsafe class ComponentNode
     public AtkComponentNode* GetPointer() => node;
 }
 
-internal static unsafe class Node
+public static unsafe class Node
 {
     public static T* GetNodeByID<T>(AtkUldManager uldManager, uint nodeId) where T : unmanaged 
     {
