@@ -1,40 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Mappy.Localization;
-using Mappy.Utilities;
+using Mappy.System;
+using Mappy.Util;
 
 namespace Mappy.Interfaces;
 
-internal interface IPluginCommand
+public interface IPluginCommand
 {
     string? CommandArgument { get; }
-
-    public void Execute(string? additionalArguments)
+    
+    IEnumerable<ISubCommand> SubCommands { get; }
+    
+    public void Execute(CommandData data)
     {
-        var matchingSubCommands = SubCommands.Where(subCommand => subCommand.GetCommand() == additionalArguments).ToList();
+        var matchingSubCommands = SubCommands.Where(subCommand => subCommand.GetCommand() == data.SubCommand).ToList();
 
-        if (matchingSubCommands.Count != 0)
+        if (matchingSubCommands.Any())
         {
-            foreach (var subCommand in matchingSubCommands)
+            foreach (var _ in matchingSubCommands.Where(subCommand => subCommand.Execute(data)))
             {
-                if (subCommand.Execute())
-                {
-                    Chat.Print("Command", "Command Successful");
-                }
+                Chat.Print("Command", "Command Successful");
             }
         }
         else
         {
-            PrintCommandError(CommandArgument, additionalArguments);
+            Chat.PrintError($"The command '/mappy {CommandArgument} {data.SubCommand}' does not exist.");
         }
-    }
-
-    IEnumerable<ISubCommand> SubCommands { get; }
-    
-    static void PrintCommandError(string? command, string? arguments)
-    {
-        Chat.PrintCommandError(arguments != null
-            ? $"{Strings.Command.InvalidCommand} `/mappy {command ?? "[blank]"} {arguments}`"
-            : $"{Strings.Command.InvalidCommand} `/mappy {command ?? "[blank]"}`");
     }
 }
