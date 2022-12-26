@@ -1,7 +1,6 @@
 ﻿using Dalamud.Plugin;
 using Mappy.Config;
 using Mappy.System;
-using Mappy.Util;
 
 namespace Mappy;
 
