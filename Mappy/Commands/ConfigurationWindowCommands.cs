@@ -14,7 +14,7 @@ internal class ConfigurationWindowCommands : IPluginCommand
         new SubCommand
         {
             CommandKeyword = null,
-            CommandAction = () => Chat.PrintError("The configuration menu cannot be opened while in a PvP area"),
+            CommandAction = () => Chat.PrintError("The configuration window cannot be opened while in a PvP area"),
             CanExecute = () => Service.ClientState.IsPvP,
             GetHelpText = () => "Open Configuration Window"
         },
