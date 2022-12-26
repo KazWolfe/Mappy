@@ -1,6 +1,7 @@
 ﻿using Dalamud.Plugin;
 using Mappy.Config;
 using Mappy.System;
+using Mappy.UI;
 
 namespace Mappy;
 
@@ -15,15 +16,17 @@ public sealed class MappyPlugin : IDalamudPlugin
         Service.Configuration = Service.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Service.Configuration.Initialize(Service.PluginInterface);
 
-        Service.CommandManager = new CommandManager();
-        Service.WindowManager = new WindowManager();
+        KamiLib.KamiLib.Initialize(pluginInterface, Name);
+        KamiLib.KamiLib.WindowManager.AddWindow(new ConfigWindow());
+        KamiLib.KamiLib.WindowManager.AddWindow(new MapOverlay());
+
         Service.AreaMapAddon = new AreaMapAddon();
     }
 
     public void Dispose()
     {
         Service.AreaMapAddon.Dispose();
-        Service.WindowManager.Dispose();
-        Service.CommandManager.Dispose();
+        
+        KamiLib.KamiLib.Dispose();
     }
 }

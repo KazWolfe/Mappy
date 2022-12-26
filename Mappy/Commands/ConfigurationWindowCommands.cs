@@ -23,7 +23,7 @@ internal class ConfigurationWindowCommands : IPluginCommand
             CommandKeyword = null,
             CommandAction = () =>
             {
-                if ( Service.WindowManager.GetWindowOfType<ConfigWindow>() is {} mainWindow )
+                if ( KamiLib.KamiLib.WindowManager.GetWindowOfType<ConfigWindow>() is {} mainWindow )
                 {
                     mainWindow.IsOpen = !mainWindow.IsOpen;
                 }
