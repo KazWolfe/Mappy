@@ -33,6 +33,6 @@ public class ModuleManager : IDisposable
 
     public void Dispose()
     {
-        // No Modules Implement Dispose
+        // Nothing to see here, move along
     }
 }

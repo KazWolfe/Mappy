@@ -23,6 +23,7 @@ internal class CommandManager : IDisposable
         new LocalizationCommand(),
         new GotoCommand(),
         new QuestCommand(),
+        new ExperimentalCommand(),
     };
 
     public CommandManager()
@@ -42,6 +43,11 @@ internal class CommandManager : IDisposable
     {
         Service.Commands.RemoveHandler(SettingsCommand);
         Service.Commands.RemoveHandler(HelpCommand);
+
+        foreach (var disposableCommand in Commands.OfType<IDisposable>())
+        {
+            disposableCommand.Dispose();
+        }
     }
 
     private void OnCommand(string command, string arguments)
@@ -86,7 +92,6 @@ internal class CommandManager : IDisposable
         else
         {
             IPluginCommand.PrintCommandError(subCommand, subCommandArguments);
-
         }
     }
 

@@ -10,7 +10,7 @@ namespace Mappy.System;
 
 internal class WindowManager : IDisposable
 {
-    private readonly WindowSystem windowSystem = new("DailyDuty");
+    private readonly WindowSystem windowSystem = new("Mappy");
 
     private readonly List<Window> windows = new()
     {

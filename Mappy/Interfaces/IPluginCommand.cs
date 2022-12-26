@@ -11,13 +11,14 @@ internal interface IPluginCommand
 
     public void Execute(string? additionalArguments)
     {
-        var matchingSubCommands = SubCommands.Where(subCommand => subCommand.GetCommand() == additionalArguments).ToList();
+        var targetSubCommand = GetSubCommand(additionalArguments);
+        var matchingSubCommands = SubCommands.Where(subCommand => subCommand.GetCommand() == targetSubCommand).ToList();
 
         if (matchingSubCommands.Count != 0)
         {
             foreach (var subCommand in matchingSubCommands)
             {
-                if (subCommand.Execute())
+                if (subCommand.Execute(GetSubSubCommand(additionalArguments)))
                 {
                     Chat.Print("Command", "Command Successful");
                 }
@@ -36,5 +37,20 @@ internal interface IPluginCommand
         Chat.PrintCommandError(arguments != null
             ? $"{Strings.Command.InvalidCommand} `/mappy {command ?? "[blank]"} {arguments}`"
             : $"{Strings.Command.InvalidCommand} `/mappy {command ?? "[blank]"}`");
+    }
+
+    private string? GetSubCommand(string? additionalArguments)
+    {
+        if (additionalArguments is null) return null;
+
+        return additionalArguments.Split(" ")[0];
+    }
+    
+    private string[]? GetSubSubCommand(string? additionalArguments)
+    {
+        if (additionalArguments is null) return null;
+        
+        var strings = additionalArguments.Split(" ");
+        return strings[1..];
     }
 }
