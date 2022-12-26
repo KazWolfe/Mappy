@@ -3,30 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Game.Command;
 using Dalamud.Logging;
+using Mappy.Commands;
 using Mappy.Interfaces;
-using Mappy.System.Commands;
+using Mappy.Util;
 
 namespace Mappy.System;
 
-internal class CommandManager : IDisposable
+public class CommandManager : IDisposable
 {
     private const string SettingsCommand = "/mappy";
-
     private const string HelpCommand = "/mappy help";
 
-    public readonly List<IPluginCommand> Commands = new()
-    {
-        new ConfigurationWindowCommand(),
-        new PrintHelpTextCommand(),
-        new DebugWindowCommand(),
-        new MapManagerCommand(),
-        new LocalizationCommand(),
-        new GotoCommand(),
-        new QuestCommand(),
-    };
-
+    public readonly List<IPluginCommand> Commands;
+    
     public CommandManager()
     {
+        Commands = new List<IPluginCommand>
+        {
+            new ConfigurationWindowCommands(),
+            new HelpCommands()
+        };
+        
         Service.Commands.AddHandler(SettingsCommand, new CommandInfo(OnCommand)
         {
             HelpMessage = "open configuration window"
@@ -37,80 +34,92 @@ internal class CommandManager : IDisposable
             HelpMessage = "display a list of all available sub-commands"
         });
     }
-
+    
     public void Dispose()
     {
         Service.Commands.RemoveHandler(SettingsCommand);
         Service.Commands.RemoveHandler(HelpCommand);
+        
+        // ReSharper disable once SuspiciousTypeConversion.Global
+        foreach (var disposableCommand in Commands.OfType<IDisposable>())
+        {
+            disposableCommand.Dispose();
+        }
     }
 
     private void OnCommand(string command, string arguments)
     {
         PluginLog.Debug($"Received Command `{command}` `{arguments}`");
 
-        var subCommand = GetPrimaryCommand(arguments);
-        var subCommandArguments = GetSecondaryCommand(arguments);
-
-        switch (subCommand)
+        var commandData = GetCommandData(arguments);
+        switch (commandData)
         {
-            case null:
-                GetCommand<ConfigurationWindowCommand>()?.Execute(subCommandArguments);
+            case {Command: null}:
+                GetCommand<ConfigurationWindowCommands>()?.Execute(commandData);
                 break;
-
-            case "help":
-                GetCommand<PrintHelpTextCommand>()?.Execute(subCommandArguments);
+            
+            case {Command: "help"}:
+                GetCommand<HelpCommands>()?.Execute(commandData);
                 break;
-
+            
             default:
-                ProcessCommand(subCommand, subCommandArguments);
+                ProcessCommand(commandData);
                 break;
         }
     }
-
-    private IPluginCommand? GetCommand<T>()
-    {
-        return Commands.OfType<T>().FirstOrDefault() as IPluginCommand;
-    }
     
-    private void ProcessCommand(string subCommand, string? subCommandArguments)
+    private void ProcessCommand(CommandData data)
     {
-        var matchingCommands = Commands.Where(command => command.CommandArgument == subCommand).ToList();
+        var matchingCommands = Commands.Where(command => command.CommandArgument == data.Command).ToList();
 
         if (matchingCommands.Any())
         {
             foreach (var cmd in matchingCommands)
             {
-                cmd.Execute(subCommandArguments);
+                cmd.Execute(data);
             }
         }
         else
         {
-            IPluginCommand.PrintCommandError(subCommand, subCommandArguments);
-
+            Chat.PrintError($"The command '/mappy {data.Command}' does not exist.");
         }
     }
+    
+    private IPluginCommand? GetCommand<T>() => Commands.OfType<T>().FirstOrDefault() as IPluginCommand;
 
-    private static string? GetSecondaryCommand(string arguments)
+    private CommandData GetCommandData(string arguments) => new(arguments);
+}
+
+public class CommandData
+{
+    public string? Command;
+    public string? SubCommand;
+    public string?[]? Arguments;
+    
+    public CommandData(string arguments)
     {
-        var stringArray = arguments.Split(' ');
-
-        if (stringArray.Length == 1)
+        if (arguments != string.Empty)
         {
-            return null;
-        }
+            var splits = arguments.Split(' ');
 
-        return string.Join(" ", stringArray[1..]);
+            if (splits.Length >= 1)
+            {
+                Command = splits[0];
+            }
+
+            if (splits.Length >= 2)
+            {
+                SubCommand = splits[1];
+            }
+
+            if (splits.Length >= 3)
+            {
+                Arguments = splits[2..];
+            }
+        }
     }
 
-    private static string? GetPrimaryCommand(string arguments)
-    {
-        var stringArray = arguments.Split(' ');
-
-        if (stringArray[0] == string.Empty)
-        {
-            return null;
-        }
-
-        return stringArray[0];
-    }
+    public override string ToString() => $"{Command ?? "Empty Command"}, " +
+                                         $"{SubCommand ?? "Empty SubCommand"}, " +
+                                         $"{(Arguments is null ? "Empty Args" : string.Join(", ", Arguments))}";
 }
