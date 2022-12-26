@@ -19,4 +19,5 @@ internal class Service
     public static Configuration Configuration = null!;
     public static WindowManager WindowManager = null!;
     public static CommandManager CommandManager = null!;
+    public static AreaMapAddon AreaMapAddon = null!;
 }

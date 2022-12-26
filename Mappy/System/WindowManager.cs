@@ -18,6 +18,7 @@ public class WindowManager : IDisposable
         windows = new List<Window>
         {
             new ConfigWindow(),
+            new MapOverlay(),
         };
         
         windows.ForEach(window => windowSystem.AddWindow(window));

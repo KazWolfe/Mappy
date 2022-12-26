@@ -12,6 +12,7 @@ public class ConfigWindow : Window
 
     public override void Draw()
     {
-        
+        ImGui.Text($"WindowPosition: {Service.AreaMapAddon.GetWindowPosition()}");
+        ImGui.Text($"WindowPosition: {Service.AreaMapAddon.GetWindowSize()}");
     }
 }

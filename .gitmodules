@@ -1,0 +1,3 @@
+[submodule "Mappy/KamiLib"]
+	path = Mappy/KamiLib
+	url = https://github.com/MidoriKami/KamiLib
